@@ -6,7 +6,15 @@ A custom OpenHAB Main UI widget that shows your Husqvarna Automower's real-time 
 
 ---
 
-## Preview
+## Screenshots
+
+> Add screenshots to `widgets/lawn_mower/screenshots/` and update these links.
+
+| Default | With GPS map open | With weather guards |
+|---------|------------------|---------------------|
+| ![Card](screenshots/card.png) | ![Map](screenshots/map.png) | ![Guards](screenshots/guards.png) |
+
+## What it shows
 
 The card shows:
 - Activity badge (green = mowing/leaving, grey = idle/parked, red = error)

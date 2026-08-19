@@ -6,6 +6,12 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 
 ---
 
+## Screenshot
+
+> Add a screenshot to `widgets/humidity_room_card/screenshots/card.png` and update this link.
+
+![Humidity Room Card](screenshots/card.png)
+
 ## What it shows
 
 - Room icon + name + **OK / Elevated / Critical** badge (green / amber / red)

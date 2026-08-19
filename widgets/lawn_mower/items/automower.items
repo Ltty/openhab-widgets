@@ -1,0 +1,34 @@
+// Husqvarna Automower items
+// Replace BRIDGE and THING with your actual Bridge and Thing IDs from the automower binding.
+// Find them in Settings → Things → your automower thing → copy the UID from the URL.
+// Example: automower:automower:abc123:am415x
+
+// ── Required: status items ────────────────────────────────────────────────────
+String   Automower_Activity   "Activity"          { channel="automower:automower:BRIDGE:THING:status#activity" }
+String   Automower_State      "State"             { channel="automower:automower:BRIDGE:THING:status#state" }
+Number   Automower_ErrorCode  "Error Code"        { channel="automower:automower:BRIDGE:THING:status#error-code" }
+Number   Automower_Battery    "Battery [%d %%]"   { channel="automower:automower:BRIDGE:THING:status#battery" }
+DateTime Automower_LastUpdate "Last Update"       { channel="automower:automower:BRIDGE:THING:status#last-update" }
+
+// ── Optional: GPS track map ───────────────────────────────────────────────────
+// Required only if you want the satellite map. Copy automower-map.html to /etc/openhab/html/.
+Location Automower_Position   "Position"          { channel="automower:automower:BRIDGE:THING:status#position" }
+
+// ── Optional: simple pause (Tier 1) ──────────────────────────────────────────
+// Bind the widget's "Manual Pause" prop to this item for a direct pause via the binding.
+// This does NOT integrate with weather guard rules.
+Switch   Automower_Pause      "Pause"             { channel="automower:automower:BRIDGE:THING:command#pause" }
+
+// ── Optional: combined schedule control (Tier 2) ──────────────────────────────
+// A NAND group: group is OFF (mower parks) when ANY member is ON.
+// Group is ON (mower resumes) only when ALL members are OFF.
+// Bind the widget's guard props (isDark/isHot/isCold/isRaining/isFrost/Manual Pause)
+// to the corresponding Switch items below.
+Group:Switch:NAND(OFF,ON) AutomowerSchedule "Mower Schedule" ["Equipment"]
+
+Switch Automower_Guard_Dark   "Darkness"    (AutomowerSchedule)
+Switch Automower_Guard_Hot    "High Temp"   (AutomowerSchedule)
+Switch Automower_Guard_Cold   "Low Temp"    (AutomowerSchedule)
+Switch Automower_Guard_Frost  "Frost"       (AutomowerSchedule)
+Switch Automower_Guard_Rain   "Rain"        (AutomowerSchedule)
+Switch Automower_Guard_Manual "Manual Pause" (AutomowerSchedule)

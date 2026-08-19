@@ -1,0 +1,326 @@
+uid: lawn_mower
+tags: []
+props:
+  parameters:
+  - context: item
+    description: The current activity of the automower (bind to status#activity channel)
+    label: Automower Activity
+    name: automowerActivity
+    required: true
+    type: TEXT
+    groupName: overview
+  - context: item
+    description: The current status/state of the automower (bind to status#state channel)
+    label: Automower Status
+    name: automowerStatus
+    required: true
+    type: TEXT
+    groupName: overview
+  - context: item
+    description: The current error code of the automower (bind to status#error-code
+      channel, Number item)
+    label: Automower Error Code
+    name: automowerErrorCode
+    required: true
+    type: TEXT
+    groupName: overview
+  - context: item
+    description: The battery level of the automower (bind to status#battery channel)
+    label: Automower Battery Level
+    name: automowerBatteryLevel
+    required: true
+    type: TEXT
+    groupName: overview
+  - context: item
+    description: The date and time the automower was last updated (bind to status#last-update
+      channel)
+    label: Automower Last Update
+    name: automowerLastUpdate
+    required: true
+    type: TEXT
+    groupName: overview
+  - context: item
+    description: Location item for GPS track map (bind to status#position channel).
+      Requires automower-map.html installed in /etc/openhab/html/.
+    label: Automower Position
+    name: automowerPosition
+    required: false
+    type: TEXT
+    groupName: overview
+  - context: item
+    description: 'Switch item: ON when it is dark/night (optional). Drives the sunset
+      icon in the weather guard strip.'
+    label: Darkness
+    name: isDark
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: 'Switch item: ON when temperature is too high for mowing (optional).
+      Drives the hot-temperature icon.'
+    label: High Temperature
+    name: isHot
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: 'Switch item: ON when temperature is too low for mowing (optional).
+      Drives the cold-temperature icon.'
+    label: Low Temperature
+    name: isCold
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: 'Switch item: ON when it is raining (optional). Drives the rain icon.'
+    label: Rain
+    name: isRaining
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: 'Switch item: ON when there is frost (optional). Drives the snow
+      icon.'
+    label: Frost
+    name: isFrost
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: Any Switch item for manual pause (optional). Bind to command#pause
+      channel for in-place pause, or to a NAND group member for combined weather+manual
+      schedule control. ON = paused, OFF = active.
+    label: Manual Pause
+    name: automowerManualPause
+    required: false
+    type: TEXT
+    groupName: schedule
+  parameterGroups:
+  - name: overview
+    label: Automower Status
+  - name: schedule
+    label: Schedule
+component: f7-card
+config: {}
+slots:
+  content:
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        margin-bottom: 6px
+    slots:
+      default:
+      - component: oh-icon
+        config:
+          icon: f7:location_fill
+          style:
+            color: '#4CAF50'
+            font-size: 20px
+            margin-right: 8px
+      - component: Label
+        config:
+          text: Automower
+          style:
+            flex: '1'
+            font-size: 16px
+            font-weight: '600'
+      - component: Label
+        config:
+          text: '=(items[props.automowerErrorCode].state == 0) ? items[props.automowerActivity].displayState
+            : ''Error'''
+          style:
+            background: '=(items[props.automowerErrorCode].state != 0) ? ''rgba(244,67,54,0.15)''
+              : (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state
+              === ''LEAVING'') ? ''rgba(76,175,80,0.2)'' : ''rgba(128,128,128,0.15)'''
+            color: '=(items[props.automowerErrorCode].state != 0) ? ''#f44336'' :
+              (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state
+              === ''LEAVING'') ? ''#4CAF50'' : ''#888'''
+            border-radius: 12px
+            padding: 2px 8px
+            font-size: 12px
+            font-weight: '500'
+            margin-right: 8px
+      - component: oh-icon
+        config:
+          action: analyzer
+          actionAnalyzerItems: =[props.automowerBatteryLevel]
+          height: 22
+          icon: batterylevel
+          state: =items[props.automowerBatteryLevel].state.split('.')[0]
+          style:
+            filter: grayscale(100%)
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        margin-bottom: 8px
+    slots:
+      default:
+      - component: Label
+        config:
+          text: '=(items[props.automowerErrorCode].state == 0) ? items[props.automowerStatus].displayState
+            : items[props.automowerStatus].displayState + '': '' + ((items[props.automowerErrorCode].state
+            == 1) ? ''Outside Working Area'' : (items[props.automowerErrorCode].state
+            == 2) ? ''No Loop Signal'' : (items[props.automowerErrorCode].state ==
+            3) ? ''Wrong PIN Code'' : (items[props.automowerErrorCode].state == 4)
+            ? ''Mower Lifted'' : (items[props.automowerErrorCode].state == 5) ? ''Tilt
+            Sensor Activated'' : (items[props.automowerErrorCode].state == 6) ? ''Lifted''
+            : (items[props.automowerErrorCode].state == 8) ? ''Collision Sensor Problem,
+            Rear'' : (items[props.automowerErrorCode].state == 9) ? ''Wheel Motor
+            Blocked'' : (items[props.automowerErrorCode].state == 10) ? ''Cutting
+            System Blocked'' : (items[props.automowerErrorCode].state == 11) ? ''Battery
+            Error'' : (items[props.automowerErrorCode].state == 12) ? ''Charging Station
+            Blocked'' : (items[props.automowerErrorCode].state == 110) ? ''Collision
+            Sensor Problem, Front'' : ''Unknown Error'')'
+          style:
+            flex: '1'
+            font-size: 13px
+            font-weight: '500'
+      - component: Label
+        config:
+          text: =items[props.automowerLastUpdate].displayState
+          style:
+            font-size: 11px
+            color: '#888'
+            text-align: right
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        margin-bottom: 8px
+      visible: =!!props.automowerManualPause
+    slots:
+      default:
+      - component: oh-icon
+        config:
+          icon: f7:pause_circle
+          style:
+            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#ff9800''
+              : ''#888'''
+            font-size: 16px
+            margin-right: 8px
+      - component: Label
+        config:
+          style:
+            flex: '1'
+            font-size: 13px
+            font-weight: '500'
+            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#ff9800''
+              : ''#888'''
+          text: '=items[props.automowerManualPause]?.state === ''ON'' ? ''Manually
+            paused'' : ''No manual pause'''
+      - component: oh-icon
+        config:
+          action: toggle
+          actionCommand: 'ON'
+          actionCommandAlt: 'OFF'
+          actionItem: =props.automowerManualPause
+          icon: '=items[props.automowerManualPause]?.state === ''ON'' ? ''f7:play_circle_fill''
+            : ''f7:pause_circle_fill'''
+          style:
+            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#ff9800''
+              : ''#4CAF50'''
+            cursor: pointer
+            font-size: 22px
+  - component: f7-accordion-item
+    config:
+      style:
+        margin: 0 -16px
+    slots:
+      default:
+      - component: f7-accordion-toggle
+        config:
+          style:
+            display: flex
+            align-items: center
+            padding: 6px 16px
+            cursor: pointer
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: f7:map_fill
+              style:
+                color: '#4CAF50'
+                font-size: 14px
+                margin-right: 6px
+          - component: Label
+            config:
+              text: GPS Track
+              style:
+                flex: '1'
+                font-size: 13px
+                color: '#888'
+          - component: oh-icon
+            config:
+              icon: f7:chevron_down
+              style:
+                color: '#888'
+                font-size: 12px
+      - component: f7-accordion-content
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                border-radius: 8px
+                overflow: hidden
+                background: '#1a1a2e'
+            slots:
+              default:
+              - component: oh-webframe
+                config:
+                  src: '=props.automowerPosition ? ''/static/automower-map.html?item=''
+                    + props.automowerPosition : ''about:blank'''
+                  height: 360
+                  style:
+                    width: 100%
+                    display: block
+                    border: none
+  - component: f7-row
+    config:
+      style:
+        justify-content: space-around
+        padding-top: 10px
+        margin-top: 8px
+        border-top: 1px solid rgba(128,128,128,0.15)
+      visible: =!!(props.isDark || props.isHot || props.isCold || props.isRaining
+        || props.isFrost)
+    slots:
+      default:
+      - component: oh-icon
+        config:
+          icon: sunset
+          width: 24px
+          style:
+            filter: '=(props.isDark && items[props.isDark]?.state === ''ON'') ? ''grayscale(0%)''
+              : ''grayscale(100%) opacity(0.35)'''
+      - component: oh-icon
+        config:
+          icon: temperature_hot
+          width: 24px
+          style:
+            filter: '=(props.isHot && items[props.isHot]?.state === ''ON'') ? ''grayscale(0%)''
+              : ''grayscale(100%) opacity(0.35)'''
+      - component: oh-icon
+        config:
+          icon: temperature_cold
+          width: 24px
+          style:
+            filter: '=(props.isCold && items[props.isCold]?.state === ''ON'') ? ''grayscale(0%)''
+              : ''grayscale(100%) opacity(0.35)'''
+      - component: oh-icon
+        config:
+          icon: rain
+          width: 24px
+          style:
+            filter: '=(props.isRaining && items[props.isRaining]?.state === ''ON'')
+              ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
+      - component: oh-icon
+        config:
+          icon: snow
+          width: 24px
+          style:
+            filter: '=(props.isFrost && items[props.isFrost]?.state === ''ON'') ?
+              ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''

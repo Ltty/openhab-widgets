@@ -1,0 +1,113 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; background: #1a1a2e; overflow: hidden; }
+    #map { width: 100%; height: 100vh; }
+    #msg { position: absolute; inset: 0; display: flex; align-items: center;
+           justify-content: center; color: #666; font: 13px/1 sans-serif; }
+    .leaflet-control-attribution { display: none; }
+  </style>
+</head><body>
+  <div id="map"></div><div id="msg">Loading track…</div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var params   = new URLSearchParams(window.location.search);
+    var itemName = params.get('item') || '';
+
+    var map      = null;
+    var marker   = null;
+    var polyline = null;
+    var path     = [];
+
+    var MOWER_ICON = L.divIcon({
+      html: '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"' +
+            ' style="filter:drop-shadow(0 2px 5px rgba(0,0,0,0.7))">' +
+            '<circle cx="5"  cy="5"  r="3.2" fill="#222" stroke="#fff" stroke-width="1.2"/>' +
+            '<circle cx="21" cy="5"  r="3.2" fill="#222" stroke="#fff" stroke-width="1.2"/>' +
+            '<circle cx="5"  cy="21" r="3.2" fill="#222" stroke="#fff" stroke-width="1.2"/>' +
+            '<circle cx="21" cy="21" r="3.2" fill="#222" stroke="#fff" stroke-width="1.2"/>' +
+            '<rect x="5" y="5" width="16" height="16" rx="3" fill="#4CAF50" stroke="#fff" stroke-width="1.5"/>' +
+            '<circle cx="13" cy="13" r="3.5" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>' +
+            '</svg>',
+      className: '', iconSize: [26,26], iconAnchor: [13,13]
+    });
+
+    function initMap(lat, lon) {
+      document.getElementById('msg').style.display = 'none';
+      if (map) return;
+      map = L.map('map', {zoomControl:false, attributionControl:false}).setView([lat,lon], 19);
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        {maxZoom:21, maxNativeZoom:19}).addTo(map);
+      window.addEventListener('resize', function() { map.invalidateSize(); });
+      setTimeout(function() { map.invalidateSize(); }, 200);
+    }
+
+    function redraw() {
+      if (!map || path.length === 0) return;
+      var last = path[path.length-1];
+      if (polyline) map.removeLayer(polyline);
+      if (path.length > 1)
+        polyline = L.polyline(path, {color:'#FF6B35', weight:3, opacity:0.9, lineJoin:'round'}).addTo(map);
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([last[0], last[1]], {icon:MOWER_ICON}).addTo(map);
+    }
+
+    function parseState(text) {
+      if (!text || text === 'NULL' || text === 'UNDEF') return null;
+      var parts = text.trim().split(',');
+      if (parts.length < 2) return null;
+      var lat = parseFloat(parts[0]), lon = parseFloat(parts[1]);
+      return isNaN(lat) || isNaN(lon) ? null : [lat, lon];
+    }
+
+    function todayMidnightISO() {
+      var d = new Date(); d.setHours(0,0,0,0); return d.toISOString();
+    }
+
+    function fetchHistory() {
+      if (!itemName) return;
+      var url = '/rest/persistence/items/' + itemName +
+                '?serviceId=influxdb&starttime=' + encodeURIComponent(todayMidnightISO());
+      fetch(url)
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function(data) {
+          var pts = (data.data || []).map(function(d) { return parseState(d.state); })
+                                     .filter(function(p) { return p !== null; });
+          if (pts.length === 0) {
+            document.getElementById('msg').textContent = 'No movement recorded today';
+            fetchPosition();
+            return;
+          }
+          path = pts;
+          var last = path[path.length-1];
+          initMap(last[0], last[1]);
+          redraw();
+          map.fitBounds(L.polyline(path).getBounds(), {padding:[20,20], maxZoom:19});
+        })
+        .catch(function() { fetchPosition(); });
+    }
+
+    function fetchPosition() {
+      if (!itemName) return;
+      fetch('/rest/items/' + itemName + '/state', {headers:{Accept:'text/plain'}})
+        .then(function(r) { return r.ok ? r.text() : Promise.reject(r.status); })
+        .then(function(text) {
+          var pos = parseState(text);
+          if (!pos) return;
+          initMap(pos[0], pos[1]);
+          var last = path[path.length-1];
+          var moved = !last || Math.abs(last[0]-pos[0]) > 0.000005 || Math.abs(last[1]-pos[1]) > 0.000005;
+          if (!moved) return;
+          path.push(pos);
+          redraw();
+          map.panTo([pos[0], pos[1]]);
+        })
+        .catch(function() {});
+    }
+
+    fetchHistory();
+    setInterval(fetchPosition, 30000);
+  </script>
+</body></html>

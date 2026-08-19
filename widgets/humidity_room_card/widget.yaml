@@ -1,0 +1,307 @@
+uid: humidity_room_card
+tags:
+  - humidity
+  - card
+props:
+  parameters:
+    - context: item
+      label: Humidity Item
+      name: item
+      required: true
+      type: TEXT
+    - description: Defaults to item label
+      label: Room Name
+      name: title
+      required: false
+      type: TEXT
+    - description: Icon (e.g. iconify:mdi:sofa)
+      label: Icon
+      name: icon
+      required: false
+      type: TEXT
+    - default: 60
+      label: Orange Threshold (%)
+      name: orange
+      required: false
+      type: INTEGER
+      min: 0
+      max: 100
+    - default: 70
+      label: Red Threshold (%)
+      name: red
+      required: false
+      type: INTEGER
+      min: 0
+      max: 100
+    - default: 40
+      label: Green min (%)
+      name: min
+      required: false
+      type: INTEGER
+      min: 0
+      max: 100
+  parameterGroups: []
+component: oh-link
+config:
+  action: analyzer
+  actionAnalyzerItems: "=props.item + ',' + props.item.replace('_Humidity', '_ActualTemperature')"
+  style:
+    color: inherit
+    display: block
+    text-decoration: none
+slots:
+  default:
+    - component: f7-card
+      config:
+        style:
+          min-width: "0"
+      slots:
+        default:
+          - component: f7-card-content
+            config:
+              style:
+                padding: 12px 16px 12px
+            slots:
+              default:
+                # Header: icon + room name + OK/Elevated/Critical badge
+                - component: f7-row
+                  config:
+                    style:
+                      align-items: center
+                      margin: 0 0 8px
+                  slots:
+                    default:
+                      - component: oh-icon
+                        config:
+                          icon: "=props.icon || 'f7:house'"
+                          style:
+                            flex: 0 0 auto
+                            font-size: 18px
+                            margin-right: 8px
+                            opacity: "0.7"
+                      - component: f7-col
+                        config:
+                          style:
+                            flex: "1"
+                            font-size: 14px
+                            font-weight: "500"
+                            padding: "0"
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: =props.title || items[props.item].label
+                      - component: f7-col
+                        config:
+                          style:
+                            flex: 0 0 auto
+                            padding: "0"
+                            text-align: right
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                style:
+                                  background: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? 'rgba(208,59,59,0.15)' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? 'rgba(250,178,25,0.15)' : 'rgba(12,163,12,0.15)'"
+                                  border-radius: 12px
+                                  color: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? '#d03b3b' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? '#fab219' : '#0ca30c'"
+                                  display: inline-block
+                                  font-size: 12px
+                                  font-weight: "500"
+                                  padding: 3px 12px
+                                text: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? 'Critical' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? 'Elevated' : 'OK'"
+
+                # Large humidity value
+                - component: Label
+                  config:
+                    style:
+                      color: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? '#d03b3b' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? '#fab219' : '#0ca30c'"
+                      display: block
+                      font-size: 28px
+                      font-weight: "600"
+                      line-height: "1.1"
+                      margin: 0 0 8px
+                    text: "=items[props.item] ? (Number.parseFloat(items[props.item].state).toFixed(0) + ' %') : '–'"
+
+                # CSS gradient zone bar with position indicator
+                - component: Label
+                  config:
+                    style:
+                      background-image: "='linear-gradient(rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 100%), linear-gradient(to right, #0ca30c ' + props.orange + '%, #fab219 ' + props.orange + '%, #fab219 ' + props.red + '%, #d03b3b ' + props.red + \"%)'\""
+                      background-position: "='calc(' + (items[props.item] ? items[props.item].numericState : 50) + '% - 1.5px) 0, 0 0'"
+                      background-repeat: "no-repeat, no-repeat"
+                      background-size: "3px 100%, 100% 100%"
+                      border-radius: 4px
+                      display: block
+                      height: 12px
+                      margin: 0 0 8px
+                    text: ""
+
+                # Legend rows
+                - component: f7-row
+                  config:
+                    style:
+                      align-items: center
+                      margin: 2px 0
+                  slots:
+                    default:
+                      - component: Label
+                        config:
+                          style:
+                            color: "#0ca30c"
+                            flex: 0 0 auto
+                            font-size: 10px
+                            line-height: "1"
+                            margin-right: 5px
+                          text: "●"
+                      - component: f7-col
+                        config:
+                          style:
+                            color: "#0ca30c"
+                            font-size: 12px
+                            padding: "0"
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: Safe
+                      - component: f7-col
+                        config:
+                          style:
+                            color: "#0ca30c"
+                            flex: 0 0 auto
+                            font-size: 12px
+                            padding: "0"
+                            text-align: right
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "=props.min + '–' + props.orange + ' %'"
+
+                - component: f7-row
+                  config:
+                    style:
+                      align-items: center
+                      margin: 2px 0
+                  slots:
+                    default:
+                      - component: Label
+                        config:
+                          style:
+                            color: "#fab219"
+                            flex: 0 0 auto
+                            font-size: 10px
+                            line-height: "1"
+                            margin-right: 5px
+                          text: "●"
+                      - component: f7-col
+                        config:
+                          style:
+                            color: "#fab219"
+                            font-size: 12px
+                            padding: "0"
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: Elevated
+                      - component: f7-col
+                        config:
+                          style:
+                            color: "#fab219"
+                            flex: 0 0 auto
+                            font-size: 12px
+                            padding: "0"
+                            text-align: right
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "=props.orange + '–' + props.red + ' %'"
+
+                - component: f7-row
+                  config:
+                    style:
+                      align-items: center
+                      margin: 2px 0
+                  slots:
+                    default:
+                      - component: Label
+                        config:
+                          style:
+                            color: "#d03b3b"
+                            flex: 0 0 auto
+                            font-size: 10px
+                            line-height: "1"
+                            margin-right: 5px
+                          text: "●"
+                      - component: f7-col
+                        config:
+                          style:
+                            color: "#d03b3b"
+                            font-size: 12px
+                            padding: "0"
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: Critical
+                      - component: f7-col
+                        config:
+                          style:
+                            color: "#d03b3b"
+                            flex: 0 0 auto
+                            font-size: 12px
+                            padding: "0"
+                            text-align: right
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "='> ' + props.red + ' %'"
+
+                # Divider
+                - component: Label
+                  config:
+                    style:
+                      border-top: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.12))
+                      display: block
+                      margin: 8px 0
+                    text: ""
+
+                # Temperature + setpoint row
+                - component: f7-row
+                  config:
+                    style:
+                      align-items: center
+                      margin: "0"
+                  slots:
+                    default:
+                      - component: f7-col
+                        config:
+                          style:
+                            flex: "1"
+                            padding: "0"
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                style:
+                                  display: block
+                                  font-size: 22px
+                                  font-weight: "600"
+                                text: "=items[props.item.replace('_Humidity', '_ActualTemperature')] ? (Number.parseFloat(items[props.item.replace('_Humidity', '_ActualTemperature')].state).toFixed(1) + ' °C') : '–'"
+                      - component: f7-col
+                        config:
+                          style:
+                            flex: 0 0 auto
+                            font-size: 12px
+                            opacity: "0.55"
+                            padding: "0"
+                            text-align: right
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "='Set: ' + (items[props.item.replace('_Humidity', '_SetPointTemperature')] ? Number.parseFloat(items[props.item.replace('_Humidity', '_SetPointTemperature')].state).toFixed(0) + ' °C' : '–')"

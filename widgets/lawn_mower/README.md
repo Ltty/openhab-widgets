@@ -10,9 +10,9 @@ A custom OpenHAB Main UI widget that shows your Husqvarna Automower's real-time 
 
 > Add screenshots to `widgets/lawn_mower/screenshots/` and update these links.
 
-| Default | With GPS map open | With weather guards |
-|---------|------------------|---------------------|
-| ![Card](screenshots/card.png) | ![Map](screenshots/map.png) | ![Guards](screenshots/guards.png) |
+| Collapsed | GPS map open |
+|-----------|-------------|
+| ![Card](screenshots/card.png) | ![Map](screenshots/map.png) |
 
 ## What it shows
 

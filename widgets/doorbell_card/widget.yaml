@@ -1,0 +1,262 @@
+uid: doorbell_card
+tags:
+- security
+- doorbell
+- card
+props:
+  parameters:
+  - context: item
+    description: Image item that receives snapshots from the camera (ipcamera binding)
+    label: Snapshot Image item
+    name: imageItem
+    required: true
+    type: TEXT
+  - context: item
+    description: String item showing what was detected (e.g. Person, Car, Motion)
+    label: Last Event Label item
+    name: labelItem
+    required: true
+    type: TEXT
+  - context: item
+    description: DateTime or String item with the timestamp of the last event
+    label: Last Event Time item
+    name: timeItem
+    required: true
+    type: TEXT
+  - description: ipcamera thing UID (e.g. abc12345) — used to build the HLS stream URL /ipcamera/{id}/ipcamera.m3u8
+    label: Camera Thing UID
+    name: cameraThingId
+    required: true
+    type: TEXT
+  - context: item
+    description: Switch item — ON when a person is detected
+    label: Person Detected item
+    name: humanItem
+    required: false
+    type: TEXT
+  - context: item
+    description: Switch item — ON when a car or vehicle is detected
+    label: Car Detected item
+    name: carItem
+    required: false
+    type: TEXT
+  - context: item
+    description: Switch item for smart lock state (ON = locked) — shown as a lock icon in the card header
+    label: Lock State item
+    name: lockItem
+    required: false
+    type: TEXT
+  - context: item
+    description: Item to receive PIN entry for the Unlock button popup
+    label: PIN entry item
+    name: pinItem
+    required: false
+    type: TEXT
+  - description: Title shown in the card header (default "Front Door")
+    label: Card Title
+    name: cardTitle
+    required: false
+    type: TEXT
+  parameterGroups: []
+timestamp: Aug 20, 2026, 12:00:00 PM
+component: f7-card
+config: {}
+slots:
+  default:
+  - component: f7-card-content
+    config:
+      style:
+        padding: 12px
+    slots:
+      default:
+      - component: f7-row
+        config:
+          style:
+            align-items: center
+            margin-bottom: 8px
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: f7:bell_fill
+              style:
+                color: var(--f7-theme-color)
+                font-size: 20px
+                margin-right: 8px
+          - component: Label
+            config:
+              style:
+                flex: "1"
+                font-size: 16px
+                font-weight: "600"
+              text: =props.cardTitle || 'Front Door'
+          - component: oh-icon
+            config:
+              icon: =props.lockItem && items[props.lockItem] && items[props.lockItem].state === 'ON' ? 'f7:lock_fill' : 'f7:lock_open_fill'
+              style:
+                color: =props.lockItem && items[props.lockItem] && items[props.lockItem].state === 'ON' ? 'var(--f7-theme-color)' : 'green'
+                font-size: 18px
+              visible: =!!props.lockItem
+      - component: Label
+        config:
+          style:
+            display: block
+            font-size: 14px
+            font-weight: "500"
+            margin-bottom: 2px
+          text: =items[props.labelItem] && items[props.labelItem].state !== 'NULL' ? items[props.labelItem].state : '–'
+      - component: Label
+        config:
+          style:
+            color: gray
+            display: block
+            font-size: 12px
+            margin-bottom: 8px
+          text: =items[props.timeItem] && items[props.timeItem].state !== 'NULL' ? items[props.timeItem].displayState : '–'
+      - component: f7-row
+        config:
+          style:
+            gap: 8px
+            margin-bottom: 10px
+        slots:
+          default:
+          - component: Label
+            config:
+              style:
+                background: rgba(255,165,0,0.2)
+                border-radius: 12px
+                color: orange
+                font-size: 12px
+                padding: 2px 8px
+              text: Person
+              visible: =props.humanItem && items[props.humanItem] && items[props.humanItem].state === 'ON'
+          - component: Label
+            config:
+              style:
+                background: rgba(0,120,255,0.2)
+                border-radius: 12px
+                color: "#0078ff"
+                font-size: 12px
+                padding: 2px 8px
+              text: Car
+              visible: =props.carItem && items[props.carItem] && items[props.carItem].state === 'ON'
+      - component: f7-accordion-item
+        config: {}
+        slots:
+          default:
+          - component: f7-accordion-toggle
+            config:
+              style:
+                align-items: center
+                cursor: pointer
+                display: flex
+                margin-bottom: 4px
+                margin-top: 4px
+                user-select: none
+            slots:
+              default:
+              - component: oh-link
+                config:
+                  style:
+                    align-items: center
+                    color: var(--f7-theme-color)
+                    display: flex
+                    flex: "1"
+                    font-size: 13px
+                    font-weight: "500"
+                    gap: 4px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:camera_fill
+                      style:
+                        font-size: 14px
+                  - component: Label
+                    config:
+                      style:
+                        flex: "1"
+                      text: Live view
+                  - component: oh-icon
+                    config:
+                      icon: f7:chevron_down
+                      style:
+                        font-size: 11px
+          - component: f7-accordion-content
+            config: {}
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    background: "#000"
+                    border-radius: 8px
+                    display: block
+                    height: "0"
+                    margin: 6px 0 8px
+                    overflow: hidden
+                    padding-top: 100%
+                    position: relative
+                    width: 100%
+                slots:
+                  default:
+                  - component: oh-webframe
+                    config:
+                      src: ="/static/doorbell/live.html?v=1&stream=/ipcamera/"+props.cameraThingId+"/ipcamera.m3u8"
+                      style:
+                        border: none
+                        border-radius: 8px
+                        bottom: "0"
+                        height: auto
+                        left: "0"
+                        position: absolute
+                        right: "0"
+                        top: "0"
+      - component: Label
+        config:
+          style:
+            color: gray
+            display: block
+            font-size: 11px
+            margin-bottom: 4px
+            margin-top: 8px
+          text: Latest capture
+      - component: oh-image
+        config:
+          item: =props.imageItem
+          refreshInterval: 30000
+          style:
+            border-radius: 4px
+            display: block
+            margin-bottom: 8px
+            width: 100%
+      - component: oh-link
+        config:
+          action: popup
+          actionModal: widget:keypad
+          actionModalConfig:
+            closePopup: true
+            item: =props.pinItem
+            mask: "*"
+          style:
+            background: "#cc0000"
+            border-radius: 8px
+            color: white
+            display: block
+            font-weight: "600"
+            margin-top: 4px
+            padding: 12px
+            text-align: center
+            text-decoration: none
+          visible: =!!props.pinItem
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: f7:lock_open
+              style:
+                margin-right: 6px
+                vertical-align: middle
+          - component: Label
+            config:
+              text: Unlock Front Door

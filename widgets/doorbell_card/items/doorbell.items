@@ -1,0 +1,13 @@
+// Doorbell items — ipcamera binding
+// Replace YOUR_THING_UID with your ipcamera thing UID:
+//   Settings → Things → IP Camera → click the thing → copy "Thing UID"
+//   (e.g. ipcamera:REOLINK:abc12345)
+
+Image   GF_Entryway_Doorbell_Image          "Snapshot"                       { channel="ipcamera:REOLINK:YOUR_THING_UID:image" }
+String  GF_Entryway_Doorbell_LastEventLabel "Last Event [%s]"                { channel="ipcamera:REOLINK:YOUR_THING_UID:lastEventData" }
+String  GF_Entryway_Doorbell_LastEventTime  "Last Event Time [%s]"           { channel="ipcamera:REOLINK:YOUR_THING_UID:lastMotionType" }
+Switch  GF_Entryway_Doorbell_HumanDetected  "Person Detected [%s]"           { channel="ipcamera:REOLINK:YOUR_THING_UID:humanAlarmDetected" }
+Switch  GF_Entryway_Doorbell_CarDetected    "Car Detected [%s]"              { channel="ipcamera:REOLINK:YOUR_THING_UID:carAlarmDetected" }
+
+// Optional: smart lock (shown as lock icon in the card header)
+// Switch  GF_Entryway_Lock  "Lock [%s]"  { channel="..." }

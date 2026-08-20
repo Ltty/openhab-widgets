@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<style>
+html,body{margin:0;background:#000;width:100%;height:100%;overflow:hidden}
+#s{color:#aaa;font:12px/1.6 sans-serif;padding:8px;text-align:center;position:absolute;width:100%;top:0;z-index:1}
+video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain}
+</style>
+</head>
+<body>
+<div id="s"></div>
+<video id="v" autoplay muted playsinline></video>
+<script src="hls.min.js"></script>
+<script>
+(function() {
+  var fe = window.frameElement;
+  if (!fe) return;
+  var w = document.documentElement.clientWidth || 300;
+  fe.removeAttribute('height');
+  fe.style.setProperty('width', '100%', 'important');
+  fe.style.setProperty('height', w + 'px', 'important');
+  fe.style.setProperty('border', 'none', 'important');
+})();
+
+var params = new URLSearchParams(location.search);
+var src = params.get('stream') || '';
+var v = document.getElementById('v');
+var s = document.getElementById('s');
+
+if (!src) {
+  s.textContent = 'No stream URL — set cameraThingId prop';
+} else {
+  s.textContent = Hls.isSupported() ? 'Connecting…' : 'MSE unavailable';
+  v.addEventListener('playing', function() { s.style.display = 'none'; });
+
+  if (Hls.isSupported()) {
+    var hls = new Hls({
+      startPosition: -1,
+      maxLoadingDelay: 2,
+      manifestLoadingMaxRetry: 8,
+      manifestLoadingRetryDelay: 500,
+      manifestLoadingMaxRetryTimeout: 10000,
+      liveSyncDurationCount: 1,
+      liveMaxLatencyDurationCount: 2,
+      maxBufferLength: 1,
+      maxMaxBufferLength: 3,
+      enableWorker: false
+    });
+    hls.loadSource(src);
+    hls.attachMedia(v);
+    hls.on(Hls.Events.MANIFEST_PARSED, function() { s.textContent = 'Buffering…'; v.play(); });
+    hls.on(Hls.Events.ERROR, function(e, d) {
+      if (d.fatal) {
+        s.style.display = ''; s.textContent = 'Reconnecting…';
+        setTimeout(function() { location.reload(); }, 5000);
+      } else if (d.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
+        try { hls.startLoad(); } catch(ex) {}
+      }
+    });
+
+    // Stall watchdog: nudge after 8s stall, reload after 20s
+    var lastTime = -1, lastTimeAt = 0, recovering = false;
+    setInterval(function() {
+      if (v.paused || v.ended || v.readyState < 2) return;
+      var ct = v.currentTime;
+      var now = Date.now();
+      if (ct !== lastTime) { lastTime = ct; lastTimeAt = now; recovering = false; return; }
+      var stalled = now - lastTimeAt;
+      if (stalled > 8000 && !recovering) {
+        recovering = true;
+        s.style.display = ''; s.textContent = 'Reconnecting…';
+        try { hls.stopLoad(); hls.startLoad(-1); } catch(ex) {}
+      } else if (stalled > 20000) {
+        location.reload();
+      }
+    }, 3000);
+
+  } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = src; s.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>

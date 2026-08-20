@@ -1,0 +1,11 @@
+// Speedtest binding items
+// Replace YOUR_THING_UID with your Thing UID:
+//   Settings → Things → Ookla Speedtest → click the thing → copy "Thing UID"
+
+Number:DataTransferRate SpeedtestResultDown   "Download [%.1f %unit%]"      { channel="speedtest:speedtest:YOUR_THING_UID:downloadBandwidth" }
+Number:DataTransferRate SpeedtestResultUp     "Upload [%.1f %unit%]"        { channel="speedtest:speedtest:YOUR_THING_UID:uploadBandwidth" }
+Number:Time             SpeedtestResultPing   "Ping [%.1f %unit%]"          { channel="speedtest:speedtest:YOUR_THING_UID:pingLatency" }
+Number:Time             SpeedtestResultJitter "Jitter [%.0f %unit%]"        { channel="speedtest:speedtest:YOUR_THING_UID:pingJitter" }
+String                  SpeedtestServer       "Server [%s]"                 { channel="speedtest:speedtest:YOUR_THING_UID:server" }
+DateTime                SpeedtestResultDate   "Test time [%1$tH:%1$tM]"    { channel="speedtest:speedtest:YOUR_THING_UID:timestamp" }
+Switch                  SpeedtestRerun        "Run Test"                    { channel="speedtest:speedtest:YOUR_THING_UID:triggerTest" }

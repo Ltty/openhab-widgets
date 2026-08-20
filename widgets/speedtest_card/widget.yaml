@@ -1,0 +1,22 @@
+uid: speedtest_card
+tags: []
+props:
+  parameters:
+  - name: planDown
+    type: DECIMAL
+    label: Download plan (Mbit/s)
+    description: Your contracted download speed in Mbit/s. Used for degradation indicators.
+    required: false
+    default: 150
+  - name: planUp
+    type: DECIMAL
+    label: Upload plan (Mbit/s)
+    description: Your contracted upload speed in Mbit/s. Used for degradation indicators.
+    required: false
+    default: 20
+  parameterGroups: []
+timestamp: Aug 20, 2026, 10:00:00 AM
+component: oh-webframe
+config:
+  src: "='/static/speedtest.html?planDown='+(props.planDown||150)+'&planUp='+(props.planUp||20)"
+  height: 310

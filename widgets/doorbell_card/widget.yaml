@@ -229,6 +229,9 @@ slots:
             border-radius: 4px
             display: block
             margin-bottom: 8px
+            max-height: 180px
+            object-fit: cover
+            object-position: center
             width: 100%
       - component: oh-link
         config:

@@ -123,6 +123,13 @@ html, body { background: var(--bg); color: var(--text);
 const _p = new URLSearchParams(location.search);
 const PLAN_D = parseFloat(_p.get('planDown')) || 150;
 const PLAN_U = parseFloat(_p.get('planUp')) || 20;
+const ITEM_DL  = _p.get('dl')  || 'SpeedtestResultDown';
+const ITEM_UL  = _p.get('ul')  || 'SpeedtestResultUp';
+const ITEM_PG  = _p.get('pg')  || 'SpeedtestResultPing';
+const ITEM_JT  = _p.get('jt')  || 'SpeedtestResultJitter';
+const ITEM_DT  = _p.get('dt')  || 'SpeedtestResultDate';
+const ITEM_SV  = _p.get('sv')  || 'SpeedtestServer';
+const ITEM_RUN = _p.get('run') || 'SpeedtestRerun';
 
 function scoreColor(s) { return s >= 4 ? 'g' : s >= 2 ? 'w' : 'b'; }
 function renderDots(id, score) {
@@ -191,10 +198,10 @@ function renderSparkline(svgId, pts, planVal, color) {
 async function refresh() {
   try {
     const [dl, ul, pg, jt, sv, ts, dlH, ulH] = await Promise.all([
-      getItem('SpeedtestResultDown'), getItem('SpeedtestResultUp'),
-      getItem('SpeedtestResultPing'), getItem('SpeedtestResultJitter'),
-      getItem('SpeedtestServer'), getItem('SpeedtestResultDate'),
-      getHistory('SpeedtestResultDown'), getHistory('SpeedtestResultUp')
+      getItem(ITEM_DL), getItem(ITEM_UL),
+      getItem(ITEM_PG), getItem(ITEM_JT),
+      getItem(ITEM_SV), getItem(ITEM_DT),
+      getHistory(ITEM_DL), getHistory(ITEM_UL)
     ]);
     const d = parseFloat(dl.state), u = parseFloat(ul.state);
     const p = parseFloat(pg.state), j = parseFloat(jt.state) * 1000;
@@ -233,7 +240,7 @@ async function runTest() {
   btn.disabled = true; btn.textContent = 'Running…';
   try {
     const xsrf = (document.cookie.split('; ').find(r => r.startsWith('XSRF-TOKEN=')) || '').split('=')[1] || '';
-    const res = await fetch('/rest/items/SpeedtestRerun', {
+    const res = await fetch('/rest/items/' + ITEM_RUN, {
       method: 'POST', credentials: 'include', body: 'ON',
       headers: {'Content-Type':'text/plain', 'X-XSRF-TOKEN': xsrf}
     });
@@ -241,7 +248,7 @@ async function runTest() {
     let n = 0;
     const iv = setInterval(async () => {
       if (++n >= 18) { clearInterval(iv); reset(); return; }
-      try { const r = await getItem('SpeedtestRerun'); if (r.state === 'OFF') { clearInterval(iv); await refresh(); reset(); } } catch(e) {}
+      try { const r = await getItem(ITEM_RUN); if (r.state === 'OFF') { clearInterval(iv); await refresh(); reset(); } } catch(e) {}
     }, 5000);
   } catch(e) { reset(); }
   function reset() { btn.disabled = false; btn.textContent = 'Run Test Again'; }

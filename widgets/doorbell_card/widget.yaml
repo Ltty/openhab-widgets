@@ -23,9 +23,10 @@ props:
     name: timeItem
     required: true
     type: TEXT
-  - description: ipcamera thing UID (e.g. abc12345) — used to build the HLS stream URL /ipcamera/{id}/ipcamera.m3u8
-    label: Camera Thing UID
-    name: cameraThingId
+  - context: thing
+    description: Select the ipcamera thing — the last UID segment is used to build the HLS stream URL /ipcamera/{id}/ipcamera.m3u8
+    label: Camera Thing
+    name: cameraThing
     required: true
     type: TEXT
   - context: item
@@ -207,7 +208,7 @@ slots:
                   default:
                   - component: oh-webframe
                     config:
-                      src: ="/static/doorbell/live.html?v=5&stream=/ipcamera/"+props.cameraThingId+"/ipcamera.m3u8"
+                      src: ="/static/doorbell/live.html?v=5&stream=/ipcamera/"+props.cameraThing.split(':').pop()+"/ipcamera.m3u8"
                       style:
                         border: none
                         border-radius: 8px

@@ -2,6 +2,48 @@ uid: speedtest_card
 tags: []
 props:
   parameters:
+  - context: item
+    description: Number item for download speed (Mbit/s)
+    label: Download Speed item
+    name: downloadItem
+    required: true
+    type: TEXT
+  - context: item
+    description: Number item for upload speed (Mbit/s)
+    label: Upload Speed item
+    name: uploadItem
+    required: true
+    type: TEXT
+  - context: item
+    description: Switch item — send ON to trigger a new test
+    label: Run Test item
+    name: triggerItem
+    required: true
+    type: TEXT
+  - context: item
+    description: Number item for ping/latency (ms)
+    label: Ping item
+    name: pingItem
+    required: false
+    type: TEXT
+  - context: item
+    description: Number item for jitter (seconds — the widget multiplies by 1000 to display ms)
+    label: Jitter item
+    name: jitterItem
+    required: false
+    type: TEXT
+  - context: item
+    description: DateTime or String item with the timestamp of the last test
+    label: Last Test Time item
+    name: dateItem
+    required: false
+    type: TEXT
+  - context: item
+    description: String item with the server name/location
+    label: Server Name item
+    name: serverItem
+    required: false
+    type: TEXT
   - name: planDown
     type: DECIMAL
     label: Download plan (Mbit/s)
@@ -18,5 +60,5 @@ props:
 timestamp: Aug 20, 2026, 10:00:00 AM
 component: oh-webframe
 config:
-  src: "='/static/speedtest.html?planDown='+(props.planDown||150)+'&planUp='+(props.planUp||20)"
+  src: "='/static/speedtest.html?v=9&planDown='+(props.planDown||150)+'&planUp='+(props.planUp||20)+(props.downloadItem?'&dl='+props.downloadItem:'')+(props.uploadItem?'&ul='+props.uploadItem:'')+(props.triggerItem?'&run='+props.triggerItem:'')+(props.pingItem?'&pg='+props.pingItem:'')+(props.jitterItem?'&jt='+props.jitterItem:'')+(props.dateItem?'&dt='+props.dateItem:'')+(props.serverItem?'&sv='+props.serverItem:'')"
   height: 310

@@ -5,6 +5,19 @@ tags:
 props:
   parameters:
     - context: item
+      groupName: sensor
+      label: Temperature Item
+      name: tempItem
+      required: false
+      type: TEXT
+    - context: item
+      groupName: sensor
+      label: Setpoint Item
+      name: setpointItem
+      required: false
+      type: TEXT
+    - context: item
+      groupName: sensor
       label: Humidity Item
       name: item
       required: true
@@ -40,11 +53,13 @@ props:
       type: INTEGER
       min: 0
       max: 100
-  parameterGroups: []
+  parameterGroups:
+    - name: sensor
+      label: Sensor Items
 component: oh-link
 config:
   action: analyzer
-  actionAnalyzerItems: "=props.item + ',' + props.item.replace('_Humidity', '_ActualTemperature')"
+  actionAnalyzerItems: "=props.item + (props.tempItem ? ',' + props.tempItem : '') + (props.setpointItem ? ',' + props.setpointItem : '')"
   style:
     color: inherit
     display: block
@@ -102,33 +117,33 @@ slots:
                             - component: Label
                               config:
                                 style:
-                                  background: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? 'rgba(208,59,59,0.15)' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? 'rgba(250,178,25,0.15)' : 'rgba(12,163,12,0.15)'"
+                                  background: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? 'rgba(208,59,59,0.15)' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? 'rgba(250,178,25,0.15)' : 'rgba(12,163,12,0.15)'"
                                   border-radius: 12px
-                                  color: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? '#d03b3b' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? '#fab219' : '#0ca30c'"
+                                  color: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? '#d03b3b' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? '#fab219' : '#0ca30c'"
                                   display: inline-block
                                   font-size: 12px
                                   font-weight: "500"
                                   padding: 3px 12px
-                                text: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? 'Critical' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? 'Elevated' : 'OK'"
+                                text: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? 'Critical' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? 'Elevated' : 'OK'"
 
                 # Large humidity value
                 - component: Label
                   config:
                     style:
-                      color: "=(Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.red) ? '#d03b3b' : (Number.parseFloat(items[props.item] ? items[props.item].state : 0) > props.orange) ? '#fab219' : '#0ca30c'"
+                      color: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? '#d03b3b' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? '#fab219' : '#0ca30c'"
                       display: block
                       font-size: 28px
                       font-weight: "600"
                       line-height: "1.1"
                       margin: 0 0 8px
-                    text: "=items[props.item] ? (Number.parseFloat(items[props.item].state).toFixed(0) + ' %') : '–'"
+                    text: "=items[props.item] ? ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item].state))).toFixed(0) + ' %' : '–'"
 
                 # CSS gradient zone bar with position indicator
                 - component: Label
                   config:
                     style:
                       background-image: "='linear-gradient(rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 100%), linear-gradient(to right, #0ca30c ' + props.orange + '%, #fab219 ' + props.orange + '%, #fab219 ' + props.red + '%, #d03b3b ' + props.red + \"%)'\""
-                      background-position: "='calc(' + (items[props.item] ? items[props.item].numericState : 50) + '% - 1.5px) 0, 0 0'"
+                      background-position: "='calc(' + (items[props.item] ? (v=>v<=1?v*100:v)(Number.parseFloat(items[props.item].state)) : 50) + '% - 1.5px) 0, 0 0'"
                       background-repeat: "no-repeat, no-repeat"
                       background-size: "3px 100%, 100% 100%"
                       border-radius: 4px
@@ -291,7 +306,7 @@ slots:
                                   display: block
                                   font-size: 22px
                                   font-weight: "600"
-                                text: "=items[props.item.replace('_Humidity', '_ActualTemperature')] ? (Number.parseFloat(items[props.item.replace('_Humidity', '_ActualTemperature')].state).toFixed(1) + ' °C') : '–'"
+                                text: "=items[props.tempItem] ? (Number.parseFloat(items[props.tempItem].state).toFixed(1) + ' °C') : '–'"
                       - component: f7-col
                         config:
                           style:
@@ -304,4 +319,4 @@ slots:
                           default:
                             - component: Label
                               config:
-                                text: "='Set: ' + (items[props.item.replace('_Humidity', '_SetPointTemperature')] ? Number.parseFloat(items[props.item.replace('_Humidity', '_SetPointTemperature')].state).toFixed(0) + ' °C' : '–')"
+                                text: "='Set: ' + (items[props.setpointItem] ? Number.parseFloat(items[props.setpointItem].state).toFixed(0) + ' °C' : '–')"

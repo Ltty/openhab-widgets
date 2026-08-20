@@ -57,6 +57,11 @@ props:
     name: cardTitle
     required: false
     type: TEXT
+  - description: "Subfolder name under /etc/openhab/html/ where snapshot rotation files are stored (snapshot.jpg, snapshot_1.jpg, snapshot_2.jpg, snapshot_3.jpg). When set, shows a 4-image history grid instead of the single latest image. Requires a snapshot rotation rule — see README. Example: doorbell"
+    label: Snapshot Folder (4-image history)
+    name: snapshotFolder
+    required: false
+    type: TEXT
   parameterGroups: []
 timestamp: Aug 20, 2026, 12:00:00 PM
 component: f7-card
@@ -220,7 +225,7 @@ slots:
             font-size: 11px
             margin-bottom: 4px
             margin-top: 8px
-          text: Latest capture
+          text: =props.snapshotFolder ? 'Recent captures' : 'Latest capture'
       - component: oh-image
         config:
           item: =props.imageItem
@@ -233,6 +238,95 @@ slots:
             object-fit: cover
             object-position: center
             width: 100%
+          visible: =!props.snapshotFolder
+      - component: f7-row
+        config:
+          style:
+            gap: 4px
+            margin-bottom: 8px
+          visible: =!!props.snapshotFolder
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: photos
+              actionPhotos: "=[{url: '/static/'+props.snapshotFolder+'/snapshot.jpg?t='+items[props.timeItem].state}]"
+              style:
+                aspect-ratio: "1"
+                flex: "1"
+                min-width: "0"
+            slots:
+              default:
+              - component: oh-image
+                config:
+                  refreshInterval: 30000
+                  style:
+                    border-radius: 4px
+                    display: block
+                    height: 100%
+                    object-fit: contain
+                    width: 100%
+                  url: "='/static/'+props.snapshotFolder+'/snapshot.jpg?t='+items[props.timeItem].state"
+          - component: oh-link
+            config:
+              action: photos
+              actionPhotos: "=[{url: '/static/'+props.snapshotFolder+'/snapshot_1.jpg?t='+items[props.timeItem].state}]"
+              style:
+                aspect-ratio: "1"
+                flex: "1"
+                min-width: "0"
+            slots:
+              default:
+              - component: oh-image
+                config:
+                  refreshInterval: 30000
+                  style:
+                    border-radius: 4px
+                    display: block
+                    height: 100%
+                    object-fit: contain
+                    width: 100%
+                  url: "='/static/'+props.snapshotFolder+'/snapshot_1.jpg?t='+items[props.timeItem].state"
+          - component: oh-link
+            config:
+              action: photos
+              actionPhotos: "=[{url: '/static/'+props.snapshotFolder+'/snapshot_2.jpg?t='+items[props.timeItem].state}]"
+              style:
+                aspect-ratio: "1"
+                flex: "1"
+                min-width: "0"
+            slots:
+              default:
+              - component: oh-image
+                config:
+                  refreshInterval: 30000
+                  style:
+                    border-radius: 4px
+                    display: block
+                    height: 100%
+                    object-fit: contain
+                    width: 100%
+                  url: "='/static/'+props.snapshotFolder+'/snapshot_2.jpg?t='+items[props.timeItem].state"
+          - component: oh-link
+            config:
+              action: photos
+              actionPhotos: "=[{url: '/static/'+props.snapshotFolder+'/snapshot_3.jpg?t='+items[props.timeItem].state}]"
+              style:
+                aspect-ratio: "1"
+                flex: "1"
+                min-width: "0"
+            slots:
+              default:
+              - component: oh-image
+                config:
+                  refreshInterval: 30000
+                  style:
+                    border-radius: 4px
+                    display: block
+                    height: 100%
+                    object-fit: contain
+                    width: 100%
+                  url: "='/static/'+props.snapshotFolder+'/snapshot_3.jpg?t='+items[props.timeItem].state"
       - component: oh-link
         config:
           action: popup

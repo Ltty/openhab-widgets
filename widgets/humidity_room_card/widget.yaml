@@ -6,6 +6,12 @@ props:
   parameters:
     - context: item
       groupName: sensor
+      label: Humidity Item
+      name: item
+      required: true
+      type: TEXT
+    - context: item
+      groupName: sensor
       label: Temperature Item
       name: tempItem
       required: false
@@ -16,39 +22,38 @@ props:
       name: setpointItem
       required: false
       type: TEXT
-    - context: item
-      groupName: sensor
-      label: Humidity Item
-      name: item
-      required: true
-      type: TEXT
     - description: Defaults to item label
+      groupName: appearance
       label: Room Name
       name: title
       required: false
       type: TEXT
     - description: Icon (e.g. iconify:mdi:sofa)
+      groupName: appearance
       label: Icon
       name: icon
       required: false
       type: TEXT
+    - default: 40
+      groupName: thresholds
+      label: Safe max (%)
+      name: min
+      required: false
+      type: INTEGER
+      min: 0
+      max: 100
     - default: 60
-      label: Orange Threshold (%)
+      groupName: thresholds
+      label: Elevated max (%)
       name: orange
       required: false
       type: INTEGER
       min: 0
       max: 100
     - default: 70
-      label: Red Threshold (%)
+      groupName: thresholds
+      label: Critical from (%)
       name: red
-      required: false
-      type: INTEGER
-      min: 0
-      max: 100
-    - default: 40
-      label: Green min (%)
-      name: min
       required: false
       type: INTEGER
       min: 0
@@ -56,6 +61,10 @@ props:
   parameterGroups:
     - name: sensor
       label: Sensor Items
+    - name: appearance
+      label: Appearance
+    - name: thresholds
+      label: Thresholds
 component: oh-link
 config:
   action: analyzer

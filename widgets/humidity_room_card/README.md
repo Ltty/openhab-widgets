@@ -2,8 +2,6 @@
 
 A compact OpenHAB Main UI widget that shows a room's current humidity with a colour-coded status badge, a zone bar visualising the safe/elevated/critical thresholds, and the current temperature and setpoint.
 
-> **Documentation in progress.** Full setup guide coming soon.
-
 ---
 
 ## Screenshot
@@ -20,19 +18,6 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 - Three-row legend: Safe · Elevated · Critical with configurable ranges
 - Current temperature and thermostat setpoint (optional)
 - Tapping the card opens the Analyzer for the humidity and temperature items
-
----
-
-## Item naming convention
-
-The widget derives the temperature and setpoint items from the humidity item name by string replacement:
-
-| Replacement | Result |
-|-------------|--------|
-| `_Humidity` → `_ActualTemperature` | temperature reading |
-| `_Humidity` → `_SetPointTemperature` | thermostat setpoint |
-
-This convention matches the default item names produced by the **HomeMatic/piVCCU** binding for combined humidity/temperature sensors. If your item names follow a different convention, the temperature and setpoint rows will show `–`.
 
 ---
 
@@ -59,17 +44,34 @@ This convention matches the default item names produced by the **HomeMatic/piVCC
 | Prop | Required | Default | Description |
 |------|----------|---------|-------------|
 | `item` | Yes | — | Humidity item (e.g. `FF_KidsRoom_Climate_Humidity`) |
+| `tempItem` | No | — | Temperature item |
+| `setpointItem` | No | — | Thermostat setpoint item |
 | `title` | No | item label | Room display name |
 | `icon` | No | `f7:house` | Icon name (e.g. `iconify:mdi:sofa`) |
-| `orange` | No | `60` | Elevated threshold (%) |
-| `red` | No | `70` | Critical threshold (%) |
-| `min` | No | `40` | Safe zone lower bound (%) displayed in legend |
+| `min` | No | `40` | Safe zone upper bound (%) displayed in legend |
+| `orange` | No | `60` | Elevated threshold — above this is amber (%) |
+| `red` | No | `70` | Critical threshold — above this is red (%) |
 
 ---
 
 ## Requirements
 
 - OpenHAB 5.x (tested on 5.2.x)
-- A Number or Number:Dimensionless humidity item
+- A Number or Number:Dimensionless humidity item (0–100 % or 0–1 ratio both accepted)
 
-Temperature display requires a temperature item whose name is derived from the humidity item by replacing `_Humidity` with `_ActualTemperature` (HomeMatic convention). Setpoint display requires a corresponding `_SetPointTemperature` item.
+---
+
+## Changelog
+
+### 1.0.2
+- Fix: zone bar not rendering in some Main UI versions — replaced empty `Label` with `f7-block` (empty-text Labels are silently suppressed in certain OH releases)
+- Improvement: props reorganised into Sensor Items / Appearance / Thresholds groups; threshold labels clarified (Safe max / Elevated max / Critical from)
+
+### 1.0.1
+- Explicit `tempItem` and `setpointItem` props — no more implicit `_Humidity` → `_ActualTemperature` name derivation
+- Props grouped under "Sensor Items" (humidity first, then temperature, setpoint) at the top of the settings panel
+- Humidity normalisation: accepts both 0–100 % and 0–1 dimensionless ratio sensors
+- Bar indicator position uses `parseFloat(state)` instead of `numericState` for consistent behaviour across item types
+
+### 1.0.0
+- Initial release

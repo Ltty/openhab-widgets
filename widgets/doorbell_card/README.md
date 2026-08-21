@@ -33,7 +33,7 @@ The snapshot section works in two modes — choose based on your setup:
 
 ### 1. Install the ipcamera binding and configure your camera
 
-In **Settings → Add-ons → Bindings**, install "IP Camera". Add your camera as a thing and note the **Thing UID** (e.g. `abc12345` — the last segment of `ipcamera:REOLINK:abc12345`).
+In **Settings → Add-ons → Bindings**, install "IP Camera". Add your camera as a thing and note the **full Thing UID** (e.g. `ipcamera:REOLINK:abc12345`).
 
 ### 2. Create items
 

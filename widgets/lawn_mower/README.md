@@ -67,8 +67,11 @@ The collapsible map accordion requires a companion HTML file served by OpenHAB's
 1. Copy [`automower-map.html`](automower-map.html) to `/etc/openhab/html/automower-map.html`
 2. Create a `Location` item linked to `status#position`
 3. Set the widget's **Automower Position** prop to that item name
+4. Set the widget's **Persistence Service** prop to your persistence service ID (e.g. `influxdb`)
 
-The map shows today's GPS track from InfluxDB persistence and live-polls every 30 seconds. Requires InfluxDB or another persistence service that stores the Location item.
+> **Important:** The GPS track history requires a persistence service that supports the OpenHAB `Location` item type. RRD4J (the OpenHAB default) only stores numeric types and cannot store Location items — the map will show no track history. Use InfluxDB or another service that persists Location items and configure its service ID in the **Persistence Service** prop.
+
+The map live-polls the mower's current position every 30 seconds regardless of persistence, so the current position marker always works. Only the today's track history requires persistence.
 
 ### Optional: simple manual pause
 
@@ -166,6 +169,7 @@ The weather guard icon strip is hidden when none of the guard props are set.
 | `automowerBatteryLevel` | Yes | — | Number item: `status#battery` channel |
 | `automowerLastUpdate` | Yes | — | DateTime item: `status#last-update` channel |
 | `automowerPosition` | No | — | Location item: `status#position` channel (GPS map) |
+| `persistenceService` | No | OH default | Persistence service ID for GPS track history (e.g. `influxdb`). Must support Location items — RRD4J does not. |
 | `automowerManualPause` | No | — | Switch item for manual pause |
 | `isDark` | No | — | Switch item: ON when dark/night |
 | `isHot` | No | — | Switch item: ON when too hot |
@@ -180,4 +184,4 @@ The weather guard icon strip is hidden when none of the guard props are set.
 - OpenHAB 5.x (tested on 5.2.x)
 - [Husqvarna Automower binding](https://www.openhab.org/addons/bindings/automower/)
 - JS Scripting add-on (for the schedule rule, Tier 2 only)
-- InfluxDB persistence (for the GPS track map, optional)
+- A persistence service that supports `Location` items, e.g. InfluxDB (for the GPS track map, optional — see note above)

@@ -8,6 +8,8 @@ Custom OpenHAB Main UI widgets for home automation.
 |--------|-------------|------------|
 | [lawn_mower](widgets/lawn_mower/) | Husqvarna Automower status card with GPS track map, weather guards, and manual pause | 5.x |
 | [humidity_room_card](widgets/humidity_room_card/) | Per-room humidity + temperature card with colour-coded zone bar | 5.x |
+| [speedtest_card](widgets/speedtest_card/) | Ookla Speedtest dashboard — download/upload speeds, 7-day sparklines, ping/jitter, quality indicators, and run-test button | 5.x |
+| [doorbell_card](widgets/doorbell_card/) | Doorbell card with snapshot image, live HLS stream, lock toggle, person/car detection badges, and recent-capture thumbnail grid | 5.x |
 
 ---
 

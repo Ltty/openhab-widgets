@@ -5,18 +5,21 @@ tags:
 props:
   parameters:
     - context: item
+      description: Humidity item from your climate sensor. Accepts 0–100 % or 0–1 ratio — drives the large value, zone bar, and status badge.
       groupName: sensor
       label: Humidity Item
       name: item
       required: true
       type: TEXT
     - context: item
+      description: Temperature item — shown as the large number at the bottom of the card.
       groupName: sensor
       label: Temperature Item
       name: tempItem
       required: false
       type: TEXT
     - context: item
+      description: Thermostat setpoint item — shown as "Set: X °C" next to the temperature.
       groupName: sensor
       label: Setpoint Item
       name: setpointItem
@@ -36,7 +39,7 @@ props:
       type: TEXT
     - default: 40
       groupName: thresholds
-      label: Safe max (%)
+      label: Safe Min (%)
       name: min
       required: false
       type: INTEGER

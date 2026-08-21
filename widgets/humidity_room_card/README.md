@@ -46,7 +46,7 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 | `setpointItem` | No | — | Thermostat setpoint item |
 | `title` | No | item label | Room display name |
 | `icon` | No | `f7:house` | Icon name (e.g. `iconify:mdi:sofa`) |
-| `min` | No | `40` | Safe zone upper bound (%) displayed in legend |
+| `min` | No | `40` | Safe zone lower bound (%) — the floor of the "Safe" label in the legend |
 | `orange` | No | `60` | Elevated threshold — above this is amber (%) |
 | `red` | No | `70` | Critical threshold — above this is red (%) |
 
@@ -61,15 +61,23 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 
 ## Changelog
 
-### 1.0.2
+### Version 1.0.3
+
+- Fixed `min` prop label: "Safe max (%)" → "Safe Min (%)" — it is the lower bound of the safe zone, not the upper
+- Added descriptions to Humidity Item, Temperature Item, and Setpoint Item props
+
+### Version 1.0.2
+
 - Fix: zone bar not rendering in some Main UI versions — replaced empty `Label` with `f7-block` (empty-text Labels are silently suppressed in certain OH releases)
 - Improvement: props reorganised into Sensor Items / Appearance / Thresholds groups; threshold labels clarified (Safe max / Elevated max / Critical from)
 
-### 1.0.1
+### Version 1.0.1
+
 - Explicit `tempItem` and `setpointItem` props — no more implicit `_Humidity` → `_ActualTemperature` name derivation
 - Props grouped under "Sensor Items" (humidity first, then temperature, setpoint) at the top of the settings panel
 - Humidity normalisation: accepts both 0–100 % and 0–1 dimensionless ratio sensors
 - Bar indicator position uses `parseFloat(state)` instead of `numericState` for consistent behaviour across item types
 
-### 1.0.0
+### Version 1.0.0
+
 - Initial release

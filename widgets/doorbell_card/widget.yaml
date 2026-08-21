@@ -6,65 +6,90 @@ tags:
 props:
   parameters:
   - context: item
-    description: Image item that receives snapshots from the camera (ipcamera binding)
-    label: Snapshot Image item
+    description: Image item linked to the ipcamera binding's image channel. Receives
+      the latest snapshot.
+    groupName: source
+    label: Snapshot Image Item
     name: imageItem
     required: true
     type: TEXT
-  - context: item
-    description: String item showing what was detected (e.g. Person, Car, Motion)
-    label: Last Event Label item
-    name: labelItem
-    required: true
-    type: TEXT
-  - context: item
-    description: DateTime or String item with the timestamp of the last event
-    label: Last Event Time item
-    name: timeItem
-    required: true
-    type: TEXT
-  - context: thing
-    description: Select the ipcamera thing — the last UID segment is used to build the HLS stream URL /ipcamera/{id}/ipcamera.m3u8
-    label: Camera Thing
+  - description: Full ipcamera Thing UID (e.g. ipcamera:REOLINK:abc12345). The last
+      segment builds the HLS stream URL /ipcamera/{id}/ipcamera.m3u8.
+    groupName: source
+    label: Camera Thing UID
     name: cameraThing
     required: true
     type: TEXT
   - context: item
-    description: Switch item — ON when a person is detected
-    label: Person Detected item
+    description: String item for the last event description (e.g. Person, Car, Motion).
+      Shown below the card header.
+    groupName: events
+    label: Last Event Label Item
+    name: labelItem
+    required: true
+    type: TEXT
+  - context: item
+    description: DateTime or String item with the last event timestamp. Shown as relative
+      time and used as a cache-buster for snapshot thumbnails.
+    groupName: events
+    label: Last Event Time Item
+    name: timeItem
+    required: true
+    type: TEXT
+  - context: item
+    description: Switch item — ON when a person is detected. Shows an orange "Person"
+      badge.
+    groupName: events
+    label: Person Detected Item
     name: humanItem
     required: false
     type: TEXT
   - context: item
-    description: Switch item — ON when a car or vehicle is detected
-    label: Car Detected item
+    description: Switch item — ON when a car or vehicle is detected. Shows a blue
+      "Car" badge.
+    groupName: events
+    label: Car Detected Item
     name: carItem
     required: false
     type: TEXT
-  - context: item
-    description: Switch item for smart lock state (ON = locked) — shown as a lock icon in the card header
-    label: Lock State item
-    name: lockItem
-    required: false
-    type: TEXT
-  - context: item
-    description: Item to receive PIN entry for the Unlock button popup
-    label: PIN entry item
-    name: pinItem
-    required: false
-    type: TEXT
-  - description: Title shown in the card header (default "Front Door")
+  - description: Title shown in the card header. Defaults to "Front Door".
+    groupName: appearance
     label: Card Title
     name: cardTitle
     required: false
     type: TEXT
-  - description: "Subfolder name under /etc/openhab/html/ where snapshot rotation files are stored (snapshot.jpg, snapshot_1.jpg, snapshot_2.jpg, snapshot_3.jpg). When set, shows a 4-image history grid instead of the single latest image. Requires a snapshot rotation rule — see README. Example: doorbell"
-    label: Snapshot Folder (4-image history)
+  - description: Subfolder under /etc/openhab/html/ holding 4 rotating snapshots
+      (e.g. doorbell). Replaces the single image with a history grid — requires a
+      snapshot rotation rule, see README.
+    groupName: appearance
+    label: Snapshot History Folder
     name: snapshotFolder
     required: false
     type: TEXT
-  parameterGroups: []
-timestamp: Aug 20, 2026, 12:00:00 PM
+  - context: item
+    description: Switch item for lock state — ON = locked. Shows a lock icon in the
+      card header.
+    groupName: appearance
+    label: Lock State Item
+    name: lockItem
+    required: false
+    type: TEXT
+  - context: item
+    description: Item for PIN code entry. Enables the Unlock button popup (requires
+      widget:keypad marketplace widget).
+    groupName: appearance
+    label: PIN Entry Item
+    name: pinItem
+    required: false
+    type: TEXT
+  parameterGroups:
+  - name: source
+    label: Camera Source
+  - name: events
+    label: Event Detection
+  - name: appearance
+    label: Appearance
+timestamp: Aug 21, 2026, 10:00:00 AM
 component: f7-card
 config: {}
 slots:

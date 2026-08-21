@@ -84,18 +84,30 @@ Both files must be in the same `/etc/openhab/html/doorbell/` directory. The live
 
 ## Props reference
 
+### Camera Source
+
 | Prop | Required | Type | Description |
 |------|----------|------|-------------|
-| `imageItem` | Yes | Item | Image item receiving camera snapshots |
+| `imageItem` | Yes | Item | Image item receiving camera snapshots (ipcamera `image` channel) |
+| `cameraThing` | Yes | Text | Full ipcamera Thing UID (e.g. `ipcamera:REOLINK:abc12345`) — the last segment builds the HLS stream URL |
+
+### Event Detection
+
+| Prop | Required | Type | Description |
+|------|----------|------|-------------|
 | `labelItem` | Yes | Item | String item with the last event description |
 | `timeItem` | Yes | Item | DateTime/String item with the last event time |
-| `cameraThingId` | Yes | Text | ipcamera thing UID — last segment of the Thing UID |
-| `humanItem` | No | Item | Switch: ON when a person is detected |
-| `carItem` | No | Item | Switch: ON when a car is detected |
+| `humanItem` | No | Item | Switch: ON when a person is detected — shows orange "Person" badge |
+| `carItem` | No | Item | Switch: ON when a car is detected — shows blue "Car" badge |
+
+### Appearance
+
+| Prop | Required | Type | Description |
+|------|----------|------|-------------|
+| `cardTitle` | No | Text | Card header label (default: "Front Door") |
+| `snapshotFolder` | No | Text | Subfolder under `/etc/openhab/html/` for 4-image history grid (see below) |
 | `lockItem` | No | Item | Switch: ON = locked; shows lock icon in header |
 | `pinItem` | No | Item | Item for PIN unlock popup (`widget:keypad` required) |
-| `cardTitle` | No | Text | Card header label (default: "Front Door") |
-| `snapshotFolder` | No | Text | Subfolder under `/etc/openhab/html/` for 4-image history (see below) |
 
 ---
 
@@ -165,6 +177,21 @@ if (!fetch()) {
 
 - **Snapshot (simple mode)**: shown via the `imageItem` OH Image item state, refreshed every 30 s. Updated automatically when the ipcamera binding captures a new image via the `image` channel.
 - **Snapshot (history mode)**: files served directly from `/etc/openhab/html/{snapshotFolder}/`. The `timeItem` state is appended as a cache-buster (`?t=...`) so browsers reload on new events.
-- **Live view**: the `cameraThingId` prop builds the URL `/ipcamera/{id}/ipcamera.m3u8`. The ipcamera thing must be ONLINE. The live HLS stream includes a stall watchdog (nudges after 8 s, reloads after 20 s).
+- **Live view**: the `cameraThing` prop builds the URL `/ipcamera/{id}/ipcamera.m3u8` using the last segment of the Thing UID. The ipcamera thing must be ONLINE. The live HLS stream includes a stall watchdog (nudges after 8 s, reloads after 20 s).
 - **Unlock button**: only appears when `pinItem` is set. Requires the [`widget:keypad`](https://community.openhab.org/t/keypad-widget/122765) marketplace widget.
 - **hls.js version**: tested with hls.js 1.5.x.
+
+---
+
+## Changelog
+
+### Version 1.1.0
+
+- Props reorganised into three groups: **Camera Source** (imageItem, cameraThing), **Event Detection** (labelItem, timeItem, humanItem, carItem), and **Appearance** (cardTitle, snapshotFolder, lockItem, pinItem)
+- Improved prop labels (title case, role noun) and descriptions throughout
+- `cameraThing` now accepts the full Thing UID — the widget extracts the last segment for the HLS URL; removed non-standard `context: thing`
+- Shortened `snapshotFolder` description
+
+### Version 1.0.0
+
+- Initial release — snapshot card with live HLS view, person/car detection badges, 4-image history grid, and optional smart lock unlock button

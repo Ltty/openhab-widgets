@@ -3,60 +3,80 @@ tags: []
 props:
   parameters:
   - context: item
-    description: Number item for download speed (Mbit/s)
-    label: Download Speed item
+    description: Number item linked to the Speedtest binding's download result channel.
+      Drives the large download speed number and 7-day sparkline.
+    label: Download Item
     name: downloadItem
     required: true
     type: TEXT
+    groupName: binding
   - context: item
-    description: Number item for upload speed (Mbit/s)
-    label: Upload Speed item
+    description: Number item linked to the Speedtest binding's upload result channel.
+      Drives the large upload speed number and 7-day sparkline.
+    label: Upload Item
     name: uploadItem
     required: true
     type: TEXT
+    groupName: binding
   - context: item
-    description: Switch item — send ON to trigger a new test
-    label: Run Test item
+    description: Switch item linked to the binding's run channel. The "Run Test Again"
+      button sends ON to this item and waits for it to reset to OFF.
+    label: Trigger Item
     name: triggerItem
     required: true
     type: TEXT
+    groupName: binding
   - context: item
-    description: Number item for ping/latency (ms)
-    label: Ping item
+    description: Number item for ping/latency in milliseconds. Shown in the ping row.
+    label: Ping Item
     name: pingItem
     required: false
     type: TEXT
+    groupName: binding
   - context: item
-    description: Number item for jitter (seconds — the widget multiplies by 1000 to display ms)
-    label: Jitter item
+    description: Number item for jitter in seconds — the widget multiplies by 1000
+      to display in milliseconds.
+    label: Jitter Item
     name: jitterItem
     required: false
     type: TEXT
+    groupName: binding
   - context: item
-    description: DateTime or String item with the timestamp of the last test
-    label: Last Test Time item
+    description: DateTime or String item for the timestamp of the last test. Shown
+      as relative time (e.g. "3 min ago").
+    label: Last Test Time Item
     name: dateItem
     required: false
     type: TEXT
+    groupName: binding
   - context: item
-    description: String item with the server name/location
-    label: Server Name item
+    description: String item with the server name or location. Shown next to the timestamp.
+    label: Server Name Item
     name: serverItem
     required: false
     type: TEXT
+    groupName: binding
   - name: planDown
     type: DECIMAL
-    label: Download plan (Mbit/s)
-    description: Your contracted download speed in Mbit/s. Used for degradation indicators.
+    label: Download Plan (Mbit/s)
+    description: Your contracted download speed in Mbit/s. The sparkline dashed line
+      and the degradation warning (−X% below plan) are calculated against this value.
     required: false
     default: 150
+    groupName: plan
   - name: planUp
     type: DECIMAL
-    label: Upload plan (Mbit/s)
-    description: Your contracted upload speed in Mbit/s. Used for degradation indicators.
+    label: Upload Plan (Mbit/s)
+    description: Your contracted upload speed in Mbit/s. Used the same way as the
+      download plan for the upload column.
     required: false
     default: 20
-  parameterGroups: []
+    groupName: plan
+  parameterGroups:
+  - name: binding
+    label: Binding Items
+  - name: plan
+    label: Plan Speeds
 timestamp: Aug 20, 2026, 10:00:00 AM
 component: oh-webframe
 config:

@@ -35,17 +35,17 @@ Once installed, add a new **Ookla Speedtest** thing and note the **Thing UID** (
 
 Paste [`items/speedtest.items`](items/speedtest.items) into your `.items` file, replacing `YOUR_THING_UID` with your actual Thing UID.
 
-The widget expects these exact item names:
+These are the default item names the widget falls back to. You can use any item names — configure them via widget props (see Props reference).
 
-| Item | Type | Channel |
-|------|------|---------|
-| `SpeedtestResultDown` | `Number:DataTransferRate` | `downloadBandwidth` |
-| `SpeedtestResultUp` | `Number:DataTransferRate` | `uploadBandwidth` |
-| `SpeedtestResultPing` | `Number:Time` | `pingLatency` |
-| `SpeedtestResultJitter` | `Number:Time` | `pingJitter` |
-| `SpeedtestServer` | `String` | `server` |
-| `SpeedtestResultDate` | `DateTime` | `timestamp` |
-| `SpeedtestRerun` | `Switch` | `triggerTest` |
+| Item | Type | Channel | Widget prop |
+|------|------|---------|-------------|
+| `SpeedtestResultDown` | `Number:DataTransferRate` | `downloadBandwidth` | `downloadItem` |
+| `SpeedtestResultUp` | `Number:DataTransferRate` | `uploadBandwidth` | `uploadItem` |
+| `SpeedtestResultPing` | `Number:Time` | `pingLatency` | `pingItem` |
+| `SpeedtestResultJitter` | `Number:Time` | `pingJitter` | `jitterItem` |
+| `SpeedtestServer` | `String` | `server` | `serverItem` |
+| `SpeedtestResultDate` | `DateTime` | `timestamp` | `dateItem` |
+| `SpeedtestRerun` | `Switch` | `triggerTest` | `triggerItem` |
 
 ### 3. Deploy the companion HTML file
 
@@ -68,7 +68,8 @@ The file will be served at `/static/speedtest.html`.
 
 1. Edit a page → drag in a **Custom Widget** block
 2. Set the widget type to `speedtest_card`
-3. Set **Download plan** and **Upload plan** to your contracted speeds (default: 150/20 Mbit/s)
+3. Under **Binding Items**: set the three required item props (Download, Upload, Trigger) — skip if you used the default item names from step 2
+4. Under **Plan Speeds**: set **Download Plan** and **Upload Plan** to your contracted speeds (default: 150/20 Mbit/s)
 
 The degradation indicator ("−X% below plan") only appears when speed drops below your plan speed.
 
@@ -76,10 +77,24 @@ The degradation indicator ("−X% below plan") only appears when speed drops bel
 
 ## Props reference
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `planDown` | `DECIMAL` | `150` | Contracted download speed in Mbit/s |
-| `planUp` | `DECIMAL` | `20` | Contracted upload speed in Mbit/s |
+### Binding Items
+
+| Prop | Required | Default | Description |
+|------|----------|---------|-------------|
+| `downloadItem` | Yes | `SpeedtestResultDown` | Number item linked to the download result channel. Drives the download speed display and 7-day sparkline. |
+| `uploadItem` | Yes | `SpeedtestResultUp` | Number item linked to the upload result channel. Drives the upload speed display and 7-day sparkline. |
+| `triggerItem` | Yes | `SpeedtestRerun` | Switch item linked to the run channel. The "Run Test Again" button sends ON and waits for the binding to reset it to OFF. |
+| `pingItem` | No | `SpeedtestResultPing` | Number item for ping/latency in milliseconds. |
+| `jitterItem` | No | `SpeedtestResultJitter` | Number item for jitter in seconds (widget multiplies by 1000 to display ms). |
+| `dateItem` | No | `SpeedtestResultDate` | DateTime or String item for the last test timestamp. Shown as relative time ("3 min ago"). |
+| `serverItem` | No | `SpeedtestServer` | String item with the server name or location. Shown next to the timestamp. |
+
+### Plan Speeds
+
+| Prop | Required | Default | Description |
+|------|----------|---------|-------------|
+| `planDown` | No | `150` | Your contracted download speed in Mbit/s. Used for the sparkline dashed reference line and the degradation warning. |
+| `planUp` | No | `20` | Your contracted upload speed in Mbit/s. Used the same way for the upload column. |
 
 ---
 
@@ -94,6 +109,13 @@ The degradation indicator ("−X% below plan") only appears when speed drops bel
 ---
 
 ## Changelog
+
+### Version 1.0.1
+
+- Props reorganized into two groups: **Binding Items** (7 item props, required first) and **Plan Speeds**
+- All item props now configurable — no longer requires fixed item names
+- Improved prop labels and descriptions throughout
+- Fixed "How it works" section which incorrectly stated InfluxDB was required for sparklines
 
 ### Version 1.0.0
 

@@ -114,6 +114,7 @@ The degradation indicator ("−X% below plan") only appears when speed drops bel
 
 - Props reorganized into two groups: **Binding Items** (7 item props, required first) and **Plan Speeds**
 - All item props now configurable — no longer requires fixed item names
+- Removed `persistenceService` prop — sparklines now use the OpenHAB default persistence service automatically; all speedtest items are numeric so RRD4J (the OH default) works out of the box
 - Improved prop labels and descriptions throughout
 - Fixed "How it works" section which incorrectly stated InfluxDB was required for sparklines
 

@@ -61,6 +61,12 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 
 ## Changelog
 
+### Version 1.0.4
+
+- Fix: zone bar still not rendering when `orange`/`red` props were undefined on existing widget instances — gradient expression now uses `(props.orange||60)` / `(props.red||70)` defensive defaults so the CSS is always valid
+- Fix: YAML parse error in `setpointItem` description (`: ` inside an unquoted scalar misread as a YAML mapping separator) — description now single-quoted
+- Use `text: " "` (non-breaking space) on the zone bar Label to prevent silent suppression in OH releases that skip empty-text Labels
+
 ### Version 1.0.3
 
 - Fixed `min` prop label: "Safe max (%)" → "Safe Min (%)" — it is the lower bound of the safe zone, not the upper

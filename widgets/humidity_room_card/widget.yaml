@@ -153,10 +153,10 @@ slots:
                 # CSS gradient zone bar with position indicator
                 - component: Label
                   config:
-                    text: ""
+                    text: " "
                     style:
                       display: block
-                      background-image: "='linear-gradient(rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 100%), linear-gradient(to right, #0ca30c ' + props.orange + '%, #fab219 ' + props.orange + '%, #fab219 ' + props.red + '%, #d03b3b ' + props.red + '%)'"
+                      background-image: "='linear-gradient(rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 100%), linear-gradient(to right, #0ca30c ' + (props.orange||60) + '%, #fab219 ' + (props.orange||60) + '%, #fab219 ' + (props.red||70) + '%, #d03b3b ' + (props.red||70) + '%)'"
                       background-position: "='calc(' + (items[props.item] ? (v=>v<=1?v*100:v)(Number.parseFloat(items[props.item].state)) : 50) + '% - 1.5px) 0, 0 0'"
                       background-repeat: "no-repeat, no-repeat"
                       background-size: "3px 100%, 100% 100%"

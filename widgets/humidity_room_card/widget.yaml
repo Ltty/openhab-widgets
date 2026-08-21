@@ -139,7 +139,7 @@ slots:
                     text: "=items[props.item] ? ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item].state))).toFixed(0) + ' %' : '–'"
 
                 # CSS gradient zone bar with position indicator
-                - component: Label
+                - component: f7-block
                   config:
                     style:
                       background-image: "='linear-gradient(rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 100%), linear-gradient(to right, #0ca30c ' + props.orange + '%, #fab219 ' + props.orange + '%, #fab219 ' + props.red + '%, #d03b3b ' + props.red + \"%)'\""
@@ -147,10 +147,9 @@ slots:
                       background-repeat: "no-repeat, no-repeat"
                       background-size: "3px 100%, 100% 100%"
                       border-radius: 4px
-                      display: block
                       height: 12px
                       margin: 0 0 8px
-                    text: ""
+                      padding: 0
 
                 # Legend rows
                 - component: f7-row

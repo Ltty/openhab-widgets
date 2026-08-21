@@ -95,11 +95,23 @@ props:
     required: false
     type: TEXT
     groupName: schedule
-  - description: Persistence service ID (e.g. influxdb). Leave blank to use the OpenHAB
-      default (RRD4J).
+  - description: Persistence service for GPS track history. Must support Location items
+      — RRD4J (the OpenHAB default) does not. Leave blank for the OpenHAB default.
     label: Persistence Service
     name: persistenceService
     required: false
+    limitToOptions: false
+    options:
+    - value: ''
+      label: OpenHAB default
+    - value: influxdb
+      label: InfluxDB
+    - value: rrd4j
+      label: RRD4J
+    - value: mapdb
+      label: MapDB
+    - value: jdbc
+      label: JDBC
     type: TEXT
   parameterGroups:
   - name: overview

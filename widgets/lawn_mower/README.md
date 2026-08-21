@@ -190,11 +190,13 @@ The weather guard icon strip is hidden when none of the guard props are set.
 
 ## Changelog
 
-### 1.1.0
+### Version 1.1.0
+
 - Added **Persistence Service** prop — dropdown selector (InfluxDB, RRD4J, MapDB, JDBC, or OpenHAB default) for the GPS track history service; passed to `automower-map.html` as `?serviceId=` URL parameter
 - Reorganized widget props into three groups: **Binding Channels**, **GPS Track Map**, and **Schedule & Weather Guards**
 - Improved prop labels and descriptions throughout
 - GPS map setup docs updated to explain that RRD4J does not support Location items
 
-### 1.0.0
-Initial release.
+### Version 1.0.0
+
+- Initial release

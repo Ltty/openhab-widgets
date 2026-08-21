@@ -95,5 +95,6 @@ The degradation indicator ("−X% below plan") only appears when speed drops bel
 
 ## Changelog
 
-### 1.0.0
-Initial release.
+### Version 1.0.0
+
+- Initial release

@@ -33,7 +33,7 @@ var v = document.getElementById('v');
 var s = document.getElementById('s');
 
 if (!src) {
-  s.textContent = 'No stream URL — set cameraThingId prop';
+  s.textContent = 'No stream URL — set cameraThing prop';
 } else {
   s.textContent = Hls.isSupported() ? 'Connecting…' : 'MSE unavailable';
   v.addEventListener('playing', function() { s.style.display = 'none'; });

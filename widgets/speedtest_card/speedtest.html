@@ -130,6 +130,7 @@ const ITEM_JT  = _p.get('jt')  || 'SpeedtestResultJitter';
 const ITEM_DT  = _p.get('dt')  || 'SpeedtestResultDate';
 const ITEM_SV  = _p.get('sv')  || 'SpeedtestServer';
 const ITEM_RUN = _p.get('run') || 'SpeedtestRerun';
+const SERVICE_ID = _p.get('serviceId') || '';
 
 function scoreColor(s) { return s >= 4 ? 'g' : s >= 2 ? 'w' : 'b'; }
 function renderDots(id, score) {
@@ -156,7 +157,7 @@ async function getHistory(item) {
   const start = new Date(Date.now() - 7*24*60*60*1000).toISOString();
   try {
     const r = await fetch('/rest/persistence/items/' + item +
-      '?serviceId=influxdb&starttime=' + encodeURIComponent(start), {credentials:'include'});
+      '?starttime=' + encodeURIComponent(start) + (SERVICE_ID ? '&serviceId=' + encodeURIComponent(SERVICE_ID) : ''), {credentials:'include'});
     const d = await r.json();
     return (d.data || []).map(e => parseFloat(e.state)).filter(v => !isNaN(v) && v > 0);
   } catch(e) { return []; }

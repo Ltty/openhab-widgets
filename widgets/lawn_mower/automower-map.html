@@ -13,8 +13,9 @@
   <div id="map"></div><div id="msg">Loading track…</div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    var params   = new URLSearchParams(window.location.search);
-    var itemName = params.get('item') || '';
+    var params    = new URLSearchParams(window.location.search);
+    var itemName  = params.get('item') || '';
+    var serviceId = params.get('serviceId') || '';
 
     var map      = null;
     var marker   = null;
@@ -69,7 +70,8 @@
     function fetchHistory() {
       if (!itemName) return;
       var url = '/rest/persistence/items/' + itemName +
-                '?serviceId=influxdb&starttime=' + encodeURIComponent(todayMidnightISO());
+                '?starttime=' + encodeURIComponent(todayMidnightISO()) +
+                (serviceId ? '&serviceId=' + encodeURIComponent(serviceId) : '');
       fetch(url)
         .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
         .then(function(data) {

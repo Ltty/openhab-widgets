@@ -95,6 +95,12 @@ props:
     required: false
     type: TEXT
     groupName: schedule
+  - description: Persistence service ID (e.g. influxdb). Leave blank to use the OpenHAB
+      default (RRD4J).
+    label: Persistence Service
+    name: persistenceService
+    required: false
+    type: TEXT
   parameterGroups:
   - name: overview
     label: Automower Status
@@ -272,7 +278,7 @@ slots:
               - component: oh-webframe
                 config:
                   src: '=props.automowerPosition ? ''/static/automower-map.html?item=''
-                    + props.automowerPosition : ''about:blank'''
+                    + props.automowerPosition + (props.persistenceService ? ''&serviceId='' + props.persistenceService : '''') : ''about:blank'''
                   height: 360
                   style:
                     width: 100%

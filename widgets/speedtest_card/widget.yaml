@@ -56,9 +56,15 @@ props:
     description: Your contracted upload speed in Mbit/s. Used for degradation indicators.
     required: false
     default: 20
+  - name: persistenceService
+    type: TEXT
+    label: Persistence Service
+    description: Persistence service ID for sparkline history (e.g. influxdb). Leave
+      blank to use the OpenHAB default (RRD4J).
+    required: false
   parameterGroups: []
 timestamp: Aug 20, 2026, 10:00:00 AM
 component: oh-webframe
 config:
-  src: "='/static/speedtest.html?v=9&planDown='+(props.planDown||150)+'&planUp='+(props.planUp||20)+(props.downloadItem?'&dl='+props.downloadItem:'')+(props.uploadItem?'&ul='+props.uploadItem:'')+(props.triggerItem?'&run='+props.triggerItem:'')+(props.pingItem?'&pg='+props.pingItem:'')+(props.jitterItem?'&jt='+props.jitterItem:'')+(props.dateItem?'&dt='+props.dateItem:'')+(props.serverItem?'&sv='+props.serverItem:'')"
+  src: "='/static/speedtest.html?v=10&planDown='+(props.planDown||150)+'&planUp='+(props.planUp||20)+(props.downloadItem?'&dl='+props.downloadItem:'')+(props.uploadItem?'&ul='+props.uploadItem:'')+(props.triggerItem?'&run='+props.triggerItem:'')+(props.pingItem?'&pg='+props.pingItem:'')+(props.jitterItem?'&jt='+props.jitterItem:'')+(props.dateItem?'&dt='+props.dateItem:'')+(props.serverItem?'&sv='+props.serverItem:'')+(props.persistenceService?'&serviceId='+props.persistenceService:'')"
   height: 310

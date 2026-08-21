@@ -3,100 +3,56 @@ tags: []
 props:
   parameters:
   - context: item
-    description: The current activity of the automower (bind to status#activity channel)
-    label: Automower Activity
+    description: String item linked to status#activity. Drives the status badge (MOWING,
+      LEAVING, PARKED…).
+    label: Activity Item
     name: automowerActivity
     required: true
     type: TEXT
-    groupName: overview
+    groupName: binding
   - context: item
-    description: The current status/state of the automower (bind to status#state channel)
-    label: Automower Status
+    description: String item linked to status#state. Shown as the mower's state label
+      below the activity badge.
+    label: State Item
     name: automowerStatus
     required: true
     type: TEXT
-    groupName: overview
+    groupName: binding
   - context: item
-    description: The current error code of the automower (bind to status#error-code
-      channel, Number item)
-    label: Automower Error Code
+    description: Number item linked to status#error-code. 0 = no error; the widget
+      decodes codes 1–12 and 110 into human-readable messages.
+    label: Error Code Item
     name: automowerErrorCode
     required: true
     type: TEXT
-    groupName: overview
+    groupName: binding
   - context: item
-    description: The battery level of the automower (bind to status#battery channel)
-    label: Automower Battery Level
+    description: Number item linked to status#battery. Shown as a battery icon; tap
+      opens the Analyzer.
+    label: Battery Item
     name: automowerBatteryLevel
     required: true
     type: TEXT
-    groupName: overview
+    groupName: binding
   - context: item
-    description: The date and time the automower was last updated (bind to status#last-update
-      channel)
-    label: Automower Last Update
+    description: DateTime item linked to status#last-update. Shown as a human-readable
+      timestamp.
+    label: Last Update Item
     name: automowerLastUpdate
     required: true
     type: TEXT
-    groupName: overview
+    groupName: binding
   - context: item
-    description: Location item for GPS track map (bind to status#position channel).
-      Requires automower-map.html installed in /etc/openhab/html/.
-    label: Automower Position
+    description: Location item linked to status#position. Enables the collapsible GPS
+      track map. Requires automower-map.html installed in /etc/openhab/html/.
+    label: Position Item
     name: automowerPosition
     required: false
     type: TEXT
-    groupName: overview
-  - context: item
-    description: 'Switch item: ON when it is dark/night (optional). Drives the sunset
-      icon in the weather guard strip.'
-    label: Darkness
-    name: isDark
-    required: false
-    type: TEXT
-    groupName: schedule
-  - context: item
-    description: 'Switch item: ON when temperature is too high for mowing (optional).
-      Drives the hot-temperature icon.'
-    label: High Temperature
-    name: isHot
-    required: false
-    type: TEXT
-    groupName: schedule
-  - context: item
-    description: 'Switch item: ON when temperature is too low for mowing (optional).
-      Drives the cold-temperature icon.'
-    label: Low Temperature
-    name: isCold
-    required: false
-    type: TEXT
-    groupName: schedule
-  - context: item
-    description: 'Switch item: ON when it is raining (optional). Drives the rain icon.'
-    label: Rain
-    name: isRaining
-    required: false
-    type: TEXT
-    groupName: schedule
-  - context: item
-    description: 'Switch item: ON when there is frost (optional). Drives the snow
-      icon.'
-    label: Frost
-    name: isFrost
-    required: false
-    type: TEXT
-    groupName: schedule
-  - context: item
-    description: Any Switch item for manual pause (optional). Bind to command#pause
-      channel for in-place pause, or to a NAND group member for combined weather+manual
-      schedule control. ON = paused, OFF = active.
-    label: Manual Pause
-    name: automowerManualPause
-    required: false
-    type: TEXT
-    groupName: schedule
-  - description: Persistence service for GPS track history. Must support Location items
-      — RRD4J (the OpenHAB default) does not. Leave blank for the OpenHAB default.
+    groupName: map
+  - description: Persistence service used to load today's GPS track history. Must support
+      the Location item type — RRD4J (the OpenHAB default) does not. Leave blank to
+      use the OpenHAB default.
     label: Persistence Service
     name: persistenceService
     required: false
@@ -113,11 +69,61 @@ props:
     - value: jdbc
       label: JDBC
     type: TEXT
+    groupName: map
+  - context: item
+    description: Switch item for manual pause. ON = paused, OFF = active. Bind to command#pause
+      for direct mower control, or use a NAND group member for combined schedule +
+      weather guard control.
+    label: Manual Pause Switch
+    name: automowerManualPause
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: Switch ON when it is dark or nighttime. Lights the sunset icon in
+      the guard strip.
+    label: Darkness Switch
+    name: isDark
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: Switch ON when temperature is too high for mowing. Lights the heat
+      icon in the guard strip.
+    label: High Temp Switch
+    name: isHot
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: Switch ON when temperature is too low for mowing. Lights the cold
+      icon in the guard strip.
+    label: Low Temp Switch
+    name: isCold
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: Switch ON when it is raining. Lights the rain icon in the guard strip.
+    label: Rain Switch
+    name: isRaining
+    required: false
+    type: TEXT
+    groupName: schedule
+  - context: item
+    description: Switch ON when there is frost. Lights the snow icon in the guard strip.
+    label: Frost Switch
+    name: isFrost
+    required: false
+    type: TEXT
+    groupName: schedule
   parameterGroups:
-  - name: overview
-    label: Automower Status
+  - name: binding
+    label: Binding Channels
+  - name: map
+    label: GPS Track Map
   - name: schedule
-    label: Schedule
+    label: Schedule & Weather Guards
 component: f7-card
 config: {}
 slots:

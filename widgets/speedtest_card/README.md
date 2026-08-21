@@ -85,8 +85,15 @@ The degradation indicator ("−X% below plan") only appears when speed drops bel
 
 ## How it works
 
-- **Sparklines**: fetches the last 7 days of history from InfluxDB persistence, downsamples to 14 half-day buckets, and renders a smooth bezier curve. The dashed line marks your plan speed.
+- **Sparklines**: fetches the last 7 days of history via the OpenHAB persistence REST API (uses whatever service your installation is configured with), downsamples to 14 half-day buckets, and renders a smooth bezier curve. The dashed line marks your plan speed.
 - **Quality scores**: 5-dot indicators derived from download (Browsing, Streaming), ping (Gaming), and upload (Video Call) using Ookla's published thresholds.
 - **Degradation**: nothing shown when at or above plan speed; amber "−X% below plan" at 80–99%; red below 80%.
 - **Run Test Again**: POSTs `ON` to `SpeedtestRerun`, polls every 5 seconds until the binding resets it to `OFF`, then refreshes the display.
 - **Auto-refresh**: the widget refreshes automatically every 5 minutes.
+
+---
+
+## Changelog
+
+### 1.0.0
+Initial release.

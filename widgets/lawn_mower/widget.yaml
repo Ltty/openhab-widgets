@@ -301,119 +301,6 @@ slots:
     config:
       style:
         align-items: center
-        gap: 8px
-        margin-bottom: 8px
-      visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice
-        || props.automowerResume)
-    slots:
-      default:
-      - component: oh-button
-        config:
-          fill: true
-          iconF7: house_fill
-          popoverOpen: .mower-park-popover
-          style:
-            --f7-button-bg-color: '#3498db'
-            --f7-button-text-color: '#ffffff'
-            border-radius: 8px
-            flex: 1
-          visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice)
-      - component: oh-button
-        config:
-          action: command
-          actionCommand: 'ON'
-          actionItem: =props.automowerManualPause
-          fill: true
-          iconF7: pause_fill
-          style:
-            --f7-button-bg-color: '#f39c12'
-            --f7-button-text-color: '#ffffff'
-            border-radius: 8px
-            flex: 1
-          visible: =!!(props.automowerManualPause) && (items[props.automowerActivity].state
-            === 'MOWING' || items[props.automowerActivity].state === 'LEAVING')
-      - component: oh-button
-        config:
-          action: command
-          actionCommand: 'ON'
-          actionItem: =props.automowerResume
-          fill: true
-          iconF7: play_fill
-          style:
-            --f7-button-bg-color: '#2ecc71'
-            --f7-button-text-color: '#ffffff'
-            border-radius: 8px
-            flex: 1
-          visible: =!!(props.automowerResume) && items[props.automowerActivity].state
-            !== 'MOWING' && items[props.automowerActivity].state !== 'LEAVING'
-      - component: f7-popover
-        config:
-          class: mower-park-popover
-        slots:
-          default:
-          - component: oh-list
-            config:
-              inset: false
-            slots:
-              default:
-              - component: oh-list-item
-                config:
-                  groupTitle: true
-                  title: Park For
-                  visible: =!!(props.automowerPark)
-              - component: oh-list-item
-                config:
-                  action: command
-                  actionCommand: '30'
-                  actionItem: =props.automowerPark
-                  icon: f7:timer
-                  popoverClose: true
-                  title: 30 Minutes
-                  visible: =!!(props.automowerPark)
-              - component: oh-list-item
-                config:
-                  action: command
-                  actionCommand: '180'
-                  actionItem: =props.automowerPark
-                  icon: f7:timer
-                  popoverClose: true
-                  title: 3 Hours
-                  visible: =!!(props.automowerPark)
-              - component: oh-list-item
-                config:
-                  action: command
-                  actionCommand: '1440'
-                  actionItem: =props.automowerPark
-                  icon: f7:timer
-                  popoverClose: true
-                  title: 24 Hours
-                  visible: =!!(props.automowerPark)
-              - component: oh-list-item
-                config:
-                  groupTitle: true
-                  title: Park Until
-              - component: oh-list-item
-                config:
-                  action: command
-                  actionCommand: 'ON'
-                  actionItem: =props.automowerParkNextSchedule
-                  icon: f7:calendar
-                  popoverClose: true
-                  title: Until Next Schedule
-                  visible: =!!(props.automowerParkNextSchedule)
-              - component: oh-list-item
-                config:
-                  action: command
-                  actionCommand: 'ON'
-                  actionItem: =props.automowerParkFurtherNotice
-                  icon: f7:pause_circle
-                  popoverClose: true
-                  title: Until Further Notice
-                  visible: =!!(props.automowerParkFurtherNotice)
-  - component: f7-row
-    config:
-      style:
-        align-items: center
         margin-bottom: 8px
       visible: =!!props.automowerManualPause
     slots:
@@ -551,3 +438,118 @@ slots:
           style:
             filter: '=(props.isFrost && items[props.isFrost]?.state === ''ON'') ?
               ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        gap: 8px
+        padding-top: 10px
+        margin-top: 8px
+        border-top: 1px solid rgba(128,128,128,0.15)
+      visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice
+        || props.automowerResume)
+    slots:
+      default:
+      - component: oh-button
+        config:
+          fill: true
+          iconF7: house_fill
+          popoverOpen: .mower-park-popover
+          style:
+            --f7-button-bg-color: '#3498db'
+            --f7-button-text-color: '#ffffff'
+            border-radius: 8px
+            flex: 1
+          visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice)
+      - component: oh-button
+        config:
+          action: command
+          actionCommand: 'ON'
+          actionItem: =props.automowerManualPause
+          fill: true
+          iconF7: pause_fill
+          style:
+            --f7-button-bg-color: '#f39c12'
+            --f7-button-text-color: '#ffffff'
+            border-radius: 8px
+            flex: 1
+          visible: =!!(props.automowerManualPause) && (items[props.automowerActivity].state
+            === 'MOWING' || items[props.automowerActivity].state === 'LEAVING')
+      - component: oh-button
+        config:
+          action: command
+          actionCommand: 'ON'
+          actionItem: =props.automowerResume
+          fill: true
+          iconF7: play_fill
+          style:
+            --f7-button-bg-color: '#2ecc71'
+            --f7-button-text-color: '#ffffff'
+            border-radius: 8px
+            flex: 1
+          visible: =!!(props.automowerResume) && items[props.automowerActivity].state
+            !== 'MOWING' && items[props.automowerActivity].state !== 'LEAVING'
+      - component: f7-popover
+        config:
+          class: mower-park-popover
+        slots:
+          default:
+          - component: oh-list
+            config:
+              inset: false
+            slots:
+              default:
+              - component: oh-list-item
+                config:
+                  groupTitle: true
+                  title: Park For
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: '30'
+                  actionItem: =props.automowerPark
+                  icon: f7:timer
+                  popoverClose: true
+                  title: 30 Minutes
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: '180'
+                  actionItem: =props.automowerPark
+                  icon: f7:timer
+                  popoverClose: true
+                  title: 3 Hours
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: '1440'
+                  actionItem: =props.automowerPark
+                  icon: f7:timer
+                  popoverClose: true
+                  title: 24 Hours
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  groupTitle: true
+                  title: Park Until
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: 'ON'
+                  actionItem: =props.automowerParkNextSchedule
+                  icon: f7:calendar
+                  popoverClose: true
+                  title: Until Next Schedule
+                  visible: =!!(props.automowerParkNextSchedule)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: 'ON'
+                  actionItem: =props.automowerParkFurtherNotice
+                  icon: f7:pause_circle
+                  popoverClose: true
+                  title: Until Further Notice
+                  visible: =!!(props.automowerParkFurtherNotice)

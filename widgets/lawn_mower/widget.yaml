@@ -79,6 +79,16 @@ props:
     type: TEXT
     groupName: controls
   - context: item
+    description: String item for rich status detail (e.g. "87% done in main area",
+      "Next start tomorrow at 07:00"). Wire to the Summary Detail proxy item from
+      the optional synthetic status rule. When set, the work area name row is hidden
+      (the detail already includes it).
+    label: Summary Detail Item
+    name: automowerSummaryDetail
+    required: false
+    type: TEXT
+    groupName: controls
+  - context: item
     description: Number item linked to command#park. Send a number (minutes) to park
       for that duration. Powers the 30 min / 3 hr / 24 hr options in the Home button
       menu.
@@ -279,8 +289,9 @@ slots:
       style:
         align-items: center
         margin-bottom: 6px
-      visible: =!!(props.automowerWorkAreaName) && items[props.automowerWorkAreaName]?.state
-        !== 'NULL' && items[props.automowerWorkAreaName]?.state !== 'UNDEF'
+      visible: =!!(props.automowerWorkAreaName) && !props.automowerSummaryDetail &&
+        items[props.automowerWorkAreaName]?.state !== 'NULL' && items[props.automowerWorkAreaName]?.state
+        !== 'UNDEF'
     slots:
       default:
       - component: oh-icon
@@ -296,6 +307,30 @@ slots:
           style:
             flex: '1'
             font-size: 13px
+            color: '#888'
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        margin-bottom: 6px
+      visible: =!!(props.automowerSummaryDetail) && items[props.automowerSummaryDetail]?.state
+        !== 'NULL' && items[props.automowerSummaryDetail]?.state !== 'UNDEF' && items[props.automowerSummaryDetail]?.state
+        !== 'no value'
+    slots:
+      default:
+      - component: oh-icon
+        config:
+          icon: f7:info_circle_fill
+          style:
+            color: '#888'
+            font-size: 13px
+            margin-right: 6px
+      - component: Label
+        config:
+          text: =items[props.automowerSummaryDetail]?.state
+          style:
+            flex: '1'
+            font-size: 12px
             color: '#888'
   - component: f7-row
     config:

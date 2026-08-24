@@ -71,6 +71,47 @@ props:
     type: TEXT
     groupName: map
   - context: item
+    description: String item linked to status#work-area. Shows the active work area
+      name in the status area when the mower is assigned to an area.
+    label: Work Area Name Item
+    name: automowerWorkAreaName
+    required: false
+    type: TEXT
+    groupName: controls
+  - context: item
+    description: Number item linked to command#park. Send a number (minutes) to park
+      for that duration. Powers the 30 min / 3 hr / 24 hr options in the Home button
+      menu.
+    label: Park (Timed) Item
+    name: automowerPark
+    required: false
+    type: TEXT
+    groupName: controls
+  - context: item
+    description: Switch item linked to command#park-until-next-schedule. Used by the
+      Home button to park until the next scheduled start.
+    label: Park Until Next Schedule Item
+    name: automowerParkNextSchedule
+    required: false
+    type: TEXT
+    groupName: controls
+  - context: item
+    description: Switch item linked to command#park-until-further-notice. Used by the
+      Home button to park indefinitely.
+    label: Park Until Further Notice Item
+    name: automowerParkFurtherNotice
+    required: false
+    type: TEXT
+    groupName: controls
+  - context: item
+    description: Switch item linked to command#resume-schedule. Used by the Start button
+      to resume the mowing schedule.
+    label: Resume Schedule Item
+    name: automowerResume
+    required: false
+    type: TEXT
+    groupName: controls
+  - context: item
     description: Switch item for manual pause. ON = paused, OFF = active. Bind to command#pause
       for direct mower control, or use a NAND group member for combined schedule +
       weather guard control.
@@ -122,6 +163,8 @@ props:
     label: Binding Channels
   - name: map
     label: GPS Track Map
+  - name: controls
+    label: Control Actions
   - name: schedule
     label: Schedule & Weather Guards
 component: f7-card
@@ -151,15 +194,24 @@ slots:
             font-weight: '600'
       - component: Label
         config:
-          text: '=(items[props.automowerErrorCode].state == 0) ? items[props.automowerActivity].displayState
-            : ''Error'''
+          text: '=(items[props.automowerErrorCode].state != 0) ? ''Error'' : (items[props.automowerActivity].state
+            === ''MOWING'') ? ''Mowing'' : (items[props.automowerActivity].state ===
+            ''LEAVING'') ? ''On the Way'' : (items[props.automowerActivity].state ===
+            ''GOING_HOME'') ? ''Going Home'' : (items[props.automowerActivity].state
+            === ''CHARGING'') ? ''Charging'' : (items[props.automowerActivity].state
+            === ''PARKED_IN_CS'') ? ''Parked'' : (items[props.automowerActivity].state
+            === ''STOPPED_IN_GARDEN'') ? ''Stopped'' : items[props.automowerActivity].displayState'
           style:
             background: '=(items[props.automowerErrorCode].state != 0) ? ''rgba(244,67,54,0.15)''
               : (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state
-              === ''LEAVING'') ? ''rgba(76,175,80,0.2)'' : ''rgba(128,128,128,0.15)'''
-            color: '=(items[props.automowerErrorCode].state != 0) ? ''#f44336'' :
-              (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state
-              === ''LEAVING'') ? ''#4CAF50'' : ''#888'''
+              === ''LEAVING'') ? ''rgba(76,175,80,0.2)'' : (items[props.automowerActivity].state
+              === ''CHARGING'') ? ''rgba(241,196,15,0.2)'' : (items[props.automowerActivity].state
+              === ''GOING_HOME'') ? ''rgba(26,188,156,0.2)'' : ''rgba(128,128,128,0.15)'''
+            color: '=(items[props.automowerErrorCode].state != 0) ? ''#f44336'' : (items[props.automowerActivity].state
+              === ''MOWING'' || items[props.automowerActivity].state === ''LEAVING'')
+              ? ''#4CAF50'' : (items[props.automowerActivity].state === ''CHARGING'')
+              ? ''#f1c40f'' : (items[props.automowerActivity].state === ''GOING_HOME'')
+              ? ''#1abc9c'' : ''#888'''
             border-radius: 12px
             padding: 2px 8px
             font-size: 12px
@@ -183,20 +235,34 @@ slots:
       default:
       - component: Label
         config:
-          text: '=(items[props.automowerErrorCode].state == 0) ? items[props.automowerStatus].displayState
-            : items[props.automowerStatus].displayState + '': '' + ((items[props.automowerErrorCode].state
-            == 1) ? ''Outside Working Area'' : (items[props.automowerErrorCode].state
-            == 2) ? ''No Loop Signal'' : (items[props.automowerErrorCode].state ==
-            3) ? ''Wrong PIN Code'' : (items[props.automowerErrorCode].state == 4)
-            ? ''Mower Lifted'' : (items[props.automowerErrorCode].state == 5) ? ''Tilt
-            Sensor Activated'' : (items[props.automowerErrorCode].state == 6) ? ''Lifted''
-            : (items[props.automowerErrorCode].state == 8) ? ''Collision Sensor Problem,
-            Rear'' : (items[props.automowerErrorCode].state == 9) ? ''Wheel Motor
-            Blocked'' : (items[props.automowerErrorCode].state == 10) ? ''Cutting
-            System Blocked'' : (items[props.automowerErrorCode].state == 11) ? ''Battery
-            Error'' : (items[props.automowerErrorCode].state == 12) ? ''Charging Station
-            Blocked'' : (items[props.automowerErrorCode].state == 110) ? ''Collision
-            Sensor Problem, Front'' : ''Unknown Error'')'
+          text: '=(items[props.automowerErrorCode].state != 0) ? items[props.automowerStatus].displayState
+            + '': '' + ((items[props.automowerErrorCode].state == 1) ? ''Outside Working
+            Area'' : (items[props.automowerErrorCode].state == 2) ? ''No Loop Signal''
+            : (items[props.automowerErrorCode].state == 3) ? ''Wrong PIN Code'' : (items[props.automowerErrorCode].state
+            == 4) ? ''Mower Lifted'' : (items[props.automowerErrorCode].state == 5)
+            ? ''Tilt Sensor Activated'' : (items[props.automowerErrorCode].state ==
+            6) ? ''Lifted'' : (items[props.automowerErrorCode].state == 8) ? ''Collision
+            Sensor Problem, Rear'' : (items[props.automowerErrorCode].state == 9) ?
+            ''Wheel Motor Blocked'' : (items[props.automowerErrorCode].state == 10)
+            ? ''Cutting System Blocked'' : (items[props.automowerErrorCode].state ==
+            11) ? ''Battery Error'' : (items[props.automowerErrorCode].state == 12)
+            ? ''Charging Station Blocked'' : (items[props.automowerErrorCode].state
+            == 110) ? ''Collision Sensor Problem, Front'' : ''Unknown Error'') : (items[props.automowerActivity].state
+            === ''MOWING'') ? ''Mowing'' : (items[props.automowerActivity].state ===
+            ''LEAVING'') ? ''On the Way'' : (items[props.automowerActivity].state ===
+            ''GOING_HOME'') ? ''Going Home'' : (items[props.automowerActivity].state
+            === ''CHARGING'') ? ''Charging'' : (items[props.automowerActivity].state
+            === ''PARKED_IN_CS'') ? ''Parked'' : (items[props.automowerActivity].state
+            === ''STOPPED_IN_GARDEN'') ? ''Stopped'' : (items[props.automowerActivity].state
+            === ''NOT_APPLICABLE'') ? ((items[props.automowerStatus].state === ''IN_OPERATION'')
+            ? ''Planning'' : (items[props.automowerStatus].state === ''PAUSED'') ?
+            ''Paused'' : (items[props.automowerStatus].state === ''RESTRICTED_PARK_OVERRIDE''
+            || items[props.automowerStatus].state === ''RESTRICTED_WEEK_SCHEDULE'')
+            ? ''Parked'' : (items[props.automowerStatus].state === ''RESTRICTED_FROST'')
+            ? ''Parked — frost guard'' : (items[props.automowerStatus].state ===
+            ''RESTRICTED_SENSOR'') ? ''Parked — weather timer'' : (items[props.automowerStatus].state
+            === ''FATAL_ERROR'' || items[props.automowerStatus].state === ''ERROR'')
+            ? ''Error'' : items[props.automowerStatus].displayState) : items[props.automowerActivity].displayState'
           style:
             flex: '1'
             font-size: 13px
@@ -208,6 +274,142 @@ slots:
             font-size: 11px
             color: '#888'
             text-align: right
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        margin-bottom: 6px
+      visible: =!!(props.automowerWorkAreaName) && items[props.automowerWorkAreaName]?.state
+        !== 'NULL' && items[props.automowerWorkAreaName]?.state !== 'UNDEF'
+    slots:
+      default:
+      - component: oh-icon
+        config:
+          icon: f7:layers_fill
+          style:
+            color: '#4CAF50'
+            font-size: 14px
+            margin-right: 6px
+      - component: Label
+        config:
+          text: =items[props.automowerWorkAreaName]?.state
+          style:
+            flex: '1'
+            font-size: 13px
+            color: '#888'
+  - component: f7-row
+    config:
+      style:
+        align-items: center
+        gap: 8px
+        margin-bottom: 8px
+      visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice
+        || props.automowerResume)
+    slots:
+      default:
+      - component: oh-button
+        config:
+          fill: true
+          iconF7: house_fill
+          popoverOpen: .mower-park-popover
+          style:
+            --f7-button-bg-color: '#3498db'
+            --f7-button-text-color: '#ffffff'
+            border-radius: 8px
+            flex: 1
+          visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice)
+      - component: oh-button
+        config:
+          action: command
+          actionCommand: 'ON'
+          actionItem: =props.automowerManualPause
+          fill: true
+          iconF7: pause_fill
+          style:
+            --f7-button-bg-color: '#f39c12'
+            --f7-button-text-color: '#ffffff'
+            border-radius: 8px
+            flex: 1
+          visible: =!!(props.automowerManualPause) && (items[props.automowerActivity].state
+            === 'MOWING' || items[props.automowerActivity].state === 'LEAVING')
+      - component: oh-button
+        config:
+          action: command
+          actionCommand: 'ON'
+          actionItem: =props.automowerResume
+          fill: true
+          iconF7: play_fill
+          style:
+            --f7-button-bg-color: '#2ecc71'
+            --f7-button-text-color: '#ffffff'
+            border-radius: 8px
+            flex: 1
+          visible: =!!(props.automowerResume) && items[props.automowerActivity].state
+            !== 'MOWING' && items[props.automowerActivity].state !== 'LEAVING'
+      - component: f7-popover
+        config:
+          class: mower-park-popover
+        slots:
+          default:
+          - component: oh-list
+            config:
+              inset: false
+            slots:
+              default:
+              - component: oh-list-item
+                config:
+                  groupTitle: true
+                  title: Park For
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: '30'
+                  actionItem: =props.automowerPark
+                  icon: f7:timer
+                  popoverClose: true
+                  title: 30 Minutes
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: '180'
+                  actionItem: =props.automowerPark
+                  icon: f7:timer
+                  popoverClose: true
+                  title: 3 Hours
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: '1440'
+                  actionItem: =props.automowerPark
+                  icon: f7:timer
+                  popoverClose: true
+                  title: 24 Hours
+                  visible: =!!(props.automowerPark)
+              - component: oh-list-item
+                config:
+                  groupTitle: true
+                  title: Park Until
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: 'ON'
+                  actionItem: =props.automowerParkNextSchedule
+                  icon: f7:calendar
+                  popoverClose: true
+                  title: Until Next Schedule
+                  visible: =!!(props.automowerParkNextSchedule)
+              - component: oh-list-item
+                config:
+                  action: command
+                  actionCommand: 'ON'
+                  actionItem: =props.automowerParkFurtherNotice
+                  icon: f7:pause_circle
+                  popoverClose: true
+                  title: Until Further Notice
+                  visible: =!!(props.automowerParkFurtherNotice)
   - component: f7-row
     config:
       style:
@@ -296,7 +498,8 @@ slots:
               - component: oh-webframe
                 config:
                   src: '=props.automowerPosition ? ''/static/automower-map.html?item=''
-                    + props.automowerPosition + (props.persistenceService ? ''&serviceId='' + props.persistenceService : '''') : ''about:blank'''
+                    + props.automowerPosition + (props.persistenceService ? ''&serviceId=''
+                    + props.persistenceService : '''') : ''about:blank'''
                   height: 360
                   style:
                     width: 100%

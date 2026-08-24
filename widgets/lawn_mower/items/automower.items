@@ -14,6 +14,14 @@ DateTime Automower_LastUpdate "Last Update"       { channel="automower:automower
 // Required only if you want the satellite map. Copy automower-map.html to /etc/openhab/html/.
 Location Automower_Position   "Position"          { channel="automower:automower:BRIDGE:THING:status#position" }
 
+// ── Optional: control actions ────────────────────────────────────────────────
+// Wire these to the widget's Control Actions props to enable the Home/Start/Pause buttons.
+String Automower_WorkAreaName     "Work Area"         { channel="automower:automower:BRIDGE:THING:status#work-area" }
+Number Automower_Park             "Park Duration"     { channel="automower:automower:BRIDGE:THING:command#park" }
+Switch Automower_ParkNextSchedule "Park Next Sched."  { channel="automower:automower:BRIDGE:THING:command#park-until-next-schedule" }
+Switch Automower_ParkFurtherNotice "Park Indef."      { channel="automower:automower:BRIDGE:THING:command#park-until-further-notice" }
+Switch Automower_Resume           "Resume Schedule"   { channel="automower:automower:BRIDGE:THING:command#resume-schedule" }
+
 // ── Optional: simple pause (Tier 1) ──────────────────────────────────────────
 // Bind the widget's "Manual Pause" prop to this item for a direct pause via the binding.
 // This does NOT integrate with weather guard rules.

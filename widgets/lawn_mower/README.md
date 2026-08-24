@@ -73,12 +73,41 @@ The collapsible map accordion requires a companion HTML file served by OpenHAB's
 
 The map live-polls the mower's current position every 30 seconds regardless of persistence, so the current position marker always works. Only the today's track history requires persistence.
 
+### Optional: control buttons (Home / Start / Pause)
+
+Wire the control action props to unlock three buttons in the card:
+
+- **Home** (blue) — opens a park menu: 30 min, 3 hr, 24 hr, until next schedule, or until further notice
+- **Pause** (orange) — visible only when the mower is mowing or leaving; sends pause command
+- **Start** (green) — visible when the mower is idle; resumes the mowing schedule
+
+Create these items and wire them to the widget's **Control Actions** props:
+
+| Item | Channel | Widget prop |
+|------|---------|-------------|
+| `Number Automower_Park` | `command#park` | Park (Timed) Item |
+| `Switch Automower_ParkNextSchedule` | `command#park-until-next-schedule` | Park Until Next Schedule Item |
+| `Switch Automower_ParkFurtherNotice` | `command#park-until-further-notice` | Park Until Further Notice Item |
+| `Switch Automower_Resume` | `command#resume-schedule` | Resume Schedule Item |
+
+Optionally also wire:
+
+| Item | Channel | Widget prop |
+|------|---------|-------------|
+| `String Automower_WorkAreaName` | `status#work-area` | Work Area Name Item |
+
+When set, this shows the active work area name below the status text.
+
+See [`items/automower.items`](items/automower.items) for ready-to-paste item definitions for all of these.
+
+**Pause button note:** The Pause button sends `ON` to whichever item you wire to the **Manual Pause Switch** prop. Wire it to `command#pause` for a direct binding pause, or to a NAND group member for integrated weather-guard control (see Tier 2 below).
+
 ### Optional: simple manual pause
 
-To add a pause toggle directly bound to the binding:
+To add only the manual pause toggle (without the full control button row):
 
 1. Create a `Switch` item linked to `command#pause`
-2. Set the widget's **Manual Pause** prop to that item name
+2. Set the widget's **Manual Pause** prop to that item name — leave all Control Actions props empty
 
 This pauses the mower in-place via the binding but does not interact with any schedule automation.
 
@@ -161,21 +190,65 @@ The weather guard icon strip is hidden when none of the guard props are set.
 
 ## Props reference
 
-| Prop | Required | Default | Description |
-|------|----------|---------|-------------|
-| `automowerActivity` | Yes | — | String item: `status#activity` channel |
-| `automowerStatus` | Yes | — | String item: `status#state` channel |
-| `automowerErrorCode` | Yes | — | Number item: `status#error-code` channel |
-| `automowerBatteryLevel` | Yes | — | Number item: `status#battery` channel |
-| `automowerLastUpdate` | Yes | — | DateTime item: `status#last-update` channel |
-| `automowerPosition` | No | — | Location item: `status#position` channel (GPS map) |
-| `persistenceService` | No | OH default | Persistence service ID for GPS track history (e.g. `influxdb`). Must support Location items — RRD4J does not. |
-| `automowerManualPause` | No | — | Switch item for manual pause |
-| `isDark` | No | — | Switch item: ON when dark/night |
-| `isHot` | No | — | Switch item: ON when too hot |
-| `isCold` | No | — | Switch item: ON when too cold |
-| `isRaining` | No | — | Switch item: ON when raining |
-| `isFrost` | No | — | Switch item: ON when frost |
+### Binding Channels (required)
+
+| Prop | Description |
+|------|-------------|
+| `automowerActivity` | String item: `status#activity` channel |
+| `automowerStatus` | String item: `status#state` channel |
+| `automowerErrorCode` | Number item: `status#error-code` channel |
+| `automowerBatteryLevel` | Number item: `status#battery` channel |
+| `automowerLastUpdate` | DateTime item: `status#last-update` channel |
+
+### GPS Track Map (optional)
+
+| Prop | Description |
+|------|-------------|
+| `automowerPosition` | Location item: `status#position` channel. Enables the GPS map. |
+| `persistenceService` | Persistence service ID for GPS track history (e.g. `influxdb`). Must support Location items — RRD4J does not. |
+
+### Control Actions (optional)
+
+| Prop | Description |
+|------|-------------|
+| `automowerWorkAreaName` | String item: `status#work-area` channel. Shows the active work area name. |
+| `automowerPark` | Number item: `command#park` channel. Powers timed park options (30 min / 3 hr / 24 hr). |
+| `automowerParkNextSchedule` | Switch item: `command#park-until-next-schedule` channel. |
+| `automowerParkFurtherNotice` | Switch item: `command#park-until-further-notice` channel. |
+| `automowerResume` | Switch item: `command#resume-schedule` channel. Powers the Start button. |
+
+### Schedule & Weather Guards (optional)
+
+| Prop | Description |
+|------|-------------|
+| `automowerManualPause` | Switch item for manual pause. Also drives the Pause button in the control row. |
+| `isDark` | Switch ON when dark/night |
+| `isHot` | Switch ON when too hot |
+| `isCold` | Switch ON when too cold |
+| `isRaining` | Switch ON when raining |
+| `isFrost` | Switch ON when frost |
+
+---
+
+## Advanced: synthetic status detail (work area progress %)
+
+The widget's inline status decoding covers all activity and state values with friendly labels. The one thing it cannot show without an external rule is work area progress (e.g. "87% done in House North"), because that requires iterating over work area items at runtime.
+
+If you want this level of detail, [`rules/automower_state_summary.js`](rules/automower_state_summary.js) contains a ready-to-use rule script (adapted from a community contribution). It computes three proxy items:
+
+| Item to create | Type | Description |
+|---|---|---|
+| `Automower_Summary_Status` | `String` | High-level status label |
+| `Automower_Summary_Detail` | `String` | Detail string with work area + progress |
+| `Automower_Current_Cutting_Height` | `Number:Length` | Active cutting height in cm |
+
+Setup:
+1. Create the three proxy items
+2. Create a rule in Main UI with triggers on each status/activity/state/work-area item change, plus a cron trigger `0 * * * * ? *`
+3. Paste the script from `rules/automower_state_summary.js` as the rule action
+4. Adjust `BASE_PREFIX` and `WORK_AREA_TAG` at the top of the script to match your installation
+
+The widget has no props for these items — they are informational only. To surface them in the card, you could display `Automower_Summary_Status` via the **State Item** prop instead of `Automower_State`.
 
 ---
 
@@ -237,6 +310,17 @@ L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
 ---
 
 ## Changelog
+
+### Version 1.3.0
+
+- Added **Control Actions** prop group with Home/Start/Pause button row (all optional — card stays status-only when these props are not wired)
+  - **Home** button opens a park popover: 30 min, 3 hr, 24 hr, until next schedule, until further notice
+  - **Pause** button (orange) appears when mowing/leaving; sends pause command to `automowerManualPause` item
+  - **Start** button (green) appears when idle; sends resume command to `automowerResume` item
+- Added optional **Work Area Name** prop — shows the active work area below the status text
+- Improved inline status decoding: all activity/state values now show friendly labels (`GOING_HOME` → "Going Home", `CHARGING` → "Charging", `NOT_APPLICABLE` + `IN_OPERATION` → "Planning", etc.) without requiring an external rule
+- Badge colour expanded: Charging → yellow, Going Home → teal (previously only Mowing/Leaving were coloured)
+- Bundled `rules/automower_state_summary.js` — community-contributed rule for richer status detail including work area progress percentage (advanced, optional)
 
 ### Version 1.2.0
 

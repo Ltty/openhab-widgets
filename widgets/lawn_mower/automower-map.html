@@ -8,9 +8,17 @@
     #msg { position: absolute; inset: 0; display: flex; align-items: center;
            justify-content: center; color: #666; font: 13px/1 sans-serif; }
     .leaflet-control-attribution { display: none; }
+    #status-overlay {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(26,26,46,0.85); border: 1px solid rgba(255,255,255,0.15);
+      color: #e0e0e0; padding: 6px 12px; border-radius: 6px;
+      font-size: 11px; line-height: 1.4; z-index: 999;
+      pointer-events: none; backdrop-filter: blur(4px); display: none;
+    }
   </style>
 </head><body>
   <div id="map"></div><div id="msg">Loading track…</div>
+  <div id="status-overlay"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     var params    = new URLSearchParams(window.location.search);
@@ -45,6 +53,14 @@
       setTimeout(function() { map.invalidateSize(); }, 200);
     }
 
+    function updateOverlay(lat, lon) {
+      var overlay = document.getElementById('status-overlay');
+      var now = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      overlay.innerHTML = lat.toFixed(6) + ', ' + lon.toFixed(6) +
+                          '<br><span style="color:#888;">Updated: ' + now + '</span>';
+      overlay.style.display = 'block';
+    }
+
     function redraw() {
       if (!map || path.length === 0) return;
       var last = path[path.length-1];
@@ -53,6 +69,7 @@
         polyline = L.polyline(path, {color:'#FF6B35', weight:3, opacity:0.9, lineJoin:'round'}).addTo(map);
       if (marker) map.removeLayer(marker);
       marker = L.marker([last[0], last[1]], {icon:MOWER_ICON}).addTo(map);
+      updateOverlay(last[0], last[1]);
     }
 
     function parseState(text) {
@@ -71,6 +88,7 @@
       if (!itemName) return;
       var url = '/rest/persistence/items/' + itemName +
                 '?starttime=' + encodeURIComponent(todayMidnightISO()) +
+                '&boundary=false' +
                 (serviceId ? '&serviceId=' + encodeURIComponent(serviceId) : '');
       fetch(url)
         .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })

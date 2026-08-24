@@ -179,6 +179,54 @@ The weather guard icon strip is hidden when none of the guard props are set.
 
 ---
 
+## Advanced: self-hosting Leaflet and tiles
+
+By default `automower-map.html` loads Leaflet from [unpkg.com](https://unpkg.com) and satellite tiles from [Esri World Imagery](https://server.arcgisonline.com). Self-hosting both on your OpenHAB server eliminates all external dependencies, enables offline operation, and removes any CDN rate-limiting risk.
+
+### Self-host Leaflet
+
+Run once on your OpenHAB server:
+
+```bash
+sudo -u openhab mkdir -p /etc/openhab/html/leaflet/images
+sudo -u openhab curl -sSL https://unpkg.com/leaflet@1.9.4/dist/leaflet.js     -o /etc/openhab/html/leaflet/leaflet.js
+sudo -u openhab curl -sSL https://unpkg.com/leaflet@1.9.4/dist/leaflet.css    -o /etc/openhab/html/leaflet/leaflet.css
+sudo -u openhab curl -sSL https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png    -o /etc/openhab/html/leaflet/images/marker-icon.png
+sudo -u openhab curl -sSL https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png -o /etc/openhab/html/leaflet/images/marker-icon-2x.png
+sudo -u openhab curl -sSL https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png  -o /etc/openhab/html/leaflet/images/marker-shadow.png
+```
+
+Then edit `automower-map.html` — replace the two CDN references with local paths:
+
+```html
+<!-- replace the <link> in <head> -->
+<link rel="stylesheet" href="leaflet/leaflet.css"/>
+
+<!-- replace the <script src="https://unpkg.com/..."> -->
+<script src="leaflet/leaflet.js"></script>
+```
+
+The HTML is served at `/static/automower-map.html`, so `leaflet/` resolves to `/etc/openhab/html/leaflet/`.
+
+### Self-host satellite tiles
+
+For fully offline tile serving you need to pre-download the Esri imagery tiles that cover your property, then point the map at the local copies. This is a one-time setup:
+
+1. Determine the bounding box (NW and SE corners in decimal degrees) for your property — add a generous buffer so the map is usable when the mower is near the boundary.
+2. Write a small Python script (see the [Gemini-generated example in the community thread](https://community.openhab.org/)) that iterates over zoom levels 17–20, calls the Esri tile URL for each tile in the bounding box, and saves them to `/etc/openhab/html/tiles/{z}/{x}/{y}.jpg`.
+3. Run it once; expect ~100–400 tiles (~10–40 MB) for a typical residential property.
+4. In `automower-map.html`, change the `L.tileLayer` URL from the Esri CDN to the local path:
+
+```js
+L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
+  minZoom: 17, maxZoom: 21, maxNativeZoom: 20, errorTileUrl: ''
+}).addTo(map);
+```
+
+> **Note:** Satellite imagery is updated periodically by Esri. Local tiles become stale over time. Re-run the downloader script periodically (e.g. yearly) to refresh them.
+
+---
+
 ## Requirements
 
 - OpenHAB 5.x (tested on 5.2.x)
@@ -189,6 +237,12 @@ The weather guard icon strip is hidden when none of the guard props are set.
 ---
 
 ## Changelog
+
+### Version 1.2.0
+
+- Added **status overlay** — semi-transparent chip in the top-right corner showing current lat/lon and last-updated time; appears once the first position is received
+- Fixed persistence fetch to use `boundary=false`, preventing OpenHAB from injecting artificial boundary points into the GPS track
+- Added **Advanced: self-hosting** section to README documenting how to serve Leaflet and satellite tiles locally for offline/resilient operation
 
 ### Version 1.1.0
 

@@ -245,45 +245,10 @@ slots:
       default:
       - component: Label
         config:
-          text: '=(items[props.automowerErrorCode].state != 0) ? items[props.automowerStatus].displayState
-            + '': '' + ((items[props.automowerErrorCode].state == 1) ? ''Outside Working
-            Area'' : (items[props.automowerErrorCode].state == 2) ? ''No Loop Signal''
-            : (items[props.automowerErrorCode].state == 3) ? ''Wrong PIN Code'' : (items[props.automowerErrorCode].state
-            == 4) ? ''Mower Lifted'' : (items[props.automowerErrorCode].state == 5)
-            ? ''Tilt Sensor Activated'' : (items[props.automowerErrorCode].state ==
-            6) ? ''Lifted'' : (items[props.automowerErrorCode].state == 8) ? ''Collision
-            Sensor Problem, Rear'' : (items[props.automowerErrorCode].state == 9) ?
-            ''Wheel Motor Blocked'' : (items[props.automowerErrorCode].state == 10)
-            ? ''Cutting System Blocked'' : (items[props.automowerErrorCode].state ==
-            11) ? ''Battery Error'' : (items[props.automowerErrorCode].state == 12)
-            ? ''Charging Station Blocked'' : (items[props.automowerErrorCode].state
-            == 110) ? ''Collision Sensor Problem, Front'' : ''Unknown Error'') : (items[props.automowerActivity].state
-            === ''MOWING'') ? ''Mowing'' : (items[props.automowerActivity].state ===
-            ''LEAVING'') ? ''On the Way'' : (items[props.automowerActivity].state ===
-            ''GOING_HOME'') ? ''Going Home'' : (items[props.automowerActivity].state
-            === ''CHARGING'') ? ''Charging'' : (items[props.automowerActivity].state
-            === ''PARKED_IN_CS'') ? ''Parked'' : (items[props.automowerActivity].state
-            === ''STOPPED_IN_GARDEN'') ? ''Stopped'' : (items[props.automowerActivity].state
-            === ''NOT_APPLICABLE'') ? ((items[props.automowerStatus].state === ''IN_OPERATION'')
-            ? ''Planning'' : (items[props.automowerStatus].state === ''PAUSED'') ?
-            ''Paused'' : (items[props.automowerStatus].state === ''RESTRICTED_PARK_OVERRIDE''
-            || items[props.automowerStatus].state === ''RESTRICTED_WEEK_SCHEDULE'')
-            ? ''Parked'' : (items[props.automowerStatus].state === ''RESTRICTED_FROST'')
-            ? ''Parked — frost guard'' : (items[props.automowerStatus].state ===
-            ''RESTRICTED_SENSOR'') ? ''Parked — weather timer'' : (items[props.automowerStatus].state
-            === ''FATAL_ERROR'' || items[props.automowerStatus].state === ''ERROR'')
-            ? ''Error'' : items[props.automowerStatus].displayState) : items[props.automowerActivity].displayState'
-          style:
-            flex: '1'
-            font-size: 13px
-            font-weight: '500'
-      - component: Label
-        config:
           text: =items[props.automowerLastUpdate].displayState
           style:
             font-size: 11px
             color: '#888'
-            text-align: right
   - component: f7-row
     config:
       style:

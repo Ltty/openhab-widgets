@@ -311,6 +311,11 @@ L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
 
 ## Changelog
 
+### Version 1.3.1
+
+- Removed the duplicate status sentence below the activity badge — it repeated the same MOWING/CHARGING/error info already shown in the badge next to the battery icon, using a hardcoded error-code table that duplicated the binding's own `status#error-message` channel (already surfaced via the optional Summary Detail rule)
+- That row now shows only the Last Update timestamp
+
 ### Version 1.3.0
 
 - Added **Control Actions** prop group with Home/Start/Pause button row (all optional — card stays status-only when these props are not wired)

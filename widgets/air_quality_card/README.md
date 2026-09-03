@@ -107,6 +107,10 @@ Drag in a **Custom Widget** block, set the widget type to `air_quality_card`, an
 
 ## Changelog
 
+### Version 1.0.1
+
+- Right-aligned the pollutant name/description in the accordion (was left-aligned, sitting far from the value); value + badge remain right-aligned in their own column
+
 ### Version 1.0.0
 
 - Initial release: EAQI verdict, six-band strip, driven-by pollutant, advice text, expandable per-pollutant detail with right-aligned color-coded badges

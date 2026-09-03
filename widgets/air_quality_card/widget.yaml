@@ -93,7 +93,7 @@ props:
       label: Pollutant Items
     - name: appearance
       label: Appearance
-timestamp: Sep 1, 2026, 6:30:00 PM
+timestamp: Sep 3, 2026, 12:00:00 PM
 component: f7-card
 config:
   style:
@@ -297,10 +297,26 @@ slots:
                         slots:
                           default:
                             - component: f7-list-item
-                              config:
-                                title: PM2.5
-                                subtitle: Fine particulate matter
+                              config: {}
                               slots:
+                                title:
+                                  - component: Label
+                                    config:
+                                      text: PM2.5
+                                      style:
+                                        display: block
+                                        font-size: 14px
+                                        font-weight: "500"
+                                        text-align: right
+                                subtitle:
+                                  - component: Label
+                                    config:
+                                      text: Fine particulate matter
+                                      style:
+                                        display: block
+                                        font-size: 12px
+                                        opacity: "0.55"
+                                        text-align: right
                                 after:
                                   - component: f7-row
                                     config:
@@ -328,10 +344,26 @@ slots:
                                               padding: 3px 10px
                                               white-space: nowrap
                             - component: f7-list-item
-                              config:
-                                title: PM10
-                                subtitle: Coarse particulate matter
+                              config: {}
                               slots:
+                                title:
+                                  - component: Label
+                                    config:
+                                      text: PM10
+                                      style:
+                                        display: block
+                                        font-size: 14px
+                                        font-weight: "500"
+                                        text-align: right
+                                subtitle:
+                                  - component: Label
+                                    config:
+                                      text: Coarse particulate matter
+                                      style:
+                                        display: block
+                                        font-size: 12px
+                                        opacity: "0.55"
+                                        text-align: right
                                 after:
                                   - component: f7-row
                                     config:
@@ -359,10 +391,26 @@ slots:
                                               padding: 3px 10px
                                               white-space: nowrap
                             - component: f7-list-item
-                              config:
-                                title: NO2
-                                subtitle: Nitrogen dioxide
+                              config: {}
                               slots:
+                                title:
+                                  - component: Label
+                                    config:
+                                      text: NO2
+                                      style:
+                                        display: block
+                                        font-size: 14px
+                                        font-weight: "500"
+                                        text-align: right
+                                subtitle:
+                                  - component: Label
+                                    config:
+                                      text: Nitrogen dioxide
+                                      style:
+                                        display: block
+                                        font-size: 12px
+                                        opacity: "0.55"
+                                        text-align: right
                                 after:
                                   - component: f7-row
                                     config:
@@ -390,10 +438,26 @@ slots:
                                               padding: 3px 10px
                                               white-space: nowrap
                             - component: f7-list-item
-                              config:
-                                title: O3
-                                subtitle: Ozone
+                              config: {}
                               slots:
+                                title:
+                                  - component: Label
+                                    config:
+                                      text: O3
+                                      style:
+                                        display: block
+                                        font-size: 14px
+                                        font-weight: "500"
+                                        text-align: right
+                                subtitle:
+                                  - component: Label
+                                    config:
+                                      text: Ozone
+                                      style:
+                                        display: block
+                                        font-size: 12px
+                                        opacity: "0.55"
+                                        text-align: right
                                 after:
                                   - component: f7-row
                                     config:
@@ -421,10 +485,26 @@ slots:
                                               padding: 3px 10px
                                               white-space: nowrap
                             - component: f7-list-item
-                              config:
-                                title: SO2
-                                subtitle: Sulphur dioxide
+                              config: {}
                               slots:
+                                title:
+                                  - component: Label
+                                    config:
+                                      text: SO2
+                                      style:
+                                        display: block
+                                        font-size: 14px
+                                        font-weight: "500"
+                                        text-align: right
+                                subtitle:
+                                  - component: Label
+                                    config:
+                                      text: Sulphur dioxide
+                                      style:
+                                        display: block
+                                        font-size: 12px
+                                        opacity: "0.55"
+                                        text-align: right
                                 after:
                                   - component: f7-row
                                     config:

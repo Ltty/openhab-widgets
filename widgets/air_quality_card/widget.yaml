@@ -93,7 +93,7 @@ props:
       label: Pollutant Items
     - name: appearance
       label: Appearance
-timestamp: Sep 3, 2026, 12:00:00 PM
+timestamp: Sep 3, 2026, 2:56:00 PM
 component: f7-card
 config:
   style:
@@ -279,7 +279,6 @@ slots:
           - component: oh-list-card
             config:
               accordionList: true
-              mediaList: true
               noBorder: true
               noShadow: true
               style:
@@ -292,37 +291,48 @@ slots:
                     icon: f7:chevron_down
                   slots:
                     accordion:
-                      - component: f7-list
-                        config: {}
+                      - component: f7-block
+                        config:
+                          style:
+                            margin: "0"
+                            padding: "0"
                         slots:
                           default:
-                            - component: f7-list-item
-                              config: {}
+                            - component: f7-row
+                              config:
+                                style:
+                                  align-items: center
+                                  padding: 8px 0
+                                  border-bottom: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.12))
                               slots:
-                                title:
-                                  - component: Label
+                                default:
+                                  - component: f7-col
                                     config:
-                                      text: PM2.5
                                       style:
-                                        display: block
-                                        font-size: 14px
-                                        font-weight: "500"
+                                        flex: "1"
+                                        margin-right: 16px
                                         text-align: right
-                                subtitle:
-                                  - component: Label
+                                    slots:
+                                      default:
+                                        - component: Label
+                                          config:
+                                            text: PM2.5
+                                            style:
+                                              display: block
+                                              font-size: 14px
+                                              font-weight: "500"
+                                        - component: Label
+                                          config:
+                                            text: Fine particulate matter
+                                            style:
+                                              display: block
+                                              font-size: 12px
+                                              opacity: "0.55"
+                                  - component: f7-col
                                     config:
-                                      text: Fine particulate matter
                                       style:
-                                        display: block
-                                        font-size: 12px
-                                        opacity: "0.55"
+                                        flex: "0 0 auto"
                                         text-align: right
-                                after:
-                                  - component: f7-row
-                                    config:
-                                      style:
-                                        align-items: center
-                                        justify-content: flex-end
                                     slots:
                                       default:
                                         - component: Label
@@ -330,7 +340,6 @@ slots:
                                             text: "=Number.parseFloat(items[props.pm25Item].state).toFixed(1) + ' µg/m³'"
                                             style:
                                               font-size: 13px
-                                              margin-right: 8px
                                               opacity: "0.6"
                                         - component: Label
                                           config:
@@ -339,37 +348,47 @@ slots:
                                               background: "=(v=>v<=5?'#50f0e6':v<=15?'#50ccaa':v<=50?'#f0e641':v<=90?'#ff5050':v<=140?'#960032':'#7D2181')(Number.parseFloat(items[props.pm25Item].state))"
                                               border-radius: 10px
                                               color: "=(v=>v<=5?'black':v<=15?'white':v<=50?'black':v<=90?'white':v<=140?'white':'white')(Number.parseFloat(items[props.pm25Item].state))"
+                                              display: inline-block
                                               font-size: 11px
                                               font-weight: "600"
+                                              margin-top: 2px
                                               padding: 3px 10px
                                               white-space: nowrap
-                            - component: f7-list-item
-                              config: {}
+                            - component: f7-row
+                              config:
+                                style:
+                                  align-items: center
+                                  padding: 8px 0
+                                  border-bottom: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.12))
                               slots:
-                                title:
-                                  - component: Label
+                                default:
+                                  - component: f7-col
                                     config:
-                                      text: PM10
                                       style:
-                                        display: block
-                                        font-size: 14px
-                                        font-weight: "500"
+                                        flex: "1"
+                                        margin-right: 16px
                                         text-align: right
-                                subtitle:
-                                  - component: Label
+                                    slots:
+                                      default:
+                                        - component: Label
+                                          config:
+                                            text: PM10
+                                            style:
+                                              display: block
+                                              font-size: 14px
+                                              font-weight: "500"
+                                        - component: Label
+                                          config:
+                                            text: Coarse particulate matter
+                                            style:
+                                              display: block
+                                              font-size: 12px
+                                              opacity: "0.55"
+                                  - component: f7-col
                                     config:
-                                      text: Coarse particulate matter
                                       style:
-                                        display: block
-                                        font-size: 12px
-                                        opacity: "0.55"
+                                        flex: "0 0 auto"
                                         text-align: right
-                                after:
-                                  - component: f7-row
-                                    config:
-                                      style:
-                                        align-items: center
-                                        justify-content: flex-end
                                     slots:
                                       default:
                                         - component: Label
@@ -377,7 +396,6 @@ slots:
                                             text: "=Number.parseFloat(items[props.pm10Item].state).toFixed(1) + ' µg/m³'"
                                             style:
                                               font-size: 13px
-                                              margin-right: 8px
                                               opacity: "0.6"
                                         - component: Label
                                           config:
@@ -386,37 +404,47 @@ slots:
                                               background: "=(v=>v<=15?'#50f0e6':v<=45?'#50ccaa':v<=120?'#f0e641':v<=195?'#ff5050':v<=270?'#960032':'#7D2181')(Number.parseFloat(items[props.pm10Item].state))"
                                               border-radius: 10px
                                               color: "=(v=>v<=15?'black':v<=45?'white':v<=120?'black':v<=195?'white':v<=270?'white':'white')(Number.parseFloat(items[props.pm10Item].state))"
+                                              display: inline-block
                                               font-size: 11px
                                               font-weight: "600"
+                                              margin-top: 2px
                                               padding: 3px 10px
                                               white-space: nowrap
-                            - component: f7-list-item
-                              config: {}
+                            - component: f7-row
+                              config:
+                                style:
+                                  align-items: center
+                                  padding: 8px 0
+                                  border-bottom: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.12))
                               slots:
-                                title:
-                                  - component: Label
+                                default:
+                                  - component: f7-col
                                     config:
-                                      text: NO2
                                       style:
-                                        display: block
-                                        font-size: 14px
-                                        font-weight: "500"
+                                        flex: "1"
+                                        margin-right: 16px
                                         text-align: right
-                                subtitle:
-                                  - component: Label
+                                    slots:
+                                      default:
+                                        - component: Label
+                                          config:
+                                            text: NO2
+                                            style:
+                                              display: block
+                                              font-size: 14px
+                                              font-weight: "500"
+                                        - component: Label
+                                          config:
+                                            text: Nitrogen dioxide
+                                            style:
+                                              display: block
+                                              font-size: 12px
+                                              opacity: "0.55"
+                                  - component: f7-col
                                     config:
-                                      text: Nitrogen dioxide
                                       style:
-                                        display: block
-                                        font-size: 12px
-                                        opacity: "0.55"
+                                        flex: "0 0 auto"
                                         text-align: right
-                                after:
-                                  - component: f7-row
-                                    config:
-                                      style:
-                                        align-items: center
-                                        justify-content: flex-end
                                     slots:
                                       default:
                                         - component: Label
@@ -424,7 +452,6 @@ slots:
                                             text: "=Number.parseFloat(items[props.no2Item].state).toFixed(1) + ' µg/m³'"
                                             style:
                                               font-size: 13px
-                                              margin-right: 8px
                                               opacity: "0.6"
                                         - component: Label
                                           config:
@@ -433,37 +460,47 @@ slots:
                                               background: "=(v=>v<=10?'#50f0e6':v<=25?'#50ccaa':v<=60?'#f0e641':v<=100?'#ff5050':v<=150?'#960032':'#7D2181')(Number.parseFloat(items[props.no2Item].state))"
                                               border-radius: 10px
                                               color: "=(v=>v<=10?'black':v<=25?'white':v<=60?'black':v<=100?'white':v<=150?'white':'white')(Number.parseFloat(items[props.no2Item].state))"
+                                              display: inline-block
                                               font-size: 11px
                                               font-weight: "600"
+                                              margin-top: 2px
                                               padding: 3px 10px
                                               white-space: nowrap
-                            - component: f7-list-item
-                              config: {}
+                            - component: f7-row
+                              config:
+                                style:
+                                  align-items: center
+                                  padding: 8px 0
+                                  border-bottom: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.12))
                               slots:
-                                title:
-                                  - component: Label
+                                default:
+                                  - component: f7-col
                                     config:
-                                      text: O3
                                       style:
-                                        display: block
-                                        font-size: 14px
-                                        font-weight: "500"
+                                        flex: "1"
+                                        margin-right: 16px
                                         text-align: right
-                                subtitle:
-                                  - component: Label
+                                    slots:
+                                      default:
+                                        - component: Label
+                                          config:
+                                            text: O3
+                                            style:
+                                              display: block
+                                              font-size: 14px
+                                              font-weight: "500"
+                                        - component: Label
+                                          config:
+                                            text: Ozone
+                                            style:
+                                              display: block
+                                              font-size: 12px
+                                              opacity: "0.55"
+                                  - component: f7-col
                                     config:
-                                      text: Ozone
                                       style:
-                                        display: block
-                                        font-size: 12px
-                                        opacity: "0.55"
+                                        flex: "0 0 auto"
                                         text-align: right
-                                after:
-                                  - component: f7-row
-                                    config:
-                                      style:
-                                        align-items: center
-                                        justify-content: flex-end
                                     slots:
                                       default:
                                         - component: Label
@@ -471,7 +508,6 @@ slots:
                                             text: "=Number.parseFloat(items[props.o3Item].state).toFixed(1) + ' µg/m³'"
                                             style:
                                               font-size: 13px
-                                              margin-right: 8px
                                               opacity: "0.6"
                                         - component: Label
                                           config:
@@ -480,37 +516,46 @@ slots:
                                               background: "=(v=>v<=60?'#50f0e6':v<=100?'#50ccaa':v<=120?'#f0e641':v<=160?'#ff5050':v<=180?'#960032':'#7D2181')(Number.parseFloat(items[props.o3Item].state))"
                                               border-radius: 10px
                                               color: "=(v=>v<=60?'black':v<=100?'white':v<=120?'black':v<=160?'white':v<=180?'white':'white')(Number.parseFloat(items[props.o3Item].state))"
+                                              display: inline-block
                                               font-size: 11px
                                               font-weight: "600"
+                                              margin-top: 2px
                                               padding: 3px 10px
                                               white-space: nowrap
-                            - component: f7-list-item
-                              config: {}
+                            - component: f7-row
+                              config:
+                                style:
+                                  align-items: center
+                                  padding: 8px 0
                               slots:
-                                title:
-                                  - component: Label
+                                default:
+                                  - component: f7-col
                                     config:
-                                      text: SO2
                                       style:
-                                        display: block
-                                        font-size: 14px
-                                        font-weight: "500"
+                                        flex: "1"
+                                        margin-right: 16px
                                         text-align: right
-                                subtitle:
-                                  - component: Label
+                                    slots:
+                                      default:
+                                        - component: Label
+                                          config:
+                                            text: SO2
+                                            style:
+                                              display: block
+                                              font-size: 14px
+                                              font-weight: "500"
+                                        - component: Label
+                                          config:
+                                            text: Sulphur dioxide
+                                            style:
+                                              display: block
+                                              font-size: 12px
+                                              opacity: "0.55"
+                                  - component: f7-col
                                     config:
-                                      text: Sulphur dioxide
                                       style:
-                                        display: block
-                                        font-size: 12px
-                                        opacity: "0.55"
+                                        flex: "0 0 auto"
                                         text-align: right
-                                after:
-                                  - component: f7-row
-                                    config:
-                                      style:
-                                        align-items: center
-                                        justify-content: flex-end
                                     slots:
                                       default:
                                         - component: Label
@@ -518,7 +563,6 @@ slots:
                                             text: "=Number.parseFloat(items[props.so2Item].state).toFixed(1) + ' µg/m³'"
                                             style:
                                               font-size: 13px
-                                              margin-right: 8px
                                               opacity: "0.6"
                                         - component: Label
                                           config:
@@ -527,7 +571,9 @@ slots:
                                               background: "=(v=>v<=20?'#50f0e6':v<=40?'#50ccaa':v<=125?'#f0e641':v<=190?'#ff5050':v<=275?'#960032':'#7D2181')(Number.parseFloat(items[props.so2Item].state))"
                                               border-radius: 10px
                                               color: "=(v=>v<=20?'black':v<=40?'white':v<=125?'black':v<=190?'white':v<=275?'white':'white')(Number.parseFloat(items[props.so2Item].state))"
+                                              display: inline-block
                                               font-size: 11px
                                               font-weight: "600"
+                                              margin-top: 2px
                                               padding: 3px 10px
                                               white-space: nowrap

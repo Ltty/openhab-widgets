@@ -107,6 +107,10 @@ Drag in a **Custom Widget** block, set the widget type to `air_quality_card`, an
 
 ## Changelog
 
+### Version 1.0.2
+
+- Fixed the accordion detail rows: v1.0.1 used `f7-list-item`'s `title`/`subtitle` slots to right-align the label, but that component only builds its flex "title-row" layout when the `title` *prop* is truthy — with slots only, the row collapsed and the `subtitle` slot was silently dropped entirely (pollutant descriptions vanished). Rebuilt each row as a plain `f7-row` with two `f7-col` children (name+description column, `flex:1` `text-align:right`; value+badge column, `flex:0 0 auto`), the same pattern already used in `humidity_room_card`'s legend rows — no more reliance on `f7-list-item`'s title/subtitle/after semantics. Also restored the divider lines between rows (manual `border-bottom`, since the `f7-list`/`f7-list-item` wrapper was dropped).
+
 ### Version 1.0.1
 
 - Right-aligned the pollutant name/description in the accordion (was left-aligned, sitting far from the value); value + badge remain right-aligned in their own column

@@ -93,7 +93,7 @@ props:
       label: Pollutant Items
     - name: appearance
       label: Appearance
-timestamp: Sep 3, 2026, 2:56:00 PM
+timestamp: Sep 3, 2026, 3:15:00 PM
 component: f7-card
 config:
   style:
@@ -276,26 +276,49 @@ slots:
               text: "=items[props.adviceItem] ? items[props.adviceItem].state : ''"
 
           # Expandable per-pollutant detail
-          - component: oh-list-card
+          - component: f7-accordion-item
             config:
-              accordionList: true
-              noBorder: true
-              noShadow: true
               style:
-                margin: "0"
+                margin: 0 -16px
             slots:
               default:
-                - component: oh-list-item
+                - component: f7-accordion-toggle
                   config:
-                    title: Pollutant detail
-                    icon: f7:chevron_down
+                    style:
+                      align-items: center
+                      cursor: pointer
+                      display: flex
+                      padding: 6px 16px
                   slots:
-                    accordion:
+                    default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:chart_bar_alt_fill
+                          style:
+                            color: "#50ccaa"
+                            font-size: 14px
+                            margin-right: 6px
+                      - component: Label
+                        config:
+                          text: Pollutant detail
+                          style:
+                            color: "#888"
+                            flex: "1"
+                            font-size: 13px
+                      - component: oh-icon
+                        config:
+                          icon: f7:chevron_down
+                          style:
+                            color: "#888"
+                            font-size: 12px
+                - component: f7-accordion-content
+                  slots:
+                    default:
                       - component: f7-block
                         config:
                           style:
                             margin: "0"
-                            padding: "0"
+                            padding: 0 16px
                         slots:
                           default:
                             - component: f7-row
@@ -311,7 +334,6 @@ slots:
                                       style:
                                         flex: "1"
                                         margin-right: 16px
-                                        text-align: right
                                     slots:
                                       default:
                                         - component: Label
@@ -367,7 +389,6 @@ slots:
                                       style:
                                         flex: "1"
                                         margin-right: 16px
-                                        text-align: right
                                     slots:
                                       default:
                                         - component: Label
@@ -423,7 +444,6 @@ slots:
                                       style:
                                         flex: "1"
                                         margin-right: 16px
-                                        text-align: right
                                     slots:
                                       default:
                                         - component: Label
@@ -479,7 +499,6 @@ slots:
                                       style:
                                         flex: "1"
                                         margin-right: 16px
-                                        text-align: right
                                     slots:
                                       default:
                                         - component: Label
@@ -534,7 +553,6 @@ slots:
                                       style:
                                         flex: "1"
                                         margin-right: 16px
-                                        text-align: right
                                     slots:
                                       default:
                                         - component: Label

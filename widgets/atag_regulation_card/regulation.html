@@ -1,0 +1,467 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATAG Regulation</title>
+<style>
+  :root {
+    --blue: #2f8fe0;
+    --red: #e0472f;
+    --bg: #0a0a0c;
+    --bar-bg: #17171a;
+    --fg: #f2f2f2;
+    --fg-dim: #8a8a8e;
+    --fg-dimmer: #5a5a5e;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  #app { display: flex; flex-direction: column; height: 100vh; }
+  #scroll { flex: 1; overflow-y: auto; }
+
+  .section-title {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim);
+    padding: 16px 16px 6px;
+  }
+  .section-title:first-child { padding-top: 12px; }
+  .row.hidden { display: none; }
+
+  .row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .row .label { font-size: 13px; flex: 1; min-width: 0; }
+  .row .sub { font-size: 10px; color: var(--fg-dim); margin-top: 2px; }
+  .row .control { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
+
+  /* number stepper */
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper button {
+    width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--fg-dimmer);
+    background: transparent; color: var(--fg); font-size: 15px; cursor: pointer; padding: 0;
+    line-height: 1; display: flex; align-items: center; justify-content: center;
+  }
+  .stepper button:active { background: rgba(255,255,255,0.08); }
+  .stepper .val { font-size: 13px; min-width: 56px; text-align: center; font-variant-numeric: tabular-nums; }
+  .stepper.dirty .val { color: #f0b429; }
+
+  /* select */
+  select.field {
+    background: var(--bar-bg); color: var(--fg); border: 1px solid var(--fg-dimmer);
+    border-radius: 6px; font-size: 13px; padding: 6px 8px; max-width: 150px;
+  }
+  select.field.dirty { border-color: #f0b429; color: #f0b429; }
+
+  /* text input */
+  input.field {
+    background: var(--bar-bg); color: var(--fg); border: 1px solid var(--fg-dimmer);
+    border-radius: 6px; font-size: 13px; padding: 6px 8px; width: 80px; text-align: center;
+  }
+  input.field.dirty { border-color: #f0b429; color: #f0b429; }
+
+  /* toggle switch */
+  .switch { position: relative; width: 42px; height: 24px; flex: 0 0 auto; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .track {
+    position: absolute; inset: 0; background: var(--fg-dimmer); border-radius: 12px;
+    cursor: pointer; transition: background .15s;
+  }
+  .switch .track::before {
+    content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+    background: #fff; border-radius: 50%; transition: transform .15s;
+  }
+  .switch input:checked + .track { background: var(--blue); }
+  .switch input:checked + .track::before { transform: translateX(18px); }
+
+  #bar {
+    flex: 0 0 auto; background: var(--bar-bg); display: flex; align-items: center;
+    justify-content: space-between; padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.06);
+    gap: 10px;
+  }
+  #save-status { font-size: 11px; color: var(--fg-dim); flex: 1; }
+  .btn {
+    padding: 9px 20px; border-radius: 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border: 1px solid var(--fg-dimmer); background: transparent; color: var(--fg);
+  }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn[disabled] { opacity: 0.35; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="scroll"></div>
+  <div id="bar">
+    <div id="save-status"></div>
+    <div class="btn" id="btn-revert" disabled>Revert</div>
+    <div class="btn primary" id="btn-save" disabled>Save</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  function ip(key) { return P.get(key) || ''; }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function secondsToHHMM(s) { var h = Math.floor(s / 3600) % 24, m = Math.floor((s % 3600) / 60); return pad2(h) + ':' + pad2(m); }
+  function hhmmToSeconds(v) {
+    var m = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec((v || '').trim());
+    if (!m) return null;
+    return parseInt(m[1], 10) * 3600 + parseInt(m[2], 10) * 60;
+  }
+
+  var ITEMS = {
+    seasonItem: ip('season'),
+    controlModeItem: ip('controlmode'),
+    scheduleBaseTempItem: ip('schedulebase'),
+    vacationTempItem: ip('vactemp'),
+    vacationDurationDefaultItem: ip('vacdurdef'),
+    extendDurationDefaultItem: ip('extdurdef'),
+    heatingTypeItem: ip('heatingtype'),
+    insulationItem: ip('insulation'),
+    buildingSizeItem: ip('buildingsize'),
+    roomInfluenceItem: ip('roominfluence'),
+    climateZoneItem: ip('climatezone'),
+    maxPreheatItem: ip('maxpreheat'),
+    summerEcoModeItem: ip('ecomode'),
+    summerEcoTempItem: ip('ecotemp'),
+    frostProtectionItem: ip('frost'),
+    frostProtectionRoomItem: ip('frostroom'),
+    frostProtectionOutsideItem: ip('frostoutside'),
+    dhwScheduleBaseTempItem: ip('dhwbase'),
+    legionellaProtectionItem: ip('legionella'),
+    legionellaProtectionDayItem: ip('legionelladay'),
+    legionellaProtectionTimeItem: ip('legionellatime'),
+    displayBrightnessItem: ip('brightness'),
+    timeZoneItem: ip('timezone'),
+  };
+
+  var OPTS = {
+    controlMode: [['thermostat', 'Thermostat'], ['weather-dependent', 'Weather Dependent']],
+    heatingType: [['air-heating', 'Air Heating'], ['convector', 'Convector'], ['radiator', 'Radiator'], ['radiator-underfloor', 'Radiator + Underfloor'], ['underfloor', 'Underfloor'], ['underfloor-radiator', 'Underfloor + Radiator']],
+    insulation: [['poor', 'Poor'], ['average', 'Average'], ['good', 'Good']],
+    buildingSize: [['small', 'Small'], ['medium', 'Medium'], ['large', 'Large']],
+    roomInfluence: [['off', 'Off'], ['less', 'Less'], ['medium', 'Medium'], ['more', 'More'], ['room-control', 'Room Control']],
+    maxPreheat: [['off', 'Off'], ['1h', '1 Hour'], ['2h', '2 Hours'], ['3h', '3 Hours'], ['automatic', 'Automatic']],
+    frost: [['off', 'Off'], ['outside', 'Outside'], ['inside', 'Inside'], ['both', 'Inside & Outside']],
+    legionellaDay: [['monday', 'Monday'], ['tuesday', 'Tuesday'], ['wednesday', 'Wednesday'], ['thursday', 'Thursday'], ['friday', 'Friday'], ['saturday', 'Saturday'], ['sunday', 'Sunday']],
+    timeZone: [['amsterdam', 'Amsterdam'], ['berlin', 'Berlin'], ['brussels', 'Brussels'], ['dublin', 'Dublin'], ['edinburgh', 'Edinburgh'], ['frankfurt', 'Frankfurt'], ['london', 'London'], ['luxembourg', 'Luxembourg'], ['paris', 'Paris'], ['rome', 'Rome']],
+  };
+
+  // Field definitions. `toRaw`/`fromRaw` convert between the item's raw state string
+  // and the display value shown/edited here (used for the two duration defaults, whose
+  // raw value is always plain seconds regardless of unit metadata).
+  var FIELDS = [
+    { section: 'General', key: 'seasonItem', label: 'Season', type: 'toggle',
+      sub: 'ON = heating season. OFF = summer, valves parked open.' },
+    { section: 'General', key: 'displayBrightnessItem', label: 'Display Brightness', type: 'number',
+      min: 10, max: 100, step: 5, decimals: 0, suffix: ' %',
+      toRaw: function (pct) { return pct / 100; }, fromRaw: function (frac) { return frac * 100; } },
+    { section: 'General', key: 'timeZoneItem', label: 'Time Zone', type: 'select', options: OPTS.timeZone },
+
+    { section: 'Central Heating', key: 'controlModeItem', label: 'Operating Mode', type: 'select', options: OPTS.controlMode, gates: true },
+    { section: 'Central Heating', key: 'scheduleBaseTempItem', label: 'Schedule Base Temperature', type: 'number', min: 4, max: 27, step: 0.5, decimals: 1, suffix: ' °C' },
+    { section: 'Central Heating', key: 'vacationTempItem', label: 'Vacation Temperature', type: 'number', min: 4, max: 27, step: 0.5, decimals: 1, suffix: ' °C' },
+    { section: 'Central Heating', key: 'vacationDurationDefaultItem', label: 'Vacation Duration Default', type: 'number',
+      min: 1, max: 365, step: 1, decimals: 0, suffix: ' days', toRaw: function (d) { return d * 86400; }, fromRaw: function (s) { return s / 86400; }, commandUnit: 'd' },
+    { section: 'Central Heating', key: 'extendDurationDefaultItem', label: 'Extend Duration Default', type: 'number',
+      min: 15, max: 360, step: 15, decimals: 0, suffix: ' min', toRaw: function (m) { return m * 60; }, fromRaw: function (s) { return s / 60; }, commandUnit: 'min' },
+    { section: 'Central Heating', key: 'heatingTypeItem', label: 'Heating Type', type: 'select', options: OPTS.heatingType, visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'insulationItem', label: 'Insulation Level', type: 'select', options: OPTS.insulation, visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'buildingSizeItem', label: 'Building Size', type: 'select', options: OPTS.buildingSize, visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'roomInfluenceItem', label: 'Room Influence', type: 'select', options: OPTS.roomInfluence, visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'climateZoneItem', label: 'Climate Zone', type: 'number', min: -20, max: 15, step: 1, decimals: 0, suffix: ' °C', visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'maxPreheatItem', label: 'Max Preheat', type: 'select', options: OPTS.maxPreheat, visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'summerEcoModeItem', label: 'Summer Eco Mode', type: 'toggle', visibleIf: function (c) { return c.weatherDependent; } },
+    { section: 'Central Heating', key: 'summerEcoTempItem', label: 'Summer Eco Temperature', type: 'number', min: 4, max: 27, step: 0.5, decimals: 1, suffix: ' °C', visibleIf: function (c) { return c.weatherDependent && c.summerEco; } },
+    { section: 'Central Heating', key: 'frostProtectionItem', label: 'Frost Protection', type: 'select', options: OPTS.frost },
+    { section: 'Central Heating', key: 'frostProtectionRoomItem', label: 'Frost Protection — Room', type: 'number', min: 4, max: 10, step: 0.5, decimals: 1, suffix: ' °C', visibleIf: function (c) { return c.frost === 'inside' || c.frost === 'both'; } },
+    { section: 'Central Heating', key: 'frostProtectionOutsideItem', label: 'Frost Protection — Outside', type: 'number', min: -10, max: 5, step: 0.5, decimals: 1, suffix: ' °C', visibleIf: function (c) { return c.frost === 'outside' || c.frost === 'both'; } },
+
+    { section: 'Hot Water', key: 'dhwScheduleBaseTempItem', label: 'DHW Base Temperature', type: 'number', min: 10, max: 65, step: 0.5, decimals: 1, suffix: ' °C' },
+    { section: 'Hot Water', key: 'legionellaProtectionItem', label: 'Legionella Protection', type: 'toggle' },
+    { section: 'Hot Water', key: 'legionellaProtectionDayItem', label: 'Legionella Day', type: 'select', options: OPTS.legionellaDay, visibleIf: function (c) { return c.legionella; } },
+    { section: 'Hot Water', key: 'legionellaProtectionTimeItem', label: 'Legionella Time', type: 'text', placeholder: 'HH:mm',
+      fromRaw: secondsToHHMM, toRaw: hhmmToSeconds, rawCommandUnit: 's', visibleIf: function (c) { return c.legionella; } },
+  ].filter(function (f) { return ITEMS[f.key]; });
+
+  var state = {};    // itemName -> raw REST item object
+  var loaded = {};   // key -> display value as loaded
+  var edited = {};   // key -> display value as currently edited (only present if changed)
+
+  function el(id) { return document.getElementById(id); }
+
+  function fetchItem(name) {
+    if (!name) return Promise.resolve(null);
+    return fetch('/rest/items/' + encodeURIComponent(name), { credentials: 'include' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  function rawNum(itemName, fallback) {
+    var it = state[itemName];
+    if (!it || it.state === 'UNDEF' || it.state === 'NULL') return fallback;
+    var n = parseFloat(it.state);
+    return isNaN(n) ? fallback : n;
+  }
+  function rawStr(itemName, fallback) {
+    var it = state[itemName];
+    if (!it || it.state === 'UNDEF' || it.state === 'NULL') return fallback;
+    return it.state;
+  }
+
+  function displayValue(f) {
+    var itemName = ITEMS[f.key];
+    if (f.type === 'number') {
+      var raw = rawNum(itemName, f.min);
+      return f.fromRaw ? f.fromRaw(raw) : raw;
+    }
+    if (f.type === 'toggle') return rawStr(itemName, 'OFF') === 'ON';
+    if (f.type === 'select') return rawStr(itemName, f.options[0][0]);
+    if (f.type === 'text') {
+      if (f.fromRaw) return f.fromRaw(rawNum(itemName, 0));
+      return rawStr(itemName, '');
+    }
+    return null;
+  }
+
+  function loadAll() {
+    var names = FIELDS.map(function (f) { return ITEMS[f.key]; });
+    return Promise.all(names.map(fetchItem)).then(function (results) {
+      names.forEach(function (n, i) { if (results[i]) state[n] = results[i]; });
+      FIELDS.forEach(function (f) { loaded[f.key] = displayValue(f); });
+      edited = {};
+      render();
+    });
+  }
+
+  function currentValue(f) {
+    return (f.key in edited) ? edited[f.key] : loaded[f.key];
+  }
+
+  function isDirty(f) {
+    return f.key in edited && edited[f.key] !== loaded[f.key];
+  }
+
+  function anyDirty() {
+    return Object.keys(edited).some(function (k) {
+      return edited[k] !== loaded[k];
+    });
+  }
+
+  function setValue(f, v) {
+    edited[f.key] = v;
+    renderRow(f);
+    updateVisibility();
+    updateBar();
+  }
+
+  // Which fields are visible depends on the current value of a handful of "gate" fields
+  // (operating mode, summer eco toggle, frost protection mode, legionella toggle) — mirrors
+  // the real ATAG portal, which only shows settings that affect the currently active mode.
+  function getCtx() {
+    function v(key) {
+      var f = FIELDS.filter(function (x) { return x.key === key; })[0];
+      return f ? currentValue(f) : undefined;
+    }
+    return {
+      weatherDependent: v('controlModeItem') === 'weather-dependent',
+      summerEco: !!v('summerEcoModeItem'),
+      frost: v('frostProtectionItem'),
+      legionella: !!v('legionellaProtectionItem')
+    };
+  }
+
+  function fmtNumber(f, v) {
+    return v.toFixed(f.decimals) + f.suffix;
+  }
+
+  function buildRow(f) {
+    var row = document.createElement('div');
+    row.className = 'row';
+    row.id = 'row-' + f.key;
+
+    var labelWrap = document.createElement('div');
+    labelWrap.style.minWidth = '0';
+    var label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = f.label;
+    labelWrap.appendChild(label);
+    if (f.sub) {
+      var sub = document.createElement('div');
+      sub.className = 'sub';
+      sub.textContent = f.sub;
+      labelWrap.appendChild(sub);
+    }
+    row.appendChild(labelWrap);
+
+    var control = document.createElement('div');
+    control.className = 'control';
+    control.id = 'control-' + f.key;
+    row.appendChild(control);
+
+    return row;
+  }
+
+  function renderControl(f) {
+    var control = el('control-' + f.key);
+    control.innerHTML = '';
+    var v = currentValue(f);
+    var dirty = isDirty(f);
+
+    if (f.type === 'number') {
+      var wrap = document.createElement('div');
+      wrap.className = 'stepper' + (dirty ? ' dirty' : '');
+      var minus = document.createElement('button'); minus.textContent = '−';
+      var val = document.createElement('div'); val.className = 'val'; val.textContent = fmtNumber(f, v);
+      var plus = document.createElement('button'); plus.textContent = '+';
+      minus.addEventListener('click', function () { setValue(f, Math.max(f.min, Math.round((v - f.step) / f.step) * f.step)); });
+      plus.addEventListener('click', function () { setValue(f, Math.min(f.max, Math.round((v + f.step) / f.step) * f.step)); });
+      wrap.appendChild(minus); wrap.appendChild(val); wrap.appendChild(plus);
+      control.appendChild(wrap);
+    } else if (f.type === 'toggle') {
+      var label = document.createElement('label');
+      label.className = 'switch';
+      var input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = !!v;
+      input.addEventListener('change', function () { setValue(f, input.checked); });
+      var track = document.createElement('span');
+      track.className = 'track';
+      label.appendChild(input); label.appendChild(track);
+      control.appendChild(label);
+    } else if (f.type === 'select') {
+      var sel = document.createElement('select');
+      sel.className = 'field' + (dirty ? ' dirty' : '');
+      f.options.forEach(function (opt) {
+        var o = document.createElement('option');
+        o.value = opt[0]; o.textContent = opt[1];
+        if (opt[0] === v) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', function () { setValue(f, sel.value); });
+      control.appendChild(sel);
+    } else if (f.type === 'text') {
+      var inp = document.createElement('input');
+      inp.className = 'field' + (dirty ? ' dirty' : '');
+      inp.type = 'text';
+      inp.placeholder = f.placeholder || '';
+      inp.value = v || '';
+      inp.addEventListener('change', function () {
+        if (f.toRaw && f.toRaw(inp.value) === null) { inp.value = v; return; } // reject invalid, revert
+        setValue(f, inp.value);
+      });
+      control.appendChild(inp);
+    }
+  }
+
+  function renderRow(f) { renderControl(f); }
+
+  function updateVisibility() {
+    var ctx = getCtx();
+    FIELDS.forEach(function (f) {
+      var row = el('row-' + f.key);
+      if (!row) return;
+      var visible = f.visibleIf ? !!f.visibleIf(ctx) : true;
+      row.classList.toggle('hidden', !visible);
+    });
+  }
+
+  function render() {
+    var scroll = el('scroll');
+    scroll.innerHTML = '';
+    var sections = [];
+    FIELDS.forEach(function (f) {
+      if (sections.indexOf(f.section) === -1) sections.push(f.section);
+    });
+    sections.forEach(function (sectionName) {
+      var title = document.createElement('div');
+      title.className = 'section-title';
+      title.textContent = sectionName;
+      scroll.appendChild(title);
+
+      var body = document.createElement('div');
+      body.className = 'section-body';
+      FIELDS.filter(function (f) { return f.section === sectionName; }).forEach(function (f) {
+        var row = buildRow(f);
+        body.appendChild(row);
+      });
+      scroll.appendChild(body);
+    });
+    FIELDS.forEach(function (f) { renderControl(f); });
+    updateVisibility();
+    updateBar();
+  }
+
+  function updateBar() {
+    var dirty = anyDirty();
+    el('btn-save').disabled = !dirty;
+    el('btn-revert').disabled = !dirty;
+    if (!dirty) { el('save-status').textContent = ''; return; }
+    var n = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; }).length;
+    el('save-status').textContent = n + ' unsaved change' + (n === 1 ? '' : 's');
+  }
+
+  el('btn-revert').addEventListener('click', function () {
+    edited = {};
+    render();
+  });
+
+  function commandItem(name, value) {
+    return fetch('/rest/items/' + encodeURIComponent(name), {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'text/plain' },
+      body: String(value)
+    });
+  }
+
+  function delay(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  el('btn-save').addEventListener('click', function () {
+    var changedKeys = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; });
+    if (!changedKeys.length) return;
+    el('btn-save').disabled = true;
+    el('btn-revert').disabled = true;
+
+    var writes = changedKeys.map(function (key) {
+      var f = FIELDS.find(function (x) { return x.key === key; });
+      var v = edited[key];
+      var itemName = ITEMS[key];
+      var body;
+      if (f.type === 'toggle') {
+        body = v ? 'ON' : 'OFF';
+      } else if (f.type === 'number') {
+        var raw = f.toRaw ? f.toRaw(v) : v;
+        body = f.commandUnit ? (v + ' ' + f.commandUnit) : String(raw);
+      } else if (f.rawCommandUnit && f.toRaw) {
+        body = f.toRaw(v) + ' ' + f.rawCommandUnit;
+      } else {
+        body = String(v);
+      }
+      return { itemName: itemName, body: body };
+    });
+
+    var i = 0;
+    function next() {
+      if (i >= writes.length) {
+        el('save-status').textContent = 'Saved (' + writes.length + ')';
+        setTimeout(loadAll, 3000);
+        return;
+      }
+      el('save-status').textContent = 'Saving ' + (i + 1) + ' / ' + writes.length + '…';
+      commandItem(writes[i].itemName, writes[i].body).then(function () {
+        i++;
+        setTimeout(next, 400);
+      }).catch(function () {
+        el('save-status').textContent = 'Write ' + (i + 1) + ' failed — re-checking…';
+        setTimeout(loadAll, 3000);
+      });
+    }
+    next();
+  });
+
+  loadAll();
+})();
+</script>
+</body></html>

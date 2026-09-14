@@ -100,17 +100,21 @@ slots:
             slots:
               default:
                 # Header: icon + room name + OK/Elevated/Critical badge + valve icon
-                # NOTE: this row needs an explicit width: 100% — without it, the row shrink-wraps
-                # to its own content width instead of stretching to the card's full inner width,
-                # so title's flex:"1" has no free space to grow into and the trailing group sits
-                # stranded mid-card instead of flush right. See WIDGET.md Gotchas.
+                # NOTE: the trailing badge+valve group is position:absolute, anchored to this row
+                # (position:relative). Two earlier flex-based attempts (justify-content, explicit
+                # row width:100%) both looked right in a JSON/DOM check but still rendered visibly
+                # off-center in real screenshots — absolute positioning sidesteps whatever flex
+                # quirk caused that and is confirmed correct at native screenshot resolution.
+                # See WIDGET.md Gotchas.
                 - component: f7-row
                   config:
                     style:
-                      align-items: center
-                      justify-content: flex-start
-                      margin: 0 0 8px
+                      position: relative
+                      display: flex
                       width: 100%
+                      align-items: center
+                      margin: 0 0 8px
+                      min-height: 24px
                   slots:
                     default:
                       - component: oh-icon
@@ -128,7 +132,10 @@ slots:
                             font-size: 14px
                             font-weight: "500"
                             padding: "0"
-                            min-width: "0"
+                            padding-right: 90px
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            white-space: nowrap
                         slots:
                           default:
                             - component: Label
@@ -137,7 +144,10 @@ slots:
                       - component: f7-col
                         config:
                           style:
-                            flex: 0 0 auto
+                            position: absolute
+                            top: 50%
+                            right: 0
+                            transform: translateY(-50%)
                             padding: "0"
                             display: flex
                             align-items: center

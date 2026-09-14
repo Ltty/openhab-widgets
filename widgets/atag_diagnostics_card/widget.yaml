@@ -1,167 +1,187 @@
 uid: atag_diagnostics_card
 tags:
-- atag
 - diagnostics
+- atag
 - card
 props:
   parameters:
   - context: item
     description: heating#water-pressure
-    groupName: items
     label: Water Pressure Item
     name: waterPressureItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#modulation-level
-    groupName: items
     label: Modulation Level Item
     name: modulationLevelItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#min-modulation-level
-    groupName: items
     label: Min Modulation Level Item
     name: minModulationLevelItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#burner-target (none/ch/dhw)
-    groupName: items
     label: Burner Target Item
     name: burnerTargetItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#flame
-    groupName: items
     label: Flame Item
     name: flameItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#burning-hours
-    groupName: items
     label: Burning Hours Item
     name: burningHoursItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#boiler-temperature
-    groupName: items
     label: Boiler Flow Temp Item
     name: boilerTempItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#boiler-return-temperature
-    groupName: items
     label: Boiler Return Temp Item
     name: boilerReturnTempItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#delta-temperature
-    groupName: items
     label: Delta Temperature Item
     name: deltaTempItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#time-to-target
-    groupName: items
     label: Time to Target Item
     name: timeToTargetItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#max-boiler-temperature
-    groupName: items
     label: Max Boiler Temp Item
     name: maxBoilerTempItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#average-outside-temperature
-    groupName: items
     label: Average Outside Temp Item
     name: averageOutsideTempItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#weather-status
-    groupName: items
     label: Weather Status Item
     name: weatherStatusItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: heating#regulation-state
-    groupName: items
     label: Regulation State Item
     name: regulationStateItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: device pcb-temperature channel
-    groupName: items
     label: PCB Temperature Item
     name: pcbTempItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: device voltage channel
-    groupName: items
     label: Voltage Item
     name: voltageItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: device wifi-signal channel
-    groupName: items
     label: WiFi Signal Item
     name: wifiSignalItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: device resets channel
-    groupName: items
     label: Resets Item
     name: resetsItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: device memory-allocation channel
-    groupName: items
     label: Memory Allocation Item
     name: memoryAllocationItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: device report-time channel
-    groupName: items
     label: Report Time Item
     name: reportTimeItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: alerts device-errors channel
-    groupName: items
     label: Device Errors Item
     name: deviceErrorsItem
     required: false
     type: TEXT
+    groupName: items
   - context: item
     description: alerts boiler-errors channel
-    groupName: items
     label: Boiler Errors Item
     name: boilerErrorsItem
     required: false
     type: TEXT
+    groupName: items
+  - description: Static device serial number (Thing property, not a channel — e.g. from get_thing_details). Shown as plain text, not item-bound.
+    label: Serial Number
+    name: serialNumber
+    required: false
+    type: TEXT
+    groupName: device
+  - description: Static device ID (Thing property).
+    label: Device ID
+    name: deviceId
+    required: false
+    type: TEXT
+    groupName: device
+  - description: Static firmware version (Thing property).
+    label: Firmware Version
+    name: firmwareVersion
+    required: false
+    type: TEXT
+    groupName: device
   parameterGroups:
   - name: items
     label: Items
+  - name: device
+    label: Device
 component: oh-list-card
 config:
   title: Diagnostics
@@ -169,6 +189,21 @@ config:
   footer: Read-only. Matches the ATAG ONE app's Information → Diagnosis screen.
 slots:
   default:
+  - component: oh-label-item
+    config:
+      visible: =!!props.serialNumber
+      title: Serial Number
+      after: =props.serialNumber
+  - component: oh-label-item
+    config:
+      visible: =!!props.deviceId
+      title: Device ID
+      after: =props.deviceId
+  - component: oh-label-item
+    config:
+      visible: =!!props.firmwareVersion
+      title: Firmware Version
+      after: =props.firmwareVersion
   - component: oh-label-item
     config:
       item: =props.waterPressureItem

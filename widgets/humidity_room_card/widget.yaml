@@ -100,16 +100,16 @@ slots:
             slots:
               default:
                 # Header: icon + room name + OK/Elevated/Critical badge + valve icon
-                # NOTE: the trailing badge+valve group is position:absolute, anchored to this row
-                # (position:relative). Two earlier flex-based attempts (justify-content, explicit
-                # row width:100%) both looked right in a JSON/DOM check but still rendered visibly
-                # off-center in real screenshots — absolute positioning sidesteps whatever flex
-                # quirk caused that and is confirmed correct at native screenshot resolution.
-                # See WIDGET.md Gotchas.
+                # NOTE: trailing badge+valve group uses `margin-left: auto` on a flex item to push
+                # itself (and everything after it) to the row's right edge. An earlier
+                # position:absolute + position:relative-parent approach (and, before that, two
+                # other flex attempts) all still rendered off-center in real screenshots despite
+                # looking correct in DOM/JSON checks — root cause never fully pinned down, but
+                # margin-left:auto is the standard, most robust way to right-align a flex item and
+                # doesn't depend on any ancestor's containing-block behavior. See WIDGET.md Gotchas.
                 - component: f7-row
                   config:
                     style:
-                      position: relative
                       display: flex
                       width: 100%
                       align-items: center
@@ -129,10 +129,10 @@ slots:
                         config:
                           style:
                             flex: "1"
+                            min-width: "0"
                             font-size: 14px
                             font-weight: "500"
                             padding: "0"
-                            padding-right: 90px
                             overflow: hidden
                             text-overflow: ellipsis
                             white-space: nowrap
@@ -144,10 +144,8 @@ slots:
                       - component: f7-col
                         config:
                           style:
-                            position: absolute
-                            top: 50%
-                            right: 0
-                            transform: translateY(-50%)
+                            flex: 0 0 auto
+                            margin-left: auto
                             padding: "0"
                             display: flex
                             align-items: center

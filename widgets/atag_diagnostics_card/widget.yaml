@@ -1,0 +1,272 @@
+uid: atag_diagnostics_card
+tags:
+- atag
+- diagnostics
+- card
+props:
+  parameters:
+  - context: item
+    description: heating#water-pressure
+    groupName: items
+    label: Water Pressure Item
+    name: waterPressureItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#modulation-level
+    groupName: items
+    label: Modulation Level Item
+    name: modulationLevelItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#min-modulation-level
+    groupName: items
+    label: Min Modulation Level Item
+    name: minModulationLevelItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#burner-target (none/ch/dhw)
+    groupName: items
+    label: Burner Target Item
+    name: burnerTargetItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#flame
+    groupName: items
+    label: Flame Item
+    name: flameItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#burning-hours
+    groupName: items
+    label: Burning Hours Item
+    name: burningHoursItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#boiler-temperature
+    groupName: items
+    label: Boiler Flow Temp Item
+    name: boilerTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#boiler-return-temperature
+    groupName: items
+    label: Boiler Return Temp Item
+    name: boilerReturnTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#delta-temperature
+    groupName: items
+    label: Delta Temperature Item
+    name: deltaTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#time-to-target
+    groupName: items
+    label: Time to Target Item
+    name: timeToTargetItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#max-boiler-temperature
+    groupName: items
+    label: Max Boiler Temp Item
+    name: maxBoilerTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#average-outside-temperature
+    groupName: items
+    label: Average Outside Temp Item
+    name: averageOutsideTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#weather-status
+    groupName: items
+    label: Weather Status Item
+    name: weatherStatusItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#regulation-state
+    groupName: items
+    label: Regulation State Item
+    name: regulationStateItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device pcb-temperature channel
+    groupName: items
+    label: PCB Temperature Item
+    name: pcbTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device voltage channel
+    groupName: items
+    label: Voltage Item
+    name: voltageItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device wifi-signal channel
+    groupName: items
+    label: WiFi Signal Item
+    name: wifiSignalItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device resets channel
+    groupName: items
+    label: Resets Item
+    name: resetsItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device memory-allocation channel
+    groupName: items
+    label: Memory Allocation Item
+    name: memoryAllocationItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device report-time channel
+    groupName: items
+    label: Report Time Item
+    name: reportTimeItem
+    required: false
+    type: TEXT
+  - context: item
+    description: alerts device-errors channel
+    groupName: items
+    label: Device Errors Item
+    name: deviceErrorsItem
+    required: false
+    type: TEXT
+  - context: item
+    description: alerts boiler-errors channel
+    groupName: items
+    label: Boiler Errors Item
+    name: boilerErrorsItem
+    required: false
+    type: TEXT
+  parameterGroups:
+  - name: items
+    label: Items
+component: oh-list-card
+config:
+  title: Diagnostics
+  mediaList: true
+  accordionList: true
+slots:
+  default:
+  - component: oh-list-item
+    config:
+      title: Boiler Diagnostics
+      icon: f7:gauge
+      mediaList: true
+      footer: Read-only. Matches the ATAG ONE app's Information → Diagnosis screen.
+    slots:
+      accordion:
+      - component: f7-list
+        config:
+          mediaList: true
+        slots:
+          default:
+          - component: oh-label-item
+            config:
+              item: =props.waterPressureItem
+              title: Water Pressure
+          - component: oh-label-item
+            config:
+              item: =props.modulationLevelItem
+              title: Modulation Level
+          - component: oh-label-item
+            config:
+              item: =props.minModulationLevelItem
+              title: Min Modulation Level
+          - component: oh-label-item
+            config:
+              item: =props.burnerTargetItem
+              title: Burner Target
+          - component: oh-label-item
+            config:
+              item: =props.flameItem
+              title: Flame
+          - component: oh-label-item
+            config:
+              item: =props.burningHoursItem
+              title: Burning Hours
+          - component: oh-label-item
+            config:
+              item: =props.boilerTempItem
+              title: Boiler Flow Temp
+          - component: oh-label-item
+            config:
+              item: =props.boilerReturnTempItem
+              title: Boiler Return Temp
+          - component: oh-label-item
+            config:
+              item: =props.deltaTempItem
+              title: Delta Temperature
+          - component: oh-label-item
+            config:
+              item: =props.timeToTargetItem
+              title: Time to Target
+          - component: oh-label-item
+            config:
+              item: =props.maxBoilerTempItem
+              title: Max Boiler Temp
+          - component: oh-label-item
+            config:
+              item: =props.averageOutsideTempItem
+              title: Average Outside Temp
+          - component: oh-label-item
+            config:
+              item: =props.weatherStatusItem
+              title: Weather Status
+          - component: oh-label-item
+            config:
+              item: =props.regulationStateItem
+              title: Regulation State
+          - component: oh-label-item
+            config:
+              item: =props.pcbTempItem
+              title: PCB Temperature
+          - component: oh-label-item
+            config:
+              item: =props.voltageItem
+              title: Voltage
+          - component: oh-label-item
+            config:
+              item: =props.wifiSignalItem
+              title: WiFi Signal
+          - component: oh-label-item
+            config:
+              item: =props.resetsItem
+              title: Resets
+          - component: oh-label-item
+            config:
+              item: =props.memoryAllocationItem
+              title: Memory Allocation
+          - component: oh-label-item
+            config:
+              item: =props.reportTimeItem
+              title: Report Time
+          - component: oh-label-item
+            config:
+              item: =props.deviceErrorsItem
+              title: Device Errors
+          - component: oh-label-item
+            config:
+              item: =props.boilerErrorsItem
+              title: Boiler Errors

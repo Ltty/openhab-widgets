@@ -61,6 +61,13 @@ props:
       type: INTEGER
       min: 0
       max: 100
+    - context: item
+      description: Comma-separated list of one or more HomeMatic actuator _STATE Switch items for this room's heating valve(s). Shows a small icon in the header — blue when any valve is open, dim when all closed — with a count badge when more than one item is given.
+      groupName: extras
+      label: Valve Item(s)
+      name: valveItems
+      required: false
+      type: TEXT
   parameterGroups:
     - name: sensor
       label: Sensor Items
@@ -68,10 +75,12 @@ props:
       label: Appearance
     - name: thresholds
       label: Thresholds
+    - name: extras
+      label: Valve
 component: oh-link
 config:
   action: analyzer
-  actionAnalyzerItems: "=props.item + (props.tempItem ? ',' + props.tempItem : '') + (props.setpointItem ? ',' + props.setpointItem : '')"
+  actionAnalyzerItems: "=props.item + (props.tempItem ? ',' + props.tempItem : '') + (props.setpointItem ? ',' + props.setpointItem : '') + (props.valveItems ? ',' + props.valveItems : '')"
   style:
     color: inherit
     display: block
@@ -137,6 +146,32 @@ slots:
                                   font-weight: "500"
                                   padding: 3px 12px
                                 text: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? 'Critical' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? 'Elevated' : 'OK'"
+                      - component: f7-col
+                        config:
+                          visible: "=!!(props.valveItems && props.valveItems.trim())"
+                          style:
+                            flex: 0 0 auto
+                            padding: "0"
+                            margin-left: 6px
+                            display: flex
+                            align-items: center
+                        slots:
+                          default:
+                            - component: oh-icon
+                              config:
+                                icon: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state==='ON')) ? 'iconify:mdi:valve-open' : 'iconify:mdi:valve-closed'"
+                                style:
+                                  font-size: 14px
+                                  color: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state==='ON')) ? '#2f8fe0' : 'inherit'"
+                                  opacity: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state==='ON')) ? '1' : '0.4'"
+                            - component: Label
+                              config:
+                                visible: "=(((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).length)>1)"
+                                style:
+                                  font-size: 10px
+                                  margin-left: 2px
+                                  opacity: "0.7"
+                                text: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).length)"
 
                 # Large humidity value
                 - component: Label

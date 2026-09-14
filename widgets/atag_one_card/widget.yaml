@@ -1,0 +1,121 @@
+uid: atag_one_card
+tags:
+  - atag
+  - thermostat
+  - card
+props:
+  parameters:
+    - context: thing
+      description: The atagone:thermostat Thing UID — used to resolve and call its Thing Actions (mode/vacation/extend/fireplace/cancel).
+      groupName: thing
+      label: ATAG Thing
+      name: thingUID
+      required: true
+      type: TEXT
+    - context: item
+      description: Room (current) temperature — heating#room-temperature.
+      groupName: items
+      label: Current Temperature Item
+      name: currentTempItem
+      required: true
+      type: TEXT
+    - context: item
+      description: Target temperature setpoint — heating#target-temperature. Writable; the steppers command this item directly.
+      groupName: items
+      label: Target Temperature Item
+      name: targetTempItem
+      required: true
+      type: TEXT
+    - context: item
+      description: Preset mode string item — control#preset-mode (manual/auto/holiday/extend/fireplace).
+      groupName: items
+      label: Mode Item
+      name: modeItem
+      required: true
+      type: TEXT
+    - context: item
+      description: Flame indicator — heating#flame. Drives the red dot in the top corner.
+      groupName: items
+      label: Flame Item
+      name: flameItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Central heating active — heating#central-heating-active. Reserved for future use.
+      groupName: items
+      label: CH Active Item
+      name: chActiveItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Next scheduled time change — control#next-schedule-time.
+      groupName: items
+      label: Next Schedule Time Item
+      name: nextTimeItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Temperature at the next scheduled change — control#next-schedule-temperature.
+      groupName: items
+      label: Next Schedule Temperature Item
+      name: nextTempItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Vacation duration in seconds — control#vacation-duration. Used to seed the vacation duration picker's default.
+      groupName: items
+      label: Vacation Duration Item
+      name: vacationDurationItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Vacation setback temperature — control#vacation-temperature. Reserved for future use.
+      groupName: items
+      label: Vacation Temperature Item
+      name: vacationTempItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Vacation time remaining — control#vacation-remaining. Reserved for future use.
+      groupName: items
+      label: Vacation Remaining Item
+      name: vacationRemainingItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Extend duration in seconds — control#extend-duration. Used to seed the extend duration picker's default.
+      groupName: items
+      label: Extend Duration Item
+      name: extendDurationItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Extend time remaining — control#extend-remaining. Reserved for future use.
+      groupName: items
+      label: Extend Remaining Item
+      name: extendRemainingItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Fireplace duration in seconds — control#fireplace-duration. Used to seed the fireplace duration picker's default.
+      groupName: items
+      label: Fireplace Duration Item
+      name: fireplaceDurationItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Fireplace time remaining — control#fireplace-remaining. Reserved for future use.
+      groupName: items
+      label: Fireplace Remaining Item
+      name: fireplaceRemainingItem
+      required: false
+      type: TEXT
+  parameterGroups:
+    - name: thing
+      label: Thing
+    - name: items
+      label: Items
+component: oh-webframe
+config:
+  src: "='/static/atag/control.html?v=2' + '&thing=' + props.thingUID + '&current=' + props.currentTempItem + '&target=' + props.targetTempItem + '&mode=' + props.modeItem + (props.flameItem ? '&flame=' + props.flameItem : '') + (props.chActiveItem ? '&chactive=' + props.chActiveItem : '') + (props.nextTimeItem ? '&nexttime=' + props.nextTimeItem : '') + (props.nextTempItem ? '&nexttemp=' + props.nextTempItem : '') + (props.vacationDurationItem ? '&vacdur=' + props.vacationDurationItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.vacationRemainingItem ? '&vacrem=' + props.vacationRemainingItem : '') + (props.extendDurationItem ? '&extdur=' + props.extendDurationItem : '') + (props.extendRemainingItem ? '&extrem=' + props.extendRemainingItem : '') + (props.fireplaceDurationItem ? '&firedur=' + props.fireplaceDurationItem : '') + (props.fireplaceRemainingItem ? '&firerem=' + props.fireplaceRemainingItem : '')"
+  height: 420

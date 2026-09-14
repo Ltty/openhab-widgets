@@ -15,7 +15,9 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 - CSS gradient zone bar with a live position indicator
 - Three-row legend: Safe · Elevated · Critical with configurable ranges
 - Current temperature and thermostat setpoint (optional)
-- Tapping the card opens the Analyzer for the humidity and temperature items
+- Optional heating-valve indicator in the header — a small icon (blue = any valve open, dim = all
+  closed) with a count badge when more than one valve item is configured
+- Tapping the card opens the Analyzer for the humidity, temperature, and valve items
 
 ---
 
@@ -49,6 +51,7 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 | `min` | No | `40` | Safe zone lower bound (%) — the floor of the "Safe" label in the legend |
 | `orange` | No | `60` | Elevated threshold — above this is amber (%) |
 | `red` | No | `70` | Critical threshold — above this is red (%) |
+| `valveItems` | No | — | Comma-separated heating actuator `_STATE` Switch item(s) for this room. Shows a header icon (blue when any is `ON`, dim otherwise) with a count badge when more than one is given |
 
 ---
 
@@ -60,6 +63,16 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 ---
 
 ## Changelog
+
+### Version 1.1.0
+
+- Added optional `valveItems` prop — a small header icon (blue = any configured valve item is
+  `ON`, dim = all closed) with a count badge when more than one item is given. States only
+  whether the valve is open, deliberately — not whether the room is "heating" (a room can sit at a
+  parked-open setpoint with the boiler off for most of the year, so that inference would be wrong
+  most of the time)
+- All six existing prop combinations render identically to v1.0.4 — `valveItems` is additive and
+  optional
 
 ### Version 1.0.4
 

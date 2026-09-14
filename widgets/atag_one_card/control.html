@@ -1,0 +1,459 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATAG ONE</title>
+<style>
+  :root {
+    --blue: #2f8fe0;
+    --red: #e0472f;
+    --bg: #0a0a0c;
+    --bar-bg: #17171a;
+    --fg: #f2f2f2;
+    --fg-dim: #8a8a8e;
+    --fg-dimmer: #5a5a5e;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow: hidden; -webkit-font-smoothing: antialiased; user-select: none;
+  }
+  #app { display: flex; flex-direction: column; height: 100vh; position: relative; }
+
+  /* ---- main face ---- */
+  #face { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 8px 12px; min-height: 0; }
+  #flame {
+    position: absolute; top: 14px; right: 18px; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--fg-dimmer); transition: background .3s, box-shadow .3s;
+  }
+  #flame.on { background: var(--red); box-shadow: 0 0 8px 2px rgba(224,71,47,0.6); }
+  .caption { font-size: 10px; letter-spacing: 2px; color: var(--fg-dim); text-transform: uppercase; margin-bottom: 2px; }
+  #current { font-size: clamp(48px, 12vw, 80px); font-weight: 100; line-height: 1; margin: 2px 0 6px; }
+  #current .deg { font-size: 0.5em; vertical-align: top; }
+  #target-row { display: flex; align-items: center; gap: 14px; margin-bottom: 4px; }
+  #target { font-size: clamp(22px, 5vw, 30px); font-weight: 300; color: var(--fg-dim); min-width: 3.2em; text-align: center; }
+  #target .deg { font-size: 0.7em; }
+  .stepper {
+    width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid currentColor;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    background: transparent; flex: 0 0 auto; cursor: pointer;
+  }
+  .stepper:active { background: rgba(255,255,255,0.08); }
+  .stepper.lower { color: var(--blue); }
+  .stepper.raise { color: var(--red); }
+  .stepper[disabled] { opacity: 0.3; pointer-events: none; }
+  #target-caption { font-size: 10px; letter-spacing: 2px; color: var(--fg-dim); text-transform: uppercase; margin-top: 2px; }
+  #confirm-note {
+    font-size: 11px; color: #f0b429; text-align: center; padding: 0 16px; margin-top: 10px; min-height: 14px;
+  }
+
+  /* ---- bottom bar ---- */
+  #bar {
+    flex: 0 0 auto; background: var(--bar-bg); display: flex; align-items: stretch;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  #bar .cell {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px 4px; min-width: 0; cursor: default;
+  }
+  #bar .cell.tap { cursor: pointer; }
+  #bar .cell.tap:active { background: rgba(255,255,255,0.06); }
+  #bar .cell.auto-only[hidden] { display: none; }
+  #bar.non-auto .cell:not(.auto-only) { flex: 0 0 50%; }
+  #bar .cell .icon { font-size: 16px; margin-bottom: 3px; line-height: 1; }
+  #bar .cell .val { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  #bar .cell .lbl { font-size: 8px; letter-spacing: 1px; color: var(--fg-dim); text-transform: uppercase; margin-top: 2px; }
+
+  /* ---- overlays ---- */
+  .overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.94); display: none;
+    flex-direction: column; z-index: 10;
+  }
+  .overlay.open { display: flex; }
+  .overlay-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08); flex: 0 0 auto;
+  }
+  .overlay-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim); }
+  .overlay-close { font-size: 20px; color: var(--fg-dim); cursor: pointer; padding: 4px 8px; }
+  .overlay-body { flex: 1; overflow-y: auto; padding: 12px; }
+
+  /* mode grid */
+  .mode-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 8px; }
+  .mode-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 14px 4px; border-radius: 10px; cursor: pointer; gap: 6px;
+    border: 1px solid transparent;
+  }
+  .mode-btn:active { background: rgba(255,255,255,0.06); }
+  .mode-btn.active { border-color: var(--blue); background: rgba(47,143,224,0.12); }
+  .mode-btn .icon { font-size: 22px; }
+  .mode-btn .lbl { font-size: 10px; letter-spacing: .5px; text-transform: uppercase; color: var(--fg-dim); }
+
+  /* duration picker */
+  .dur-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 16px; gap: 18px; }
+  .dur-value-row { display: flex; align-items: center; gap: 20px; }
+  .dur-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--fg-dimmer);
+    background: transparent; color: var(--fg); font-size: 20px; cursor: pointer;
+  }
+  .dur-btn:active { background: rgba(255,255,255,0.08); }
+  .dur-value { font-size: 34px; font-weight: 200; min-width: 120px; text-align: center; }
+  .dur-unit { font-size: 11px; color: var(--fg-dim); letter-spacing: 1px; text-transform: uppercase; }
+  .dur-note { font-size: 11px; color: var(--fg-dim); text-align: center; max-width: 260px; line-height: 1.5; }
+  .dur-actions { display: flex; gap: 10px; margin-top: 8px; }
+  .btn {
+    padding: 9px 22px; border-radius: 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border: 1px solid var(--fg-dimmer); background: transparent; color: var(--fg);
+  }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn:active { opacity: 0.7; }
+  .cancel-mode-row { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .cancel-mode-row .btn { width: 100%; border-color: var(--red); color: var(--red); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="face">
+    <div id="flame"></div>
+    <div class="caption">Current Temp</div>
+    <div id="current">–<span class="deg">°</span></div>
+    <div id="target-row">
+      <div class="stepper lower" id="btn-lower">‹</div>
+      <div id="target">–<span class="deg">°</span></div>
+      <div class="stepper raise" id="btn-raise">›</div>
+    </div>
+    <div id="target-caption">Target Temperature</div>
+    <div id="confirm-note"></div>
+  </div>
+
+  <div id="bar">
+    <div class="cell tap" id="cell-mode-change">
+      <div class="icon">⟩</div>
+      <div class="lbl">Change</div>
+    </div>
+    <div class="cell auto-only">
+      <div class="val" id="next-time">–</div>
+      <div class="lbl">Next Time</div>
+    </div>
+    <div class="cell tap" id="cell-mode-label">
+      <div class="icon" id="mode-icon">▦</div>
+      <div class="lbl" id="mode-label">–</div>
+    </div>
+    <div class="cell auto-only">
+      <div class="val" id="next-temp">–</div>
+      <div class="lbl">Temp</div>
+    </div>
+  </div>
+
+  <!-- Mode picker overlay -->
+  <div class="overlay" id="ov-mode">
+    <div class="overlay-header">
+      <span class="overlay-title">Select Mode</span>
+      <span class="overlay-close" data-close="ov-mode">✕</span>
+    </div>
+    <div class="overlay-body">
+      <div class="mode-grid" id="mode-grid"></div>
+    </div>
+    <div class="cancel-mode-row" id="cancel-row" style="display:none">
+      <div class="btn" id="btn-cancel-mode">Cancel active mode</div>
+    </div>
+  </div>
+
+  <!-- Duration overlay (vacation / extend / fireplace) -->
+  <div class="overlay" id="ov-duration">
+    <div class="overlay-header">
+      <span class="overlay-title" id="dur-title">Duration</span>
+      <span class="overlay-close" data-close="ov-duration">✕</span>
+    </div>
+    <div class="overlay-body">
+      <div class="dur-wrap">
+        <div class="dur-value-row">
+          <div class="dur-btn" id="dur-minus">−</div>
+          <div>
+            <div class="dur-value" id="dur-value">–</div>
+            <div class="dur-unit" id="dur-unit">–</div>
+          </div>
+          <div class="dur-btn" id="dur-plus">+</div>
+        </div>
+        <div class="dur-note" id="dur-note"></div>
+        <div class="dur-actions">
+          <div class="btn" data-close="ov-duration">Cancel</div>
+          <div class="btn primary" id="dur-set">Set</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var P = new URLSearchParams(location.search);
+  var ITEM = {
+    thing:   P.get('thing') || '',
+    current: P.get('current') || '',
+    target:  P.get('target') || '',
+    mode:    P.get('mode') || '',
+    flame:   P.get('flame') || '',
+    chactive:P.get('chactive') || '',
+    nexttime:P.get('nexttime') || '',
+    nexttemp:P.get('nexttemp') || '',
+    vacdur:  P.get('vacdur') || '',
+    vactemp: P.get('vactemp') || '',
+    vacrem:  P.get('vacrem') || '',
+    extdur:  P.get('extdur') || '',
+    extrem:  P.get('extrem') || '',
+    firedur: P.get('firedur') || '',
+    firerem: P.get('firerem') || ''
+  };
+
+  var TARGET_MIN = 4, TARGET_MAX = 27, TARGET_STEP = 0.5;
+  var MODES = [
+    { key: 'auto',      label: 'Automatic', icon: '▦' },
+    { key: 'holiday',   label: 'Vacation',  icon: '⛱' },
+    { key: 'extend',    label: 'Extend',    icon: '◔' },
+    { key: 'fireplace', label: 'Fireplace', icon: '🔥' },
+    { key: 'manual',    label: 'Manual',    icon: '✋' }
+  ];
+  var MODE_BY_KEY = {}; MODES.forEach(function (m) { MODE_BY_KEY[m.key] = m; });
+
+  var state = {}; // itemName -> raw REST item object
+  var actionUids = null; // resolved once: name -> full actionUid
+  var pendingTargetWrite = null;
+
+  function el(id) { return document.getElementById(id); }
+
+  function fetchItem(name) {
+    if (!name) return Promise.resolve(null);
+    return fetch('/rest/items/' + encodeURIComponent(name), { credentials: 'include' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  }
+
+  function numState(name, fallback) {
+    var it = state[name];
+    if (!it || it.state === 'UNDEF' || it.state === 'NULL') return fallback;
+    var n = parseFloat(it.state);
+    return isNaN(n) ? fallback : n;
+  }
+
+  function strState(name, fallback) {
+    var it = state[name];
+    if (!it || it.state === 'UNDEF' || it.state === 'NULL') return fallback;
+    return it.state;
+  }
+
+  function refreshAll() {
+    var names = Object.keys(ITEM).filter(function (k) { return k !== 'thing' && ITEM[k]; }).map(function (k) { return ITEM[k]; });
+    return Promise.all(names.map(fetchItem)).then(function (results) {
+      names.forEach(function (n, i) { if (results[i]) state[n] = results[i]; });
+      render();
+    });
+  }
+
+  function render() {
+    var cur = numState(ITEM.current, null);
+    el('current').innerHTML = (cur === null ? '–' : cur.toFixed(1)) + '<span class="deg">°</span>';
+
+    var tgt = numState(ITEM.target, null);
+    el('target').innerHTML = (tgt === null ? '–' : tgt.toFixed(1)) + '<span class="deg">°</span>';
+
+    var flameOn = strState(ITEM.flame, 'OFF') === 'ON';
+    el('flame').classList.toggle('on', flameOn);
+
+    var mode = strState(ITEM.mode, 'auto');
+    var m = MODE_BY_KEY[mode] || MODE_BY_KEY.auto;
+    el('mode-icon').textContent = m.icon;
+    el('mode-label').textContent = m.label;
+
+    // Next Time / Next Temp only mean anything in Automatic mode — the app itself
+    // shows a different bottom bar per mode; a manual/vacation/extend/fireplace
+    // thermostat isn't following the next scheduled change.
+    var isAuto = (mode === 'auto');
+    el('bar').classList.toggle('non-auto', !isAuto);
+    document.querySelectorAll('.auto-only').forEach(function (c) { c.hidden = !isAuto; });
+    if (isAuto) {
+      var nextTimeRaw = strState(ITEM.nexttime, null);
+      el('next-time').textContent = nextTimeRaw ? fmtTime(nextTimeRaw) : '–';
+      var nextTempV = numState(ITEM.nexttemp, null);
+      el('next-temp').textContent = nextTempV === null ? '–' : nextTempV.toFixed(1) + '°';
+    }
+
+    var timed = (mode === 'holiday' || mode === 'extend' || mode === 'fireplace');
+    el('cancel-row').style.display = timed ? '' : 'none';
+
+    renderModeGrid(mode);
+  }
+
+  function fmtTime(iso) {
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return '–';
+      var h = d.getHours(), mnt = d.getMinutes();
+      return (h < 10 ? '0' : '') + h + ':' + (mnt < 10 ? '0' : '') + mnt;
+    } catch (e) { return '–'; }
+  }
+
+  function renderModeGrid(activeMode) {
+    var grid = el('mode-grid');
+    grid.innerHTML = '';
+    MODES.forEach(function (m) {
+      var btn = document.createElement('div');
+      btn.className = 'mode-btn' + (m.key === activeMode ? ' active' : '');
+      btn.innerHTML = '<div class="icon">' + m.icon + '</div><div class="lbl">' + m.label + '</div>';
+      btn.addEventListener('click', function () { onModePick(m.key); });
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ---- writes ---- */
+  function commandItem(name, value) {
+    if (!name) return Promise.resolve();
+    return fetch('/rest/items/' + encodeURIComponent(name), {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'text/plain' },
+      body: String(value)
+    });
+  }
+
+  function getActionUids() {
+    if (actionUids) return Promise.resolve(actionUids);
+    return fetch('/rest/actions/' + encodeURIComponent(ITEM.thing), { credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (list) {
+        actionUids = {};
+        (list || []).forEach(function (a) {
+          var m = /^atagone\.([a-zA-Z]+)#/.exec(a.actionUid);
+          if (m) actionUids[m[1]] = a.actionUid;
+        });
+        return actionUids;
+      });
+  }
+
+  function callAction(name, body) {
+    return getActionUids().then(function (uids) {
+      var uid = uids[name];
+      if (!uid) throw new Error('action not found: ' + name);
+      return fetch('/rest/actions/' + encodeURIComponent(ITEM.thing) + '/' + encodeURIComponent(uid), {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body || {})
+      }).then(function (r) { return r.ok ? r.json().catch(function () { return {}; }) : Promise.reject(r); });
+    });
+  }
+
+  /* ---- setpoint steppers ---- */
+  var stepTimer = null;
+  function stepTarget(delta) {
+    var cur = numState(ITEM.target, TARGET_MIN);
+    var next = Math.min(TARGET_MAX, Math.max(TARGET_MIN, Math.round((cur + delta) / TARGET_STEP) * TARGET_STEP));
+    if (state[ITEM.target]) state[ITEM.target].state = String(next); // optimistic
+    render();
+    clearTimeout(stepTimer);
+    pendingTargetWrite = next;
+    stepTimer = setTimeout(function () {
+      commandItem(ITEM.target, pendingTargetWrite.toFixed(1)).then(function () {
+        setTimeout(refreshAll, 5000);
+      });
+    }, 800);
+  }
+  el('btn-lower').addEventListener('click', function () { stepTarget(-TARGET_STEP); });
+  el('btn-raise').addEventListener('click', function () { stepTarget(TARGET_STEP); });
+
+  /* ---- mode overlay open/close ---- */
+  function openOverlay(id) { el(id).classList.add('open'); }
+  function closeOverlay(id) { el(id).classList.remove('open'); }
+  document.querySelectorAll('[data-close]').forEach(function (b) {
+    b.addEventListener('click', function () { closeOverlay(b.getAttribute('data-close')); });
+  });
+  el('cell-mode-change').addEventListener('click', function () { openOverlay('ov-mode'); });
+  el('cell-mode-label').addEventListener('click', function () { openOverlay('ov-mode'); });
+
+  function onModePick(key) {
+    if (key === 'auto' || key === 'manual') {
+      commandItem(ITEM.mode, key).then(function () {
+        closeOverlay('ov-mode');
+        setTimeout(refreshAll, 3000);
+      });
+      return;
+    }
+    closeOverlay('ov-mode');
+    openDurationPicker(key);
+  }
+
+  el('btn-cancel-mode').addEventListener('click', function () {
+    callAction('cancelMode', {}).then(function (res) {
+      var needsConfirm = res && (res.result === true || res.result === 'true');
+      el('confirm-note').textContent = needsConfirm
+        ? 'Press a button on the thermostat display to confirm cancelling fireplace mode.'
+        : '';
+      closeOverlay('ov-mode');
+      setTimeout(refreshAll, 3000);
+    });
+  });
+
+  /* ---- duration picker ---- */
+  var DUR_CFG = {
+    holiday: {
+      title: 'Vacation Duration', unit: 'days', step: 1, min: 1, max: 365,
+      init: function () { return Math.max(1, Math.round(numState(ITEM.vacdur, 86400) / 86400)); },
+      note: 'The house will be held at the vacation setback temperature for the selected number of days, starting now.',
+      action: 'activateVacation', toSeconds: function (v) { return v * 86400; }
+    },
+    extend: {
+      title: 'Extend Duration', unit: 'minutes', step: 15, min: 15, max: 360,
+      init: function () { return Math.max(15, Math.round(numState(ITEM.extdur, 3600) / 60 / 15) * 15); },
+      note: 'Extends the current temperature by this many minutes on top of the time remaining until the next scheduled change — not a fixed countdown.',
+      action: 'activateExtend', toSeconds: function (v) { return v * 60; }
+    },
+    fireplace: {
+      title: 'Fireplace Duration', unit: 'hours', step: 1, min: 1, max: 24,
+      init: function () { return Math.max(1, Math.round(numState(ITEM.firedur, 10800) / 3600)); },
+      note: 'Close the radiator valve in this room while fireplace mode is active. Cancelling fireplace mode later requires a button press on the thermostat display.',
+      action: 'activateFireplace', toSeconds: function (v) { return v * 3600; }
+    }
+  };
+  var durState = { key: null, value: 0 };
+
+  function openDurationPicker(key) {
+    var cfg = DUR_CFG[key];
+    durState.key = key;
+    durState.value = cfg.init();
+    el('dur-title').textContent = cfg.title;
+    el('dur-unit').textContent = cfg.unit;
+    el('dur-note').textContent = cfg.note;
+    renderDurValue();
+    openOverlay('ov-duration');
+  }
+  function renderDurValue() { el('dur-value').textContent = durState.value; }
+  el('dur-minus').addEventListener('click', function () {
+    var cfg = DUR_CFG[durState.key];
+    durState.value = Math.max(cfg.min, durState.value - cfg.step);
+    renderDurValue();
+  });
+  el('dur-plus').addEventListener('click', function () {
+    var cfg = DUR_CFG[durState.key];
+    durState.value = Math.min(cfg.max, durState.value + cfg.step);
+    renderDurValue();
+  });
+  el('dur-set').addEventListener('click', function () {
+    var cfg = DUR_CFG[durState.key];
+    var seconds = cfg.toSeconds(durState.value);
+    callAction(cfg.action, { durationSeconds: seconds }).then(function () {
+      closeOverlay('ov-duration');
+      el('confirm-note').textContent = '';
+      setTimeout(refreshAll, 3000);
+      setTimeout(refreshAll, 8000);
+    }).catch(function () {
+      el('confirm-note').textContent = 'Could not confirm the write — the thermostat may not have responded. Re-checking…';
+      closeOverlay('ov-duration');
+      setTimeout(refreshAll, 5000);
+    });
+  });
+
+  /* ---- boot ---- */
+  refreshAll();
+  setInterval(refreshAll, 30000);
+})();
+</script>
+</body></html>

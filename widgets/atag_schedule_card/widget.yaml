@@ -1,0 +1,37 @@
+uid: atag_schedule_card
+tags:
+  - atag
+  - schedule
+  - card
+props:
+  parameters:
+    - context: thing
+      description: The atagone:thermostat Thing UID — used to resolve and call its per-period schedule Thing Actions.
+      groupName: thing
+      label: ATAG Thing
+      name: thingUID
+      required: true
+      type: TEXT
+    - context: item
+      description: CH weekly schedule as JSON — heating#schedule. Reads UNDEF until the binding gains this channel (see atag-binding-schedule-spec.md); the editor shows a "waiting for binding update" state until then.
+      groupName: items
+      label: CH Schedule JSON Item
+      name: chScheduleItem
+      required: true
+      type: TEXT
+    - context: item
+      description: DHW weekly schedule as JSON — hotwater#schedule. Same pending-channel note as above.
+      groupName: items
+      label: DHW Schedule JSON Item
+      name: dhwScheduleItem
+      required: true
+      type: TEXT
+  parameterGroups:
+    - name: thing
+      label: Thing
+    - name: items
+      label: Items
+component: oh-webframe
+config:
+  src: "='/static/atag/schedule.html?v=1' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem"
+  height: 520

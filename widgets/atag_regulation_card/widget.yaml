@@ -27,14 +27,14 @@ props:
     required: false
     type: TEXT
   - context: item
-    description: control#vacation-duration-default — days used when activating vacation with no explicit duration.
+    description: control#vacation-duration-default — read-only display here (shown converted to days); edited via the Vacation duration picker on the main control face.
     groupName: ch
     label: Vacation Duration Default Item
     name: vacationDurationDefaultItem
     required: false
     type: TEXT
   - context: item
-    description: control#extend-duration-default — minutes used when activating extend with no explicit duration.
+    description: control#extend-duration-default — read-only display here (shown converted to minutes); edited via the Extend duration picker on the main control face.
     groupName: ch
     label: Extend Duration Default Item
     name: extendDurationDefaultItem
@@ -118,7 +118,7 @@ props:
     required: false
     type: TEXT
   - context: item
-    description: hotwater#schedule-base-temperature — the writable DHW setpoint (NOT hotwater#target-temperature, which is derived/broken — see docs/openhab).
+    description: hotwater#schedule-base-temperature — the writable DHW setpoint (NOT hotwater#target-temperature, which is derived/broken).
     groupName: hw
     label: DHW Base Temperature Item
     name: dhwScheduleBaseTempItem
@@ -146,7 +146,7 @@ props:
     required: false
     type: TEXT
   - context: item
-    description: device brightness channel, 10–100%.
+    description: device brightness channel (0.1–1.0 fraction).
     groupName: disp
     label: Display Brightness Item
     name: displayBrightnessItem
@@ -172,179 +172,182 @@ component: oh-list-card
 config:
   title: Regulation
   mediaList: true
-  accordionList: true
 slots:
   default:
   - component: oh-list-item
     config:
       title: Central Heating
-      icon: f7:thermometer
-      mediaList: true
-    slots:
-      accordion:
-      - component: f7-list
-        config:
-          mediaList: true
-        slots:
-          default:
-          - component: oh-list-item
-            config:
-              item: =props.controlModeItem
-              title: Operating Mode
-          - component: oh-stepper-item
-            config:
-              item: =props.scheduleBaseTempItem
-              title: Schedule Base Temperature
-              min: 4
-              max: 27
-              step: 0.5
-          - component: oh-stepper-item
-            config:
-              item: =props.vacationTempItem
-              title: Vacation Temperature
-              min: 4
-              max: 27
-              step: 0.5
-          - component: oh-stepper-item
-            config:
-              item: =props.vacationDurationDefaultItem
-              title: Vacation Duration Default (s — steps of 1 day)
-              min: 86400
-              max: 31536000
-              step: 86400
-          - component: oh-stepper-item
-            config:
-              item: =props.extendDurationDefaultItem
-              title: Extend Duration Default (s — steps of 15 min)
-              min: 900
-              max: 21600
-              step: 900
+      groupTitle: true
+      style:
+        font-weight: '600'
+        font-size: 11px
+        letter-spacing: 0.5px
+        text-transform: uppercase
+        opacity: '0.55'
+        --f7-list-item-min-height: 32px
   - component: oh-list-item
     config:
-      title: Weather Dependent
-      icon: f7:cloud
+      item: =props.controlModeItem
+      title: Operating Mode
+      action: options
+  - component: oh-stepper-item
+    config:
+      item: =props.scheduleBaseTempItem
+      title: Schedule Base Temperature
+      min: 4
+      max: 27
+      step: 0.5
+  - component: oh-stepper-item
+    config:
+      item: =props.vacationTempItem
+      title: Vacation Temperature
+      min: 4
+      max: 27
+      step: 0.5
+  - component: oh-label-item
+    config:
+      title: Vacation Duration Default
+      after: '=items[props.vacationDurationDefaultItem] ? (Number.parseFloat(items[props.vacationDurationDefaultItem].state)/86400).toFixed(0) + '' days'' : ''–'''
+  - component: oh-label-item
+    config:
+      title: Extend Duration Default
+      after: '=items[props.extendDurationDefaultItem] ? (Number.parseFloat(items[props.extendDurationDefaultItem].state)/60).toFixed(0) + '' min'' : ''–'''
+  - component: f7-list
+    config:
       mediaList: true
+      style:
+        opacity: '=items[props.controlModeItem] && items[props.controlModeItem].state === ''thermostat'' ? ''0.4'' : ''1'''
+        pointer-events: '=items[props.controlModeItem] && items[props.controlModeItem].state === ''thermostat'' ? ''none'' : ''auto'''
+        transition: opacity .2s
     slots:
-      accordion:
-      - component: f7-list
+      default:
+      - component: oh-list-item
         config:
-          mediaList: true
+          title: Weather Dependent
+          groupTitle: true
           style:
-            opacity: '=items[props.controlModeItem] && items[props.controlModeItem].state === ''thermostat'' ? ''0.4'' : ''1'''
-            pointer-events: '=items[props.controlModeItem] && items[props.controlModeItem].state === ''thermostat'' ? ''none'' : ''auto'''
-            transition: opacity .2s
-        slots:
-          default:
-          - component: oh-list-item
-            config:
-              item: =props.heatingTypeItem
-              title: Heating Type
-          - component: oh-list-item
-            config:
-              item: =props.insulationItem
-              title: Insulation Level
-          - component: oh-list-item
-            config:
-              item: =props.buildingSizeItem
-              title: Building Size
-          - component: oh-list-item
-            config:
-              item: =props.roomInfluenceItem
-              title: Room Influence
-          - component: oh-stepper-item
-            config:
-              item: =props.climateZoneItem
-              title: Climate Zone
-              min: -20
-              max: 15
-              step: 1
-          - component: oh-list-item
-            config:
-              item: =props.maxPreheatItem
-              title: Max Preheat
-          - component: oh-toggle-item
-            config:
-              item: =props.summerEcoModeItem
-              title: Summer Eco Mode
-          - component: oh-stepper-item
-            config:
-              item: =props.summerEcoTempItem
-              title: Summer Eco Temperature
-              min: 4
-              max: 27
-              step: 0.5
-          - component: oh-list-item
-            config:
-              item: =props.frostProtectionItem
-              title: Frost Protection
-          - component: oh-stepper-item
-            config:
-              item: =props.frostProtectionRoomItem
-              title: Frost Protection — Room
-              min: 4
-              max: 10
-              step: 0.5
-          - component: oh-stepper-item
-            config:
-              item: =props.frostProtectionOutsideItem
-              title: Frost Protection — Outside
-              min: -10
-              max: 5
-              step: 0.5
+            font-weight: '600'
+            font-size: 11px
+            letter-spacing: 0.5px
+            text-transform: uppercase
+            opacity: '0.55'
+            --f7-list-item-min-height: 32px
+      - component: oh-list-item
+        config:
+          item: =props.heatingTypeItem
+          title: Heating Type
+          action: options
+      - component: oh-list-item
+        config:
+          item: =props.insulationItem
+          title: Insulation Level
+          action: options
+      - component: oh-list-item
+        config:
+          item: =props.buildingSizeItem
+          title: Building Size
+          action: options
+      - component: oh-list-item
+        config:
+          item: =props.roomInfluenceItem
+          title: Room Influence
+          action: options
+      - component: oh-stepper-item
+        config:
+          item: =props.climateZoneItem
+          title: Climate Zone
+          min: -20
+          max: 15
+          step: 1
+      - component: oh-list-item
+        config:
+          item: =props.maxPreheatItem
+          title: Max Preheat
+          action: options
+      - component: oh-toggle-item
+        config:
+          item: =props.summerEcoModeItem
+          title: Summer Eco Mode
+      - component: oh-stepper-item
+        config:
+          item: =props.summerEcoTempItem
+          title: Summer Eco Temperature
+          min: 4
+          max: 27
+          step: 0.5
+      - component: oh-list-item
+        config:
+          item: =props.frostProtectionItem
+          title: Frost Protection
+          action: options
+      - component: oh-stepper-item
+        config:
+          item: =props.frostProtectionRoomItem
+          title: Frost Protection — Room
+          min: 4
+          max: 10
+          step: 0.5
+      - component: oh-stepper-item
+        config:
+          item: =props.frostProtectionOutsideItem
+          title: Frost Protection — Outside
+          min: -10
+          max: 5
+          step: 0.5
   - component: oh-list-item
     config:
       title: Hot Water
-      icon: f7:drop
-      mediaList: true
-    slots:
-      accordion:
-      - component: f7-list
-        config:
-          mediaList: true
-        slots:
-          default:
-          - component: oh-stepper-item
-            config:
-              item: =props.dhwScheduleBaseTempItem
-              title: DHW Base Temperature
-              min: 10
-              max: 65
-              step: 0.5
-          - component: oh-toggle-item
-            config:
-              item: =props.legionellaProtectionItem
-              title: Legionella Protection
-          - component: oh-list-item
-            config:
-              item: =props.legionellaProtectionDayItem
-              title: Legionella Day
-          - component: oh-input-item
-            config:
-              item: =props.legionellaProtectionTimeItem
-              title: Legionella Time
-              type: text
-              placeholder: HH:mm
-              sendButton: true
+      groupTitle: true
+      style:
+        font-weight: '600'
+        font-size: 11px
+        letter-spacing: 0.5px
+        text-transform: uppercase
+        opacity: '0.55'
+        --f7-list-item-min-height: 32px
+  - component: oh-stepper-item
+    config:
+      item: =props.dhwScheduleBaseTempItem
+      title: DHW Base Temperature
+      min: 10
+      max: 65
+      step: 0.5
+  - component: oh-toggle-item
+    config:
+      item: =props.legionellaProtectionItem
+      title: Legionella Protection
+  - component: oh-list-item
+    config:
+      item: =props.legionellaProtectionDayItem
+      title: Legionella Day
+      action: options
+  - component: oh-input-item
+    config:
+      item: =props.legionellaProtectionTimeItem
+      title: Legionella Time
+      type: text
+      placeholder: HH:mm
+      sendButton: true
   - component: oh-list-item
     config:
       title: Display
-      icon: f7:tv
-      mediaList: true
-    slots:
-      accordion:
-      - component: f7-list
-        config:
-          mediaList: true
-        slots:
-          default:
-          - component: oh-stepper-item
-            config:
-              item: =props.displayBrightnessItem
-              title: Display Brightness (0.1–1.0)
-              min: 0.1
-              max: 1
-              step: 0.05
-          - component: oh-list-item
-            config:
-              item: =props.timeZoneItem
-              title: Time Zone
+      groupTitle: true
+      style:
+        font-weight: '600'
+        font-size: 11px
+        letter-spacing: 0.5px
+        text-transform: uppercase
+        opacity: '0.55'
+        --f7-list-item-min-height: 32px
+  - component: oh-stepper-item
+    config:
+      item: =props.displayBrightnessItem
+      title: Display Brightness
+      min: 0.1
+      max: 1
+      step: 0.05
+  - component: oh-list-item
+    config:
+      item: =props.timeZoneItem
+      title: Time Zone
+      action: options

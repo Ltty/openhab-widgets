@@ -99,12 +99,18 @@ slots:
                 padding: 12px 16px 12px
             slots:
               default:
-                # Header: icon + room name + OK/Elevated/Critical badge
+                # Header: icon + room name + OK/Elevated/Critical badge + valve icon
+                # NOTE: this row needs an explicit width: 100% — without it, the row shrink-wraps
+                # to its own content width instead of stretching to the card's full inner width,
+                # so title's flex:"1" has no free space to grow into and the trailing group sits
+                # stranded mid-card instead of flush right. See WIDGET.md Gotchas.
                 - component: f7-row
                   config:
                     style:
                       align-items: center
+                      justify-content: flex-start
                       margin: 0 0 8px
+                      width: 100%
                   slots:
                     default:
                       - component: oh-icon
@@ -122,6 +128,7 @@ slots:
                             font-size: 14px
                             font-weight: "500"
                             padding: "0"
+                            min-width: "0"
                         slots:
                           default:
                             - component: Label
@@ -132,7 +139,9 @@ slots:
                           style:
                             flex: 0 0 auto
                             padding: "0"
-                            text-align: right
+                            display: flex
+                            align-items: center
+                            gap: 6px
                         slots:
                           default:
                             - component: Label
@@ -142,25 +151,18 @@ slots:
                                   border-radius: 12px
                                   color: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? '#d03b3b' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? '#fab219' : '#0ca30c'"
                                   display: inline-block
+                                  flex: 0 0 auto
                                   font-size: 12px
                                   font-weight: "500"
                                   padding: 3px 12px
+                                  white-space: nowrap
                                 text: "=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.red) ? 'Critical' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : '50')) > props.orange) ? 'Elevated' : 'OK'"
-                      - component: f7-col
-                        config:
-                          visible: "=!!(props.valveItems && props.valveItems.trim())"
-                          style:
-                            flex: 0 0 auto
-                            padding: "0"
-                            margin-left: 6px
-                            display: flex
-                            align-items: center
-                        slots:
-                          default:
                             - component: oh-icon
                               config:
+                                visible: "=!!(props.valveItems && props.valveItems.trim())"
                                 icon: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state==='ON')) ? 'iconify:mdi:valve-open' : 'iconify:mdi:valve-closed'"
                                 style:
+                                  flex: 0 0 auto
                                   font-size: 14px
                                   color: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state==='ON')) ? '#2f8fe0' : 'inherit'"
                                   opacity: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state==='ON')) ? '1' : '0.4'"
@@ -169,7 +171,6 @@ slots:
                                 visible: "=(((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).length)>1)"
                                 style:
                                   font-size: 10px
-                                  margin-left: 2px
                                   opacity: "0.7"
                                 text: "=((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).length)"
 

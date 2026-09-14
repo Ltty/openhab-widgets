@@ -166,107 +166,94 @@ component: oh-list-card
 config:
   title: Diagnostics
   mediaList: true
-  accordionList: true
+  footer: Read-only. Matches the ATAG ONE app's Information → Diagnosis screen.
 slots:
   default:
-  - component: oh-list-item
+  - component: oh-label-item
     config:
-      title: Boiler Diagnostics
-      icon: f7:gauge
-      mediaList: true
-      footer: Read-only. Matches the ATAG ONE app's Information → Diagnosis screen.
-    slots:
-      accordion:
-      - component: f7-list
-        config:
-          mediaList: true
-        slots:
-          default:
-          - component: oh-label-item
-            config:
-              item: =props.waterPressureItem
-              title: Water Pressure
-          - component: oh-label-item
-            config:
-              item: =props.modulationLevelItem
-              title: Modulation Level
-          - component: oh-label-item
-            config:
-              item: =props.minModulationLevelItem
-              title: Min Modulation Level
-          - component: oh-label-item
-            config:
-              item: =props.burnerTargetItem
-              title: Burner Target
-          - component: oh-label-item
-            config:
-              item: =props.flameItem
-              title: Flame
-          - component: oh-label-item
-            config:
-              item: =props.burningHoursItem
-              title: Burning Hours
-          - component: oh-label-item
-            config:
-              item: =props.boilerTempItem
-              title: Boiler Flow Temp
-          - component: oh-label-item
-            config:
-              item: =props.boilerReturnTempItem
-              title: Boiler Return Temp
-          - component: oh-label-item
-            config:
-              item: =props.deltaTempItem
-              title: Delta Temperature
-          - component: oh-label-item
-            config:
-              item: =props.timeToTargetItem
-              title: Time to Target
-          - component: oh-label-item
-            config:
-              item: =props.maxBoilerTempItem
-              title: Max Boiler Temp
-          - component: oh-label-item
-            config:
-              item: =props.averageOutsideTempItem
-              title: Average Outside Temp
-          - component: oh-label-item
-            config:
-              item: =props.weatherStatusItem
-              title: Weather Status
-          - component: oh-label-item
-            config:
-              item: =props.regulationStateItem
-              title: Regulation State
-          - component: oh-label-item
-            config:
-              item: =props.pcbTempItem
-              title: PCB Temperature
-          - component: oh-label-item
-            config:
-              item: =props.voltageItem
-              title: Voltage
-          - component: oh-label-item
-            config:
-              item: =props.wifiSignalItem
-              title: WiFi Signal
-          - component: oh-label-item
-            config:
-              item: =props.resetsItem
-              title: Resets
-          - component: oh-label-item
-            config:
-              item: =props.memoryAllocationItem
-              title: Memory Allocation
-          - component: oh-label-item
-            config:
-              item: =props.reportTimeItem
-              title: Report Time
-          - component: oh-label-item
-            config:
-              item: =props.deviceErrorsItem
-              title: Device Errors
-          - component: oh-label-item
-            config:
-              item: =props.boilerErrorsItem
-              title: Boiler Errors
+      item: =props.waterPressureItem
+      title: Water Pressure
+  - component: oh-label-item
+    config:
+      item: =props.modulationLevelItem
+      title: Modulation Level
+  - component: oh-label-item
+    config:
+      item: =props.minModulationLevelItem
+      title: Min Modulation Level
+  - component: oh-label-item
+    config:
+      item: =props.burnerTargetItem
+      title: Burner Target
+  - component: oh-label-item
+    config:
+      item: =props.flameItem
+      title: Flame
+  - component: oh-label-item
+    config:
+      item: =props.burningHoursItem
+      title: Burning Hours
+  - component: oh-label-item
+    config:
+      item: =props.boilerTempItem
+      title: Boiler Flow Temp
+  - component: oh-label-item
+    config:
+      item: =props.boilerReturnTempItem
+      title: Boiler Return Temp
+  - component: oh-label-item
+    config:
+      item: =props.deltaTempItem
+      title: Delta Temperature
+  - component: oh-label-item
+    config:
+      item: =props.timeToTargetItem
+      title: Time to Target
+  - component: oh-label-item
+    config:
+      item: =props.maxBoilerTempItem
+      title: Max Boiler Temp
+  - component: oh-label-item
+    config:
+      item: =props.averageOutsideTempItem
+      title: Average Outside Temp
+  - component: oh-label-item
+    config:
+      item: =props.weatherStatusItem
+      title: Weather Status
+  - component: oh-label-item
+    config:
+      item: =props.regulationStateItem
+      title: Regulation State
+  - component: oh-label-item
+    config:
+      item: =props.pcbTempItem
+      title: PCB Temperature
+  - component: oh-label-item
+    config:
+      item: =props.voltageItem
+      title: Voltage
+  - component: oh-label-item
+    config:
+      item: =props.wifiSignalItem
+      title: WiFi Signal
+  - component: oh-label-item
+    config:
+      item: =props.resetsItem
+      title: Resets
+  - component: oh-label-item
+    config:
+      item: =props.memoryAllocationItem
+      title: Memory Allocation
+  - component: oh-label-item
+    config:
+      item: =props.reportTimeItem
+      title: Report Time
+  - component: oh-label-item
+    config:
+      item: =props.deviceErrorsItem
+      title: Device Errors
+  - component: oh-label-item
+    config:
+      item: =props.boilerErrorsItem
+      title: Boiler Errors

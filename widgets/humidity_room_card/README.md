@@ -71,8 +71,13 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
   whether the valve is open, deliberately — not whether the room is "heating" (a room can sit at a
   parked-open setpoint with the boiler off for most of the year, so that inference would be wrong
   most of the time)
-- All six existing prop combinations render identically to v1.0.4 — `valveItems` is additive and
-  optional
+- Fix: the header row now sets an explicit `width: 100%` — without it, the row shrink-wraps to its
+  own content width instead of stretching to the card's full inner width, so the room-name column's
+  `flex: "1"` has no free space to grow into and the trailing badge/valve group sits stranded
+  mid-card instead of flush right. Badge and valve icon are now one merged flex group (was two
+  separate columns) so they stay adjacent regardless of title length
+- All six existing prop combinations render identically to v1.0.4 aside from the alignment fix —
+  `valveItems` is additive and optional
 
 ### Version 1.0.4
 

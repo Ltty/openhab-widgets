@@ -14,9 +14,10 @@ Vacation/Extend/Fireplace. Always dark, matching the real device.
 
 - Large current-room-temperature readout, with a flame indicator dot top-right
 - Target temperature with blue (lower) / red (raise) steppers, debounced to one write per pause
-- Bottom bar: mode-change chevron, next scheduled time + temperature (**Automatic mode only** — the
-  other modes collapse to a 2-cell Change + Mode bar, since "next scheduled change" doesn't apply
-  outside Automatic)
+- Bottom bar is mode-conditional, matching how the official app itself changes this bar per mode:
+  in **Automatic** it shows 4 cells (Change / Next Time / Mode / Next Temp); in any other mode
+  (Manual, Vacation, Extend, Fireplace) "next scheduled change" doesn't apply, so it collapses to
+  2 cells (Change / Mode), each taking half the bar
 - Tapping the mode cell opens a 5-mode picker (Automatic / Vacation / Extend / Fireplace / Manual)
 - Vacation / Extend / Fireplace each open a duration picker (days / 15-min steps / hours) before
   activating, calling the binding's Thing Actions directly

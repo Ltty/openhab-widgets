@@ -11,11 +11,12 @@ single accordion card.
 
 ## What it shows
 
-One accordion section listing: water pressure, modulation level (+ minimum), burner target,
-flame, burning hours, boiler flow/return temperature, delta temperature, time to target, max
-boiler temperature, average outside temperature, weather status, regulation state, PCB
-temperature, voltage, WiFi signal, controller resets, memory allocation, report time, device
-errors, boiler errors.
+A single flat list (no accordion — this card only ever appears inside a popup, and collapsing a
+single section inside something already one tap deep just adds a redundant click) of: water
+pressure, modulation level (+ minimum), burner target, flame, burning hours, boiler flow/return
+temperature, delta temperature, time to target, max boiler temperature, average outside
+temperature, weather status, regulation state, PCB temperature, voltage, WiFi signal, controller
+resets, memory allocation, report time, device errors, boiler errors.
 
 All rows are `oh-label-item` — display only, nothing here writes to the device.
 

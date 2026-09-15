@@ -12,8 +12,12 @@ Vacation/Extend/Fireplace. Always dark, matching the real device.
 
 ## What it shows
 
-- Large current-room-temperature readout, with a flame indicator dot top-right
-- Target temperature with blue (lower) / red (raise) steppers, debounced to one write per pause
+- Large current-room-temperature readout, with a flame indicator dot top-right — solid red while
+  central heating is actively firing, blinking while domestic hot water is (the boiler can only
+  heat one circuit at a time, so the dot is never both)
+- Target temperature with blue (lower) / red (raise) steppers, debounced (1.5 s of no further taps)
+  to one write per pause rather than one write per tap — the target number turns amber while a
+  change is pending confirmation
 - Bottom bar is mode-conditional, matching how the official app itself changes this bar per mode:
   in **Automatic** it shows 4 cells (Change / Next Time / Mode / Next Temp); in any other mode
   (Manual, Vacation, Extend, Fireplace) "next scheduled change" doesn't apply, so it collapses to
@@ -54,8 +58,9 @@ item props for the channels you want live.
 | `currentTempItem` | Yes | Room (current) temperature — `heating#room-temperature` |
 | `targetTempItem` | Yes | Target temperature setpoint — `heating#target-temperature` (writable) |
 | `modeItem` | Yes | Preset mode string — `control#preset-mode` |
-| `flameItem` | No | Flame indicator — `heating#flame` |
-| `chActiveItem` | No | Central heating active — `heating#central-heating-active` (reserved) |
+| `flameItem` | No | Flame indicator — `heating#flame`. Used as a fallback solid-red dot when `chActiveItem`/`dhwActiveItem` aren't set |
+| `chActiveItem` | No | Central heating active — `heating#central-heating-active`. Drives the flame dot's solid-red state |
+| `dhwActiveItem` | No | Domestic hot water active — `hotwater#status`. Drives the flame dot's blinking-red state (CH and DHW can't be active at once — it's a single burner) |
 | `nextTimeItem` | No | Next scheduled time — `control#next-schedule-time` |
 | `nextTempItem` | No | Next scheduled temperature — `control#next-schedule-temperature` |
 | `vacationDurationItem` | No | Seeds the vacation duration picker's default |
@@ -82,6 +87,15 @@ item props for the channels you want live.
 ---
 
 ## Changelog
+
+### Version 1.1.0
+
+- Added `dhwActiveItem` prop — the flame dot now distinguishes central heating (solid red) from
+  domestic hot water (blinking red), matching the physical thermostat's LED behavior, instead of a
+  single solid/off state
+- Setpoint debounce widened from 800 ms to 1.5 s, with the target number turning amber while a
+  change is pending — a run of rapid taps now sends one write instead of one per tap
+- Larger control face and icons (mobile legibility pass)
 
 ### Version 1.0.0
 

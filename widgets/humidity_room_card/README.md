@@ -64,6 +64,13 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 
 ## Changelog
 
+### Version 1.1.1
+
+- The v1.1.0 header alignment fix (below) turned out to be incomplete — Framework7's `.col` grid
+  class was still fighting the `margin-left: auto` override in some cases. Fixed by pulling the
+  badge/valve-icon/count-label out of their wrapping `f7-col` entirely (now plain row children,
+  with `margin-left: auto` on the first) rather than trying to override `.col` from inside it
+
 ### Version 1.1.0
 
 - Added optional `valveItems` prop — a small header icon (blue = any configured valve item is

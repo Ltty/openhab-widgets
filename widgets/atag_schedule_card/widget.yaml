@@ -13,7 +13,7 @@ props:
       required: true
       type: TEXT
     - context: item
-      description: CH weekly schedule as JSON — heating#schedule. Reads UNDEF until the binding gains this channel (see atag-binding-schedule-spec.md); the editor shows a "waiting for binding update" state until then.
+      description: CH weekly schedule as JSON — heating#schedule. Reads UNDEF (editor shows a "waiting for binding update" state) if the binding predates this channel.
       groupName: items
       label: CH Schedule JSON Item
       name: chScheduleItem
@@ -33,5 +33,5 @@ props:
       label: Items
 component: oh-webframe
 config:
-  src: "='/static/atag/schedule.html?v=1' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem"
+  src: "='/static/atag/schedule.html?v=2' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem"
   height: 520

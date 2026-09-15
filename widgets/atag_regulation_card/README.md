@@ -15,14 +15,13 @@ Four always-visible sections (flat, not collapsible — this card only ever appe
 so a second layer of expand/collapse on top of that would just be redundant clicking):
 
 - **Central Heating** — operating mode (tap to switch thermostat ↔ weather-dependent), schedule
-  base temperature, vacation temperature, and the vacation/extend duration defaults shown
-  read-only, converted to days/minutes (see Gotchas below — editing these two isn't supported by
-  the native stepper component; use the duration picker on the main control face instead)
+  base temperature, vacation temperature
 - **Weather Dependent** — heating type, insulation, building size, room influence, climate zone,
   max preheat, summer eco mode/temperature, frost protection (mode + room/outside thresholds).
   Visually dimmed and non-interactive while Central Heating's operating mode is `thermostat`
   (these settings are ignored by the device in that mode)
-- **Hot Water** — DHW base temperature, legionella protection (on/off, day, time)
+- **Hot Water** — DHW base temperature, legionella protection (on/off, day, and time — a plain
+  `HH:mm` text field)
 - **Display** — brightness, time zone
 
 Every enum setting (Operating Mode, Heating Type, Insulation, Building Size, Room Influence, Max
@@ -57,15 +56,14 @@ water setpoint, not the binding's `hotwater#target-temperature` channel — that
 derived/read-only on the device side and a known broken write path (see the `atagone` binding's
 own test notes).
 
-**Unit note**: `vacationDurationDefaultItem` and `extendDurationDefaultItem` are shown **read-only**
-(`oh-label-item`), converted client-side from the item's raw seconds to days/minutes. `oh-stepper-item`
-reads and writes the item's raw base-unit value directly — it does not apply `unit` metadata for
-display or conversion (confirmed: setting `unit` metadata on these items changed nothing), so a
-stepper meant to read "7 days" would actually show and step in raw seconds ("604800"). Editing
-these two defaults isn't supported here; use the Vacation/Extend duration picker on
-`atag_one_card`'s main control face instead, which does its own day/minute math in JS.
-`displayBrightnessItem` steps 0.1–1.0 (a fraction, matching its actual reported scale), not
-10–100 as its channel's own `%`-pattern implies.
+**Unit note**: `displayBrightnessItem` steps 0.1–1.0 (a fraction, matching its actual reported
+scale), not 10–100 as its channel's own `%`-pattern implies — `oh-stepper-item` reads and writes
+the item's raw base-unit value directly and does not apply `unit` metadata for display or
+conversion.
+
+**`legionellaProtectionTimeItem` note**: a plain `String` item in `HH:mm` format (e.g. `07:00`).
+The widget validates the format client-side and rejects an edit that doesn't match before it's
+sent.
 
 ## Requirements
 
@@ -88,6 +86,16 @@ these two defaults isn't supported here; use the Vacation/Extend duration picker
 ---
 
 ## Changelog
+
+### Version 2.0.0 (BREAKING)
+
+- Binding update removed the `control#vacation-duration-default` / `control#extend-duration-default`
+  channels — `vacationDurationDefaultItem` and `extendDurationDefaultItem` props are gone; remove
+  them from any existing widget instance's config. Set these defaults via the Vacation/Extend
+  duration picker on `atag_one_card`'s main control face instead
+- `legionellaProtectionTimeItem`'s channel changed from `Number:Time` (raw seconds) to a plain
+  `String` in `HH:mm` format — the field is now a simple validated text input instead of doing
+  seconds↔HH:mm conversion in JS
 
 ### Version 1.0.0
 

@@ -177,6 +177,20 @@ props:
     required: false
     type: TEXT
     groupName: device
+  - context: item
+    description: hotwater#target-temperature (reported) — the DHW setpoint the boiler is currently using.
+    label: DHW Setpoint Item
+    name: dhwSetpointItem
+    required: false
+    type: TEXT
+    groupName: items
+  - context: item
+    description: hotwater#water-temperature — current hot water temperature at the boiler.
+    label: DHW Water Temperature Item
+    name: dhwWaterTempItem
+    required: false
+    type: TEXT
+    groupName: items
   parameterGroups:
   - name: items
     label: Items
@@ -186,28 +200,62 @@ component: oh-list-card
 config:
   title: Diagnostics
   mediaList: true
-  footer: Read-only. Matches the ATAG ONE app's Information → Diagnosis screen.
+  footer: All values are read-only, reported directly by the boiler.
 slots:
   default:
+  - component: Label
+    config:
+      text: Status
+      style:
+        display: block
+        font-size: 11px
+        font-weight: '600'
+        letter-spacing: 1px
+        text-transform: uppercase
+        opacity: '0.55'
+        padding: 14px 16px 2px
   - component: oh-label-item
     config:
-      visible: =!!props.serialNumber
-      title: Serial Number
-      after: =props.serialNumber
+      item: =props.flameItem
+      title: Flame
   - component: oh-label-item
     config:
-      visible: =!!props.deviceId
-      title: Device ID
-      after: =props.deviceId
+      item: =props.burnerTargetItem
+      title: Burner Target
+  - component: Label
+    config:
+      text: Alerts
+      style:
+        display: block
+        font-size: 11px
+        font-weight: '600'
+        letter-spacing: 1px
+        text-transform: uppercase
+        opacity: '0.55'
+        padding: 14px 16px 2px
   - component: oh-label-item
     config:
-      visible: =!!props.firmwareVersion
-      title: Firmware Version
-      after: =props.firmwareVersion
+      item: =props.deviceErrorsItem
+      title: Device Errors
+  - component: oh-label-item
+    config:
+      item: =props.boilerErrorsItem
+      title: Boiler Errors
+  - component: Label
+    config:
+      text: Central Heating
+      style:
+        display: block
+        font-size: 11px
+        font-weight: '600'
+        letter-spacing: 1px
+        text-transform: uppercase
+        opacity: '0.55'
+        padding: 14px 16px 2px
   - component: oh-label-item
     config:
       item: =props.waterPressureItem
-      title: Water Pressure
+      title: CH Water Pressure
   - component: oh-label-item
     config:
       item: =props.modulationLevelItem
@@ -216,18 +264,6 @@ slots:
     config:
       item: =props.minModulationLevelItem
       title: Min Modulation Level
-  - component: oh-label-item
-    config:
-      item: =props.burnerTargetItem
-      title: Burner Target
-  - component: oh-label-item
-    config:
-      item: =props.flameItem
-      title: Flame
-  - component: oh-label-item
-    config:
-      item: =props.burningHoursItem
-      title: Burning Hours
   - component: oh-label-item
     config:
       item: =props.boilerTempItem
@@ -260,6 +296,55 @@ slots:
     config:
       item: =props.regulationStateItem
       title: Regulation State
+  - component: Label
+    config:
+      text: Hot Water
+      style:
+        display: block
+        font-size: 11px
+        font-weight: '600'
+        letter-spacing: 1px
+        text-transform: uppercase
+        opacity: '0.55'
+        padding: 14px 16px 2px
+  - component: oh-label-item
+    config:
+      title: DHW Setpoint
+      item: =props.dhwSetpointItem
+  - component: oh-label-item
+    config:
+      title: DHW Water Temperature
+      item: =props.dhwWaterTempItem
+  - component: Label
+    config:
+      text: Device
+      style:
+        display: block
+        font-size: 11px
+        font-weight: '600'
+        letter-spacing: 1px
+        text-transform: uppercase
+        opacity: '0.55'
+        padding: 14px 16px 2px
+  - component: oh-label-item
+    config:
+      visible: =!!props.serialNumber
+      title: Serial Number
+      after: =props.serialNumber
+  - component: oh-label-item
+    config:
+      visible: =!!props.deviceId
+      title: Device ID
+      after: =props.deviceId
+  - component: oh-label-item
+    config:
+      visible: =!!props.firmwareVersion
+      title: Firmware Version
+      after: =props.firmwareVersion
+  - component: oh-label-item
+    config:
+      item: =props.burningHoursItem
+      title: Burning Hours
   - component: oh-label-item
     config:
       item: =props.pcbTempItem
@@ -283,12 +368,4 @@ slots:
   - component: oh-label-item
     config:
       item: =props.reportTimeItem
-      title: Report Time
-  - component: oh-label-item
-    config:
-      item: =props.deviceErrorsItem
-      title: Device Errors
-  - component: oh-label-item
-    config:
-      item: =props.boilerErrorsItem
-      title: Boiler Errors
+      title: Last Report

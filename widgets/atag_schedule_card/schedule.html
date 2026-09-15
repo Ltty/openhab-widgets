@@ -49,18 +49,21 @@
   }
   .pill {
     position: absolute; top: 3px; bottom: 3px; border-radius: 5px; display: flex; align-items: center;
-    justify-content: center; gap: 5px; font-size: 10px; font-weight: 600; color: #fff; cursor: pointer;
-    min-width: 3px; padding: 0 6px; overflow: hidden; white-space: nowrap;
+    justify-content: center; font-size: 10px; font-weight: 600; color: #fff; cursor: pointer;
+    min-width: 3px; padding: 0 4px; overflow: hidden; white-space: nowrap;
   }
   .pill.comfort { background: var(--red); }
   .pill.setback { background: var(--blue); }
   .pill.virtual { opacity: 0.5; }
-  .pill .pill-time {
-    font-size: 9px; font-weight: 600; opacity: 0.9; background: rgba(0,0,0,0.25); border-radius: 999px;
-    padding: 1px 6px; flex: 0 0 auto;
+  .time-ticks { position: relative; height: 13px; margin-top: 3px; }
+  .time-tick {
+    position: absolute; top: 3px; transform: translateX(-50%);
+    font-size: 9px; color: var(--fg-dimmer); white-space: nowrap;
   }
-  .pill.narrow .pill-time { display: none; }
-  .pill.narrow { justify-content: center; padding: 0 2px; }
+  .time-tick::before {
+    content: ''; position: absolute; left: 50%; top: -3px; width: 1px; height: 3px;
+    background: var(--fg-dimmer); transform: translateX(-50%);
+  }
   .add-btn {
     margin-top: 6px; font-size: 11px; color: var(--blue); cursor: pointer; text-align: right;
   }
@@ -269,16 +272,18 @@
       label.textContent = DAY_LABELS[day];
       row.appendChild(label);
 
+      var segs = buildSegments(periods);
+
       var track = document.createElement('div');
       track.className = 'pill-track';
-      buildSegments(periods).forEach(function (seg) {
+      segs.forEach(function (seg) {
         var pill = document.createElement('div');
         var leftPct = (seg.start / 1440) * 100;
         var widthPct = Math.max(0.5, ((seg.end - seg.start) / 1440) * 100);
         pill.className = 'pill ' + (isHot(seg.temp) ? 'comfort' : 'setback') + (seg.virtual ? ' virtual' : '');
         pill.style.left = leftPct + '%';
         pill.style.width = widthPct + '%';
-        pill.innerHTML = '<span class="pill-time">' + fmtMin(seg.start) + '</span><span class="pill-temp">' + seg.temp.toFixed(1) + '°</span>';
+        pill.textContent = seg.temp.toFixed(1) + '°';
         if (seg.virtual) {
           pill.addEventListener('click', function () {
             openPeriodEditor(day, periods.length, true, { start: seg.start, end: seg.end, temp: defaultBaseTemp() });
@@ -289,6 +294,18 @@
         track.appendChild(pill);
       });
       row.appendChild(track);
+
+      // One tick per segment boundary — the time centers exactly on the change point below it.
+      var ticks = document.createElement('div');
+      ticks.className = 'time-ticks';
+      segs.forEach(function (seg) {
+        var tick = document.createElement('span');
+        tick.className = 'time-tick';
+        tick.style.left = ((seg.start / 1440) * 100) + '%';
+        tick.textContent = fmtMin(seg.start);
+        ticks.appendChild(tick);
+      });
+      row.appendChild(ticks);
 
       var addBtn = document.createElement('div');
       addBtn.className = 'add-btn';
@@ -303,10 +320,22 @@
       grid.appendChild(row);
     });
 
-    // Hide the time badge on pills too narrow to hold both it and the temperature.
+    // Hide a tick label if it would overlap the previous visible one — boundaries can sit
+    // close together (e.g. a 15-min period), and two overlapping labels read worse than one
+    // dropped label.
     requestAnimationFrame(function () {
-      grid.querySelectorAll('.pill').forEach(function (p) {
-        if (p.offsetWidth < 46) p.classList.add('narrow');
+      grid.querySelectorAll('.time-ticks').forEach(function (ticksEl) {
+        var lastVisible = null;
+        Array.from(ticksEl.children).forEach(function (tick) {
+          if (!lastVisible) { lastVisible = tick; return; }
+          var prevRect = lastVisible.getBoundingClientRect();
+          var rect = tick.getBoundingClientRect();
+          if (rect.left < prevRect.right + 4) {
+            tick.style.visibility = 'hidden';
+          } else {
+            lastVisible = tick;
+          }
+        });
       });
     });
   }
@@ -350,18 +379,45 @@
   el('period-close').addEventListener('click', closePeriodEditor);
   el('period-cancel').addEventListener('click', closePeriodEditor);
 
+  // Trim/split/drop any existing period that overlaps the one just applied, so the day's
+  // periods never overlap — the device's own schedule model is discrete, non-overlapping
+  // ranges, and two overlapping writes is undefined behavior on the firmware side.
+  // `skipIndex` excludes the period being edited from the comparison (it's replaced by
+  // `applied`, not compared against itself).
+  function resolveOverlaps(day, applied, skipIndex) {
+    var periods = schedule.days[day] || [];
+    var result = [];
+    periods.forEach(function (p, idx) {
+      if (idx === skipIndex) return;
+      if (p.end <= applied.start || p.start >= applied.end) { result.push(p); return; }
+      if (p.start < applied.start) result.push({ start: p.start, end: applied.start, temp: p.temp });
+      if (p.end > applied.end) result.push({ start: applied.end, end: p.end, temp: p.temp });
+      // else: p falls entirely inside applied — dropped
+    });
+    result.push(applied);
+    result.sort(function (a, b) { return a.start - b.start; });
+    // A split can push the day over the device's 6-period cap — drop the shortest
+    // leftover fragment(s) (never the period the user just set) until back at the limit.
+    while (result.length > 6) {
+      var shortestIdx = -1, shortestLen = Infinity;
+      result.forEach(function (seg, i) {
+        if (seg === applied) return;
+        var len = seg.end - seg.start;
+        if (len < shortestLen) { shortestLen = len; shortestIdx = i; }
+      });
+      if (shortestIdx === -1) break;
+      result.splice(shortestIdx, 1);
+    }
+    return result;
+  }
+
   el('period-apply').addEventListener('click', function () {
     if (!editing) return;
     var day = editing.day;
     if (!schedule.days[day]) schedule.days[day] = [];
     var v = editing.value;
     if (v.end <= v.start) { v.end = Math.min(1440, v.start + 15); }
-    if (editing.isNew) {
-      schedule.days[day].push(v);
-    } else {
-      schedule.days[day][editing.index] = v;
-    }
-    schedule.days[day].sort(function (a, b) { return a.start - b.start; });
+    schedule.days[day] = resolveOverlaps(day, v, editing.isNew ? -1 : editing.index);
     dirty = true;
     closePeriodEditor();
     render();

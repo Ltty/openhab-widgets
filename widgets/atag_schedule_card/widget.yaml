@@ -31,7 +31,8 @@ props:
       label: Thing
     - name: items
       label: Items
+timestamp: Sep 15, 2026, 6:43:51 PM
 component: oh-webframe
 config:
-  src: "='/static/atag/schedule.html?v=2' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem"
+  src: "='/static/atag/schedule.html?v=3' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem"
   height: 520

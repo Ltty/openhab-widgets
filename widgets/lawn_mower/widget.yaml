@@ -177,6 +177,7 @@ props:
     label: Control Actions
   - name: schedule
     label: Schedule & Weather Guards
+timestamp: Aug 25, 2026, 2:58:01 PM
 component: f7-card
 config: {}
 slots:

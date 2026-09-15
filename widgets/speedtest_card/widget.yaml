@@ -77,7 +77,7 @@ props:
     label: Binding Items
   - name: plan
     label: Plan Speeds
-timestamp: Aug 20, 2026, 10:00:00 AM
+timestamp: Aug 21, 2026, 8:10:14 AM
 component: oh-webframe
 config:
   src: "='/static/speedtest.html?v=10&planDown='+(props.planDown||150)+'&planUp='+(props.planUp||20)+(props.downloadItem?'&dl='+props.downloadItem:'')+(props.uploadItem?'&ul='+props.uploadItem:'')+(props.triggerItem?'&run='+props.triggerItem:'')+(props.pingItem?'&pg='+props.pingItem:'')+(props.jitterItem?'&jt='+props.jitterItem:'')+(props.dateItem?'&dt='+props.dateItem:'')+(props.serverItem?'&sv='+props.serverItem:'')"

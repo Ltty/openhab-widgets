@@ -31,7 +31,8 @@
   #current { font-size: clamp(56px, 14vw, 92px); font-weight: 100; line-height: 1; margin: 2px 0 8px; }
   #current .deg { font-size: 0.5em; vertical-align: top; }
   #target-row { display: flex; align-items: center; gap: 20px; margin-bottom: 6px; }
-  #target { font-size: clamp(26px, 6vw, 36px); font-weight: 300; color: var(--fg-dim); min-width: 3.2em; text-align: center; }
+  #target { font-size: clamp(26px, 6vw, 36px); font-weight: 300; color: var(--fg-dim); min-width: 3.2em; text-align: center; transition: color .2s; }
+  #target.pending { color: #f0b429; }
   #target .deg { font-size: 0.7em; }
   .stepper {
     width: 52px; height: 52px; border-radius: 50%; border: 2px solid currentColor;
@@ -364,13 +365,15 @@
     var next = Math.min(TARGET_MAX, Math.max(TARGET_MIN, Math.round((cur + delta) / TARGET_STEP) * TARGET_STEP));
     if (state[ITEM.target]) state[ITEM.target].state = String(next); // optimistic
     render();
+    el('target').classList.add('pending'); // waiting out the debounce — not sent to the device yet
     clearTimeout(stepTimer);
     pendingTargetWrite = next;
     stepTimer = setTimeout(function () {
+      el('target').classList.remove('pending');
       commandItem(ITEM.target, pendingTargetWrite.toFixed(1)).then(function () {
         setTimeout(refreshAll, 5000);
       });
-    }, 800);
+    }, 1500); // coalesces a burst of taps into one device write instead of one per tap
   }
   el('btn-lower').addEventListener('click', function () { stepTarget(-TARGET_STEP); });
   el('btn-raise').addEventListener('click', function () { stepTarget(TARGET_STEP); });

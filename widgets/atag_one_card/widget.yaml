@@ -41,10 +41,17 @@ props:
       required: false
       type: TEXT
     - context: item
-      description: Central heating active — heating#central-heating-active. Reserved for future use.
+      description: Central heating active — heating#central-heating-active. Drives the flame dot's solid-red state (matches the physical thermostat's steady LED for central heating).
       groupName: items
       label: CH Active Item
       name: chActiveItem
+      required: false
+      type: TEXT
+    - context: item
+      description: Domestic hot water active — hotwater#status. Drives the flame dot's blinking-red state (matches the physical thermostat's blinking LED for hot water — CH and DHW can't be active at once, since it's a single burner).
+      groupName: items
+      label: DHW Active Item
+      name: dhwActiveItem
       required: false
       type: TEXT
     - context: item
@@ -117,5 +124,5 @@ props:
       label: Items
 component: oh-webframe
 config:
-  src: "='/static/atag/control.html?v=5' + '&thing=' + props.thingUID + '&current=' + props.currentTempItem + '&target=' + props.targetTempItem + '&mode=' + props.modeItem + (props.flameItem ? '&flame=' + props.flameItem : '') + (props.chActiveItem ? '&chactive=' + props.chActiveItem : '') + (props.nextTimeItem ? '&nexttime=' + props.nextTimeItem : '') + (props.nextTempItem ? '&nexttemp=' + props.nextTempItem : '') + (props.vacationDurationItem ? '&vacdur=' + props.vacationDurationItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.vacationRemainingItem ? '&vacrem=' + props.vacationRemainingItem : '') + (props.extendDurationItem ? '&extdur=' + props.extendDurationItem : '') + (props.extendRemainingItem ? '&extrem=' + props.extendRemainingItem : '') + (props.fireplaceDurationItem ? '&firedur=' + props.fireplaceDurationItem : '') + (props.fireplaceRemainingItem ? '&firerem=' + props.fireplaceRemainingItem : '')"
+  src: "='/static/atag/control.html?v=6' + '&thing=' + props.thingUID + '&current=' + props.currentTempItem + '&target=' + props.targetTempItem + '&mode=' + props.modeItem + (props.flameItem ? '&flame=' + props.flameItem : '') + (props.chActiveItem ? '&chactive=' + props.chActiveItem : '') + (props.dhwActiveItem ? '&dhwactive=' + props.dhwActiveItem : '') + (props.nextTimeItem ? '&nexttime=' + props.nextTimeItem : '') + (props.nextTempItem ? '&nexttemp=' + props.nextTempItem : '') + (props.vacationDurationItem ? '&vacdur=' + props.vacationDurationItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.vacationRemainingItem ? '&vacrem=' + props.vacationRemainingItem : '') + (props.extendDurationItem ? '&extdur=' + props.extendDurationItem : '') + (props.extendRemainingItem ? '&extrem=' + props.extendRemainingItem : '') + (props.fireplaceDurationItem ? '&firedur=' + props.fireplaceDurationItem : '') + (props.fireplaceRemainingItem ? '&firerem=' + props.fireplaceRemainingItem : '')"
   height: 420

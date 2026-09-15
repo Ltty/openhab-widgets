@@ -26,7 +26,15 @@
     position: absolute; top: 14px; right: 18px; width: 10px; height: 10px; border-radius: 50%;
     background: var(--fg-dimmer); transition: background .3s, box-shadow .3s;
   }
+  /* solid = central heating (matches the physical thermostat's steady LED) */
   #flame.on { background: var(--red); box-shadow: 0 0 8px 2px rgba(224,71,47,0.6); }
+  /* blinking = domestic hot water (matches the physical thermostat's blinking LED) — CH and
+     DHW can't both be active, it's one burner, so these two states are mutually exclusive */
+  #flame.blink { animation: flame-blink 1s step-end infinite; }
+  @keyframes flame-blink {
+    0%, 49% { background: var(--red); box-shadow: 0 0 8px 2px rgba(224,71,47,0.6); }
+    50%, 100% { background: var(--fg-dimmer); box-shadow: none; }
+  }
   .caption { font-size: 12px; letter-spacing: 2px; color: var(--fg-dim); text-transform: uppercase; margin-bottom: 2px; }
   #current { font-size: clamp(56px, 14vw, 92px); font-weight: 100; line-height: 1; margin: 2px 0 8px; }
   #current .deg { font-size: 0.5em; vertical-align: top; }
@@ -198,6 +206,7 @@
     mode:    P.get('mode') || '',
     flame:   P.get('flame') || '',
     chactive:P.get('chactive') || '',
+    dhwactive:P.get('dhwactive') || '',
     nexttime:P.get('nexttime') || '',
     nexttemp:P.get('nexttemp') || '',
     vacdur:  P.get('vacdur') || '',
@@ -274,8 +283,20 @@
     var tgt = numState(ITEM.target, null);
     el('target').innerHTML = (tgt === null ? '–' : tgt.toFixed(1)) + '<span class="deg">°</span>';
 
-    var flameOn = strState(ITEM.flame, 'OFF') === 'ON';
-    el('flame').classList.toggle('on', flameOn);
+    // Solid = central heating, blinking = domestic hot water — mirrors the physical
+    // thermostat's own LED. CH and DHW can't both be active (one burner), so these are
+    // mutually exclusive; dhwOn wins visually if somehow both read true at once.
+    var flameEl = el('flame');
+    if (ITEM.chactive || ITEM.dhwactive) {
+      var chOn = ITEM.chactive && strState(ITEM.chactive, 'OFF') === 'ON';
+      var dhwOn = ITEM.dhwactive && strState(ITEM.dhwactive, 'OFF') === 'ON';
+      flameEl.classList.toggle('blink', !!dhwOn);
+      flameEl.classList.toggle('on', !!chOn && !dhwOn);
+    } else {
+      var flameOn = strState(ITEM.flame, 'OFF') === 'ON';
+      flameEl.classList.remove('blink');
+      flameEl.classList.toggle('on', flameOn);
+    }
 
     var mode = strState(ITEM.mode, 'auto');
     var m = MODE_BY_KEY[mode] || MODE_BY_KEY.auto;

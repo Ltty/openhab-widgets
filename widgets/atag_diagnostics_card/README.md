@@ -12,11 +12,12 @@ single accordion card.
 ## What it shows
 
 A single flat list (no accordion — this card only ever appears inside a popup, and collapsing a
-single section inside something already one tap deep just adds a redundant click) of: water
-pressure, modulation level (+ minimum), burner target, flame, burning hours, boiler flow/return
-temperature, delta temperature, time to target, max boiler temperature, average outside
-temperature, weather status, regulation state, PCB temperature, voltage, WiFi signal, controller
-resets, memory allocation, report time, device errors, boiler errors.
+single section inside something already one tap deep just adds a redundant click), grouped under
+plain section headers: **Status** (flame), **Alerts** (device/boiler errors), **Central Heating**
+(water pressure, modulation level, boiler flow/return temperature, delta temperature, time to
+target, average outside temperature, weather status), **Hot Water** (DHW setpoint, DHW water
+temperature), **Device** (serial number, device ID, firmware version, burning hours, PCB
+temperature, voltage, WiFi signal, controller resets, last report).
 
 All rows are `oh-label-item` — display only, nothing here writes to the device.
 
@@ -49,6 +50,16 @@ list; each prop's description names the exact `atagone` channel it targets.
 ---
 
 ## Changelog
+
+### Version 2.0.0 (BREAKING)
+
+- Binding update removed 5 channels this widget exposed — `minModulationLevelItem`,
+  `burnerTargetItem`, `maxBoilerTempItem`, `regulationStateItem`, `memoryAllocationItem` are gone;
+  remove them from any existing widget instance's config
+- Added `dhwSetpointItem` / `dhwWaterTempItem` (hot water setpoint and current temperature) as a
+  new Hot Water section
+- Footer text changed from a confusing reference to the ATAG app's own menu path to a plain
+  "All values are read-only, reported directly by the boiler."
 
 ### Version 1.0.0
 

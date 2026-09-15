@@ -103,12 +103,8 @@
 (function () {
   var P = new URLSearchParams(location.search);
   function ip(key) { return P.get(key) || ''; }
-  function pad2(n) { return (n < 10 ? '0' : '') + n; }
-  function secondsToHHMM(s) { var h = Math.floor(s / 3600) % 24, m = Math.floor((s % 3600) / 60); return pad2(h) + ':' + pad2(m); }
-  function hhmmToSeconds(v) {
-    var m = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec((v || '').trim());
-    if (!m) return null;
-    return parseInt(m[1], 10) * 3600 + parseInt(m[2], 10) * 60;
+  function isValidHHMM(v) {
+    return /^([01]?\d|2[0-3]):([0-5]\d)$/.test((v || '').trim());
   }
 
   var ITEMS = {
@@ -116,8 +112,6 @@
     controlModeItem: ip('controlmode'),
     scheduleBaseTempItem: ip('schedulebase'),
     vacationTempItem: ip('vactemp'),
-    vacationDurationDefaultItem: ip('vacdurdef'),
-    extendDurationDefaultItem: ip('extdurdef'),
     heatingTypeItem: ip('heatingtype'),
     insulationItem: ip('insulation'),
     buildingSizeItem: ip('buildingsize'),
@@ -163,10 +157,6 @@
     { section: 'Central Heating', key: 'controlModeItem', label: 'Operating Mode', type: 'select', options: OPTS.controlMode, gates: true },
     { section: 'Central Heating', key: 'scheduleBaseTempItem', label: 'Schedule Base Temperature', type: 'number', min: 4, max: 27, step: 0.5, decimals: 1, suffix: ' °C' },
     { section: 'Central Heating', key: 'vacationTempItem', label: 'Vacation Temperature', type: 'number', min: 4, max: 27, step: 0.5, decimals: 1, suffix: ' °C' },
-    { section: 'Central Heating', key: 'vacationDurationDefaultItem', label: 'Vacation Duration Default', type: 'number',
-      min: 1, max: 365, step: 1, decimals: 0, suffix: ' days', toRaw: function (d) { return d * 86400; }, fromRaw: function (s) { return s / 86400; }, commandUnit: 'd' },
-    { section: 'Central Heating', key: 'extendDurationDefaultItem', label: 'Extend Duration Default', type: 'number',
-      min: 15, max: 360, step: 15, decimals: 0, suffix: ' min', toRaw: function (m) { return m * 60; }, fromRaw: function (s) { return s / 60; }, commandUnit: 'min' },
     { section: 'Central Heating', key: 'heatingTypeItem', label: 'Heating Type', type: 'select', options: OPTS.heatingType, visibleIf: function (c) { return c.weatherDependent; } },
     { section: 'Central Heating', key: 'insulationItem', label: 'Insulation Level', type: 'select', options: OPTS.insulation, visibleIf: function (c) { return c.weatherDependent; } },
     { section: 'Central Heating', key: 'buildingSizeItem', label: 'Building Size', type: 'select', options: OPTS.buildingSize, visibleIf: function (c) { return c.weatherDependent; } },
@@ -183,7 +173,7 @@
     { section: 'Hot Water', key: 'legionellaProtectionItem', label: 'Legionella Protection', type: 'toggle' },
     { section: 'Hot Water', key: 'legionellaProtectionDayItem', label: 'Legionella Day', type: 'select', options: OPTS.legionellaDay, visibleIf: function (c) { return c.legionella; } },
     { section: 'Hot Water', key: 'legionellaProtectionTimeItem', label: 'Legionella Time', type: 'text', placeholder: 'HH:mm',
-      fromRaw: secondsToHHMM, toRaw: hhmmToSeconds, rawCommandUnit: 's', visibleIf: function (c) { return c.legionella; } },
+      visibleIf: function (c) { return c.legionella; } },
   ].filter(function (f) { return ITEMS[f.key]; });
 
   var state = {};    // itemName -> raw REST item object
@@ -349,7 +339,7 @@
       inp.placeholder = f.placeholder || '';
       inp.value = v || '';
       inp.addEventListener('change', function () {
-        if (f.toRaw && f.toRaw(inp.value) === null) { inp.value = v; return; } // reject invalid, revert
+        if (f.key === 'legionellaProtectionTimeItem' && !isValidHHMM(inp.value)) { inp.value = v; return; } // reject invalid, revert
         setValue(f, inp.value);
       });
       control.appendChild(inp);

@@ -48,20 +48,6 @@ props:
       required: false
       type: TEXT
     - context: item
-      description: control#vacation-duration-default — days used when activating vacation with no explicit duration. Read+write; shown and committed in days (the widget converts to/from the item's raw seconds).
-      groupName: ch
-      label: Vacation Duration Default Item
-      name: vacationDurationDefaultItem
-      required: false
-      type: TEXT
-    - context: item
-      description: control#extend-duration-default — minutes used when activating extend with no explicit duration. Read+write; shown and committed in minutes.
-      groupName: ch
-      label: Extend Duration Default Item
-      name: extendDurationDefaultItem
-      required: false
-      type: TEXT
-    - context: item
       description: heating#heating-type.
       groupName: ch
       label: Heating Type Item
@@ -175,5 +161,5 @@ props:
       label: Hot Water
 component: oh-webframe
 config:
-  src: "='/static/atag/regulation.html?v=4' + (props.seasonItem ? '&season=' + props.seasonItem : '') + (props.controlModeItem ? '&controlmode=' + props.controlModeItem : '') + (props.scheduleBaseTempItem ? '&schedulebase=' + props.scheduleBaseTempItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.vacationDurationDefaultItem ? '&vacdurdef=' + props.vacationDurationDefaultItem : '') + (props.extendDurationDefaultItem ? '&extdurdef=' + props.extendDurationDefaultItem : '') + (props.heatingTypeItem ? '&heatingtype=' + props.heatingTypeItem : '') + (props.insulationItem ? '&insulation=' + props.insulationItem : '') + (props.buildingSizeItem ? '&buildingsize=' + props.buildingSizeItem : '') + (props.roomInfluenceItem ? '&roominfluence=' + props.roomInfluenceItem : '') + (props.climateZoneItem ? '&climatezone=' + props.climateZoneItem : '') + (props.maxPreheatItem ? '&maxpreheat=' + props.maxPreheatItem : '') + (props.summerEcoModeItem ? '&ecomode=' + props.summerEcoModeItem : '') + (props.summerEcoTempItem ? '&ecotemp=' + props.summerEcoTempItem : '') + (props.frostProtectionItem ? '&frost=' + props.frostProtectionItem : '') + (props.frostProtectionRoomItem ? '&frostroom=' + props.frostProtectionRoomItem : '') + (props.frostProtectionOutsideItem ? '&frostoutside=' + props.frostProtectionOutsideItem : '') + (props.dhwScheduleBaseTempItem ? '&dhwbase=' + props.dhwScheduleBaseTempItem : '') + (props.legionellaProtectionItem ? '&legionella=' + props.legionellaProtectionItem : '') + (props.legionellaProtectionDayItem ? '&legionelladay=' + props.legionellaProtectionDayItem : '') + (props.legionellaProtectionTimeItem ? '&legionellatime=' + props.legionellaProtectionTimeItem : '') + (props.displayBrightnessItem ? '&brightness=' + props.displayBrightnessItem : '') + (props.timeZoneItem ? '&timezone=' + props.timeZoneItem : '')"
+  src: "='/static/atag/regulation.html?v=5' + (props.seasonItem ? '&season=' + props.seasonItem : '') + (props.controlModeItem ? '&controlmode=' + props.controlModeItem : '') + (props.scheduleBaseTempItem ? '&schedulebase=' + props.scheduleBaseTempItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.heatingTypeItem ? '&heatingtype=' + props.heatingTypeItem : '') + (props.insulationItem ? '&insulation=' + props.insulationItem : '') + (props.buildingSizeItem ? '&buildingsize=' + props.buildingSizeItem : '') + (props.roomInfluenceItem ? '&roominfluence=' + props.roomInfluenceItem : '') + (props.climateZoneItem ? '&climatezone=' + props.climateZoneItem : '') + (props.maxPreheatItem ? '&maxpreheat=' + props.maxPreheatItem : '') + (props.summerEcoModeItem ? '&ecomode=' + props.summerEcoModeItem : '') + (props.summerEcoTempItem ? '&ecotemp=' + props.summerEcoTempItem : '') + (props.frostProtectionItem ? '&frost=' + props.frostProtectionItem : '') + (props.frostProtectionRoomItem ? '&frostroom=' + props.frostProtectionRoomItem : '') + (props.frostProtectionOutsideItem ? '&frostoutside=' + props.frostProtectionOutsideItem : '') + (props.dhwScheduleBaseTempItem ? '&dhwbase=' + props.dhwScheduleBaseTempItem : '') + (props.legionellaProtectionItem ? '&legionella=' + props.legionellaProtectionItem : '') + (props.legionellaProtectionDayItem ? '&legionelladay=' + props.legionellaProtectionDayItem : '') + (props.legionellaProtectionTimeItem ? '&legionellatime=' + props.legionellaProtectionTimeItem : '') + (props.displayBrightnessItem ? '&brightness=' + props.displayBrightnessItem : '') + (props.timeZoneItem ? '&timezone=' + props.timeZoneItem : '')"
   height: 560

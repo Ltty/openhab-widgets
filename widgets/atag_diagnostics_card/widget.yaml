@@ -20,20 +20,6 @@ props:
     type: TEXT
     groupName: items
   - context: item
-    description: heating#min-modulation-level
-    label: Min Modulation Level Item
-    name: minModulationLevelItem
-    required: false
-    type: TEXT
-    groupName: items
-  - context: item
-    description: heating#burner-target (none/ch/dhw)
-    label: Burner Target Item
-    name: burnerTargetItem
-    required: false
-    type: TEXT
-    groupName: items
-  - context: item
     description: heating#flame
     label: Flame Item
     name: flameItem
@@ -76,13 +62,6 @@ props:
     type: TEXT
     groupName: items
   - context: item
-    description: heating#max-boiler-temperature
-    label: Max Boiler Temp Item
-    name: maxBoilerTempItem
-    required: false
-    type: TEXT
-    groupName: items
-  - context: item
     description: heating#average-outside-temperature
     label: Average Outside Temp Item
     name: averageOutsideTempItem
@@ -93,13 +72,6 @@ props:
     description: heating#weather-status
     label: Weather Status Item
     name: weatherStatusItem
-    required: false
-    type: TEXT
-    groupName: items
-  - context: item
-    description: heating#regulation-state
-    label: Regulation State Item
-    name: regulationStateItem
     required: false
     type: TEXT
     groupName: items
@@ -128,13 +100,6 @@ props:
     description: device resets channel
     label: Resets Item
     name: resetsItem
-    required: false
-    type: TEXT
-    groupName: items
-  - context: item
-    description: device memory-allocation channel
-    label: Memory Allocation Item
-    name: memoryAllocationItem
     required: false
     type: TEXT
     groupName: items
@@ -218,10 +183,6 @@ slots:
     config:
       item: =props.flameItem
       title: Flame
-  - component: oh-label-item
-    config:
-      item: =props.burnerTargetItem
-      title: Burner Target
   - component: Label
     config:
       text: Alerts
@@ -262,10 +223,6 @@ slots:
       title: Modulation Level
   - component: oh-label-item
     config:
-      item: =props.minModulationLevelItem
-      title: Min Modulation Level
-  - component: oh-label-item
-    config:
       item: =props.boilerTempItem
       title: Boiler Flow Temp
   - component: oh-label-item
@@ -282,20 +239,12 @@ slots:
       title: Time to Target
   - component: oh-label-item
     config:
-      item: =props.maxBoilerTempItem
-      title: Max Boiler Temp
-  - component: oh-label-item
-    config:
       item: =props.averageOutsideTempItem
       title: Average Outside Temp
   - component: oh-label-item
     config:
       item: =props.weatherStatusItem
       title: Weather Status
-  - component: oh-label-item
-    config:
-      item: =props.regulationStateItem
-      title: Regulation State
   - component: Label
     config:
       text: Hot Water
@@ -361,10 +310,6 @@ slots:
     config:
       item: =props.resetsItem
       title: Resets
-  - component: oh-label-item
-    config:
-      item: =props.memoryAllocationItem
-      title: Memory Allocation
   - component: oh-label-item
     config:
       item: =props.reportTimeItem

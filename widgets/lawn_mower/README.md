@@ -141,7 +141,7 @@ Paste [`items/automower.items`](items/automower.items) into your `.items` file. 
 
 ### 3. Create weather guard rules (Threshold Alert)
 
-Install the **Threshold Alert** template from the [OpenHAB Marketplace](https://community.openhab.org/) (search "Threshold Alert", template ID `144863`).
+Install the **Threshold Alert** template from the [OpenHAB Marketplace](https://community.openhab.org/) (search "Threshold Alert", template ID `170178`).
 
 For each guard you want, create a rule from the template. In the template's action script, set the corresponding guard item:
 

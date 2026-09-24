@@ -21,7 +21,12 @@
   #app { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
   /* ---- main face ---- */
-  #face { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 8px 12px; min-height: 0; }
+  /* 16px horizontal/vertical matches the Framework7 card's own default content padding
+     (--f7-card-content-padding-horizontal/vertical), so this reads flush with the other
+     cards on the page. The bottom action bar (#bar) stays edge-to-edge on purpose — its own
+     --bar-bg background is the toolbar, and the outer rounded corners (applied to the iframe
+     element itself, see widget.yaml's oh-webframe style) still round its bottom two corners. */
+  #face { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 16px; min-height: 0; }
   #flame {
     position: absolute; top: 14px; right: 18px; width: 10px; height: 10px; border-radius: 50%;
     background: var(--fg-dimmer); transition: background .3s, box-shadow .3s;

@@ -88,6 +88,17 @@ item props for the channels you want live.
 
 ## Changelog
 
+### Version 1.1.1
+
+- Rounded corners (4px, matching the Framework7 default card radius) applied to the widget's
+  `oh-webframe` via a `style` override — the iframe was previously a square-cornered rectangle,
+  out of place next to the page's other (native, rounded) cards.
+- `control.html`'s `#face` (main dial content) now uses 16px padding on all sides, matching the
+  Framework7 default card content padding (`--f7-card-content-padding-horizontal/vertical`), so
+  the widget's content inset matches other cards on the page. The bottom action bar stays
+  edge-to-edge on purpose — its own `--bar-bg` background is the toolbar, and the outer rounded
+  corners (from the iframe-level style above) still round its bottom two corners.
+
 ### Version 1.1.0
 
 - Added `dhwActiveItem` prop — the flame dot now distinguishes central heating (solid red) from

@@ -48,7 +48,7 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 | `setpointItem` | No | — | Thermostat setpoint item |
 | `title` | No | item label | Room display name |
 | `icon` | No | `f7:house` | Icon name (e.g. `iconify:mdi:sofa`) |
-| `compact` | No | `false` | Hides the Safe/Elevated/Critical legend rows on narrow (<768px) screens — use when placing several cards per row. The legend still shows on wider screens regardless. |
+| `compact` | No | `false` | Hides the Safe/Elevated/Critical legend rows unconditionally — use when placing several cards per row and you don't need the legend on any screen size (there's no reliable way to key this off viewport width in a widget expression — see 1.2.2 changelog) |
 | `min` | No | `40` | Safe zone lower bound (%) — the floor of the "Safe" label in the legend |
 | `orange` | No | `60` | Elevated threshold — above this is amber (%) |
 | `red` | No | `70` | Critical threshold — above this is red (%) |
@@ -64,6 +64,16 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 ---
 
 ## Changelog
+
+### Version 1.2.2
+
+- Reverted the 1.2.1 desktop-responsive `compact` behavior — `window.innerWidth` in a widget
+  `visible:` expression didn't reliably hide the legend on narrow screens in production (it
+  showed at every width tested). `compact` is back to a plain, unconditional toggle exactly as
+  in 1.2.0 (`true` always hides the legend, `false` always shows it), until a reliable
+  per-viewport signal is available in this expression context. Pages that want the legend
+  visible everywhere (the common case, since responsive hiding isn't available) should set
+  `compact:false` explicitly.
 
 ### Version 1.2.1
 

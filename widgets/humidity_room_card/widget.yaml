@@ -85,7 +85,7 @@ props:
     label: Thresholds
   - name: extras
     label: Valve
-timestamp: Sep 24, 2026, 12:20:48 PM
+timestamp: Sep 24, 2026, 12:36:31 PM
 component: oh-link
 config:
   action: analyzer
@@ -204,7 +204,7 @@ slots:
               text: ' '
           - component: f7-row
             config:
-              visible: =!props.compact || window.innerWidth >= 768
+              visible: =!props.compact
               style:
                 align-items: center
                 margin: 2px 0
@@ -245,7 +245,7 @@ slots:
                       text: =props.min + '–' + props.orange + ' %'
           - component: f7-row
             config:
-              visible: =!props.compact || window.innerWidth >= 768
+              visible: =!props.compact
               style:
                 align-items: center
                 margin: 2px 0
@@ -286,7 +286,7 @@ slots:
                       text: =props.orange + '–' + props.red + ' %'
           - component: f7-row
             config:
-              visible: =!props.compact || window.innerWidth >= 768
+              visible: =!props.compact
               style:
                 align-items: center
                 margin: 2px 0

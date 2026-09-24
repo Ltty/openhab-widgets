@@ -1,0 +1,193 @@
+uid: atag_heating_chart
+tags:
+- atag
+- chart
+props:
+  parameters:
+  - context: item
+    description: Target (setpoint) temperature — heating#target-temperature.
+    label: Target Temperature Item
+    name: targetTempItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Outdoor temperature as measured by the boiler's own sensor — heating#outside-temperature.
+    label: Outside Temperature Item
+    name: outsideTempItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Room (current) temperature — heating#room-temperature.
+    label: Room Temperature Item
+    name: roomTempItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Central heating active — heating#central-heating-active. Drives the "Heating" overlay band.
+    label: Heating Active Item
+    name: statusItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Multi-day rolling average outside temperature used by the boiler's weather-compensation curve — heating#average-outside-temperature.
+    label: Average Outside Temperature Item
+    name: averageOutsideTempItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Summer eco-mode temperature threshold — heating#summer-eco-temperature.
+    label: Eco Threshold Item
+    name: ecoThresholdItem
+    required: true
+    type: TEXT
+    groupName: items
+  - description: Defaults to "Central Heating"
+    label: Chart Title
+    name: title
+    required: false
+    type: TEXT
+    groupName: appearance
+  - default: '340'
+    label: Height (px)
+    name: height
+    required: false
+    type: INTEGER
+    groupName: appearance
+  parameterGroups:
+  - name: items
+    label: Items
+  - name: appearance
+    label: Appearance
+timestamp: Sep 24, 2026, 3:49:16 PM
+component: oh-chart
+config:
+  height: '=(props.height || 340) + "px"'
+  options:
+    tooltip:
+      trigger: axis
+  period: D
+  chartType: ''
+slots:
+  grid:
+  - component: oh-chart-grid
+    config:
+      height: 62%
+      includeLabels: true
+      left: 55px
+      right: 20px
+      top: 12%
+  legend:
+  - component: oh-chart-legend
+    config:
+      bottom: 1%
+      orient: horizontal
+      show: true
+      type: scroll
+  series:
+  - component: oh-time-series
+    config:
+      color: '#2f8fe0'
+      gridIndex: 0
+      item: =props.targetTempItem
+      lineStyle:
+        type: dashed
+      name: Target
+      service: rrd4j
+      step: end
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  - component: oh-time-series
+    config:
+      color: '#fab219'
+      gridIndex: 0
+      item: =props.outsideTempItem
+      lineStyle:
+        opacity: 0.6
+      name: Outside
+      service: rrd4j
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  - component: oh-time-series
+    config:
+      color: '#0ca30c'
+      gridIndex: 0
+      item: =props.roomTempItem
+      name: Room
+      service: rrd4j
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  - component: oh-state-series
+    config:
+      color: '#e0472f'
+      gridIndex: 0
+      item: =props.statusItem
+      label:
+        show: false
+      name: Heating
+      service: influxdb
+      stateColor:
+        'OFF': rgba(0,0,0,0)
+        'ON': rgba(224,71,47,0.18)
+      xAxisIndex: 0
+      yAxisIndex: 1
+      yHeight: 2
+      yValue: 0.5
+  - component: oh-time-series
+    config:
+      color: '#9c27b0'
+      gridIndex: 0
+      item: =props.averageOutsideTempItem
+      name: Average
+      service: rrd4j
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  - component: oh-time-series
+    config:
+      color: '#ff6f00'
+      gridIndex: 0
+      item: =props.ecoThresholdItem
+      lineStyle:
+        type: dashed
+      name: Eco Threshold
+      service: rrd4j
+      step: end
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  title:
+  - component: oh-chart-title
+    config:
+      show: true
+      text: =props.title || "Central Heating"
+  tooltip:
+  - component: oh-chart-tooltip
+    config:
+      confine: true
+      orient: horizontal
+      show: true
+      smartFormatter: true
+      trigger: axis
+  xAxis:
+  - component: oh-time-axis
+    config:
+      gridIndex: 0
+  yAxis:
+  - component: oh-value-axis
+    config:
+      gridIndex: 0
+      name: °C
+  - component: oh-value-axis
+    config:
+      gridIndex: 0
+      max: 1
+      min: 0
+      show: false

@@ -1,0 +1,137 @@
+uid: atag_hotwater_chart
+tags:
+- atag
+- chart
+props:
+  parameters:
+  - context: item
+    description: Target (setpoint) hot water temperature — hotwater#target-temperature.
+    label: Target Temperature Item
+    name: targetTempItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Current hot water temperature — hotwater#temperature.
+    label: Water Temperature Item
+    name: waterTempItem
+    required: true
+    type: TEXT
+    groupName: items
+  - context: item
+    description: Domestic hot water active — hotwater#status. Drives the "Heating" overlay band.
+    label: Heating Active Item
+    name: statusItem
+    required: true
+    type: TEXT
+    groupName: items
+  - description: Defaults to "Domestic Hot Water"
+    label: Chart Title
+    name: title
+    required: false
+    type: TEXT
+    groupName: appearance
+  - default: '340'
+    label: Height (px)
+    name: height
+    required: false
+    type: INTEGER
+    groupName: appearance
+  parameterGroups:
+  - name: items
+    label: Items
+  - name: appearance
+    label: Appearance
+timestamp: Sep 24, 2026, 3:49:31 PM
+component: oh-chart
+config:
+  height: '=(props.height || 340) + "px"'
+  options:
+    tooltip:
+      trigger: axis
+  period: D
+  chartType: ''
+slots:
+  grid:
+  - component: oh-chart-grid
+    config:
+      height: 62%
+      includeLabels: true
+      left: 55px
+      right: 20px
+      top: 12%
+  legend:
+  - component: oh-chart-legend
+    config:
+      bottom: 1%
+      orient: horizontal
+      show: true
+      type: scroll
+  series:
+  - component: oh-time-series
+    config:
+      color: '#2f8fe0'
+      gridIndex: 0
+      item: =props.targetTempItem
+      lineStyle:
+        type: dashed
+      name: Target
+      service: rrd4j
+      step: end
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  - component: oh-time-series
+    config:
+      color: '#0ca30c'
+      gridIndex: 0
+      item: =props.waterTempItem
+      name: Water
+      service: rrd4j
+      type: line
+      xAxisIndex: 0
+      yAxisIndex: 0
+  - component: oh-state-series
+    config:
+      color: '#e0472f'
+      gridIndex: 0
+      item: =props.statusItem
+      label:
+        show: false
+      name: Heating
+      service: influxdb
+      stateColor:
+        'OFF': rgba(0,0,0,0)
+        'ON': rgba(224,71,47,0.18)
+      xAxisIndex: 0
+      yAxisIndex: 1
+      yHeight: 2
+      yValue: 0.5
+  title:
+  - component: oh-chart-title
+    config:
+      show: true
+      text: =props.title || "Domestic Hot Water"
+  tooltip:
+  - component: oh-chart-tooltip
+    config:
+      confine: true
+      orient: horizontal
+      show: true
+      smartFormatter: true
+      trigger: axis
+  xAxis:
+  - component: oh-time-axis
+    config:
+      gridIndex: 0
+  yAxis:
+  - component: oh-value-axis
+    config:
+      gridIndex: 0
+      name: °C
+  - component: oh-value-axis
+    config:
+      gridIndex: 0
+      max: 1
+      min: 0
+      show: false

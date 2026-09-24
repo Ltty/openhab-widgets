@@ -48,7 +48,7 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 | `setpointItem` | No | — | Thermostat setpoint item |
 | `title` | No | item label | Room display name |
 | `icon` | No | `f7:house` | Icon name (e.g. `iconify:mdi:sofa`) |
-| `compact` | No | `false` | Hides the Safe/Elevated/Critical legend rows — use when placing several cards per row |
+| `compact` | No | `false` | Hides the Safe/Elevated/Critical legend rows on narrow (<768px) screens — use when placing several cards per row. The legend still shows on wider screens regardless. |
 | `min` | No | `40` | Safe zone lower bound (%) — the floor of the "Safe" label in the legend |
 | `orange` | No | `60` | Elevated threshold — above this is amber (%) |
 | `red` | No | `70` | Critical threshold — above this is red (%) |
@@ -64,6 +64,12 @@ A compact OpenHAB Main UI widget that shows a room's current humidity with a col
 ---
 
 ## Changelog
+
+### Version 1.2.1
+
+- `compact` now only hides the legend below 768px viewport width (`window.innerWidth`). On
+  desktop-width screens the legend always shows, even with `compact:true` set, since there's
+  room for it there and it's useful reference (the exact Safe/Elevated/Critical % ranges).
 
 ### Version 1.2.0
 

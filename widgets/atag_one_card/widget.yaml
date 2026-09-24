@@ -122,7 +122,7 @@ props:
       label: Thing
     - name: items
       label: Items
-timestamp: Sep 24, 2026, 12:35:26 PM
+timestamp: Sep 24, 2026, 3:02:03 PM
 component: oh-webframe
 config:
   src: "='/static/atag/control.html?v=7' + '&thing=' + props.thingUID + '&current=' + props.currentTempItem + '&target=' + props.targetTempItem + '&mode=' + props.modeItem + (props.flameItem ? '&flame=' + props.flameItem : '') + (props.chActiveItem ? '&chactive=' + props.chActiveItem : '') + (props.dhwActiveItem ? '&dhwactive=' + props.dhwActiveItem : '') + (props.nextTimeItem ? '&nexttime=' + props.nextTimeItem : '') + (props.nextTempItem ? '&nexttemp=' + props.nextTempItem : '') + (props.vacationDurationItem ? '&vacdur=' + props.vacationDurationItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.vacationRemainingItem ? '&vacrem=' + props.vacationRemainingItem : '') + (props.extendDurationItem ? '&extdur=' + props.extendDurationItem : '') + (props.extendRemainingItem ? '&extrem=' + props.extendRemainingItem : '') + (props.fireplaceDurationItem ? '&firedur=' + props.fireplaceDurationItem : '') + (props.fireplaceRemainingItem ? '&firerem=' + props.fireplaceRemainingItem : '')"
@@ -130,3 +130,4 @@ config:
   style:
     border-radius: 12px
     overflow: hidden
+    margin: 16px

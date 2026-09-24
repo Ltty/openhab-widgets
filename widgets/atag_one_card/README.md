@@ -88,6 +88,14 @@ item props for the channels you want live.
 
 ## Changelog
 
+### Version 1.1.3
+
+- Added `margin: 16px` to the `oh-webframe`'s `style` — matching the Framework7 default card
+  margin (`--f7-card-margin-horizontal/vertical: 16px`) that every other card on the page gets
+  automatically from the `.card` CSS class. The webframe is a raw iframe with no `.card` class,
+  so it rendered edge-to-edge in its grid column while sibling cards had their usual inset,
+  making the thermostat look wider than every other card on the page.
+
 ### Version 1.1.2
 
 - Border radius bumped 4px → 12px. 4px matched the Framework7 default card radius CSS variable

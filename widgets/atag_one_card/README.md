@@ -88,6 +88,16 @@ item props for the channels you want live.
 
 ## Changelog
 
+### Version 1.1.4
+
+- Fixed horizontal page scrolling introduced by 1.1.3's `margin: 16px`. Margin adds space
+  *outside* an element's box — it doesn't work like a normal block's `width:auto` auto-shrink
+  unless the element's own width is also reduced to compensate, and the `oh-webframe` iframe has
+  an explicit width (not `auto`), so the added margin pushed its total footprint past its grid
+  column, wide enough to force the whole page to scroll horizontally. Added
+  `width: calc(100% - 32px)` (32px = the 16px margin doubled for both sides) plus
+  `box-sizing: border-box` so the margin now insets the frame instead of growing past it.
+
 ### Version 1.1.3
 
 - Added `margin: 16px` to the `oh-webframe`'s `style` — matching the Framework7 default card

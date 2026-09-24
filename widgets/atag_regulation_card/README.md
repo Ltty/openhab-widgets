@@ -89,6 +89,16 @@ sent.
 
 ## Changelog
 
+### Version 2.2.0
+
+- Save now confirms every changed field against the device instead of trusting the write's own
+  HTTP response — the ATAG's embedded HTTP server is known to drop requests silently (see the
+  `atagone` binding's own test notes), so a value could look saved and then quietly revert once
+  the next poll read back the device's unchanged old value. Save now waits out one
+  `refreshInterval` poll (~70s) after sending, re-reads, and retries once if a field didn't stick;
+  the status line reports "Confirmed" / "…retrying…" / which fields the ATAG rejected, instead of
+  an immediate "Saved" that could be wrong
+
 ### Version 2.1.0
 
 - Summer Eco Mode/Temperature are now shown regardless of Operating Mode, not just in

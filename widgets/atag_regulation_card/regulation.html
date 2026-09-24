@@ -409,47 +409,88 @@
 
   function delay(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
+  // The ATAG's embedded HTTP server is known to drop requests silently (see the atagone
+  // binding's own test notes) — a command can be accepted by openHAB but never reach the
+  // device, and the next poll then reports back the device's unchanged old value. So "sent"
+  // is not "saved": after sending, wait out one refreshInterval poll (60s) plus margin, then
+  // re-read from openHAB and check the value actually stuck. One silent retry if it didn't.
+  var POLL_CONFIRM_DELAY_MS = 70000;
+
+  function buildWrite(key, value) {
+    var f = FIELDS.find(function (x) { return x.key === key; });
+    var itemName = ITEMS[key];
+    var body;
+    if (f.type === 'toggle') {
+      body = value ? 'ON' : 'OFF';
+    } else if (f.type === 'number') {
+      var raw = f.toRaw ? f.toRaw(value) : value;
+      body = f.commandUnit ? (value + ' ' + f.commandUnit) : String(raw);
+    } else if (f.rawCommandUnit && f.toRaw) {
+      body = f.toRaw(value) + ' ' + f.rawCommandUnit;
+    } else {
+      body = String(value);
+    }
+    return { itemName: itemName, body: body };
+  }
+
+  // `values` is an explicit snapshot ({key: targetValue}), never `edited`/`loaded` — both of
+  // those get overwritten by the loadAll() that runs between the initial send and a retry, so
+  // reading them live here would resend whatever the device most recently reported instead of
+  // what the user actually asked for.
+  function sendSequentially(keys, values, statusVerb) {
+    var i = 0;
+    function next() {
+      if (i >= keys.length) return Promise.resolve();
+      var w = buildWrite(keys[i], values[keys[i]]);
+      el('save-status').textContent = statusVerb + ' ' + (i + 1) + ' / ' + keys.length + '…';
+      return commandItem(w.itemName, w.body).then(function () {
+        i++;
+        return delay(400).then(next);
+      });
+    }
+    return next();
+  }
+
   el('btn-save').addEventListener('click', function () {
     var changedKeys = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; });
     if (!changedKeys.length) return;
     el('btn-save').disabled = true;
     el('btn-revert').disabled = true;
 
-    var writes = changedKeys.map(function (key) {
-      var f = FIELDS.find(function (x) { return x.key === key; });
-      var v = edited[key];
-      var itemName = ITEMS[key];
-      var body;
-      if (f.type === 'toggle') {
-        body = v ? 'ON' : 'OFF';
-      } else if (f.type === 'number') {
-        var raw = f.toRaw ? f.toRaw(v) : v;
-        body = f.commandUnit ? (v + ' ' + f.commandUnit) : String(raw);
-      } else if (f.rawCommandUnit && f.toRaw) {
-        body = f.toRaw(v) + ' ' + f.rawCommandUnit;
-      } else {
-        body = String(v);
-      }
-      return { itemName: itemName, body: body };
-    });
+    var attempted = {};
+    changedKeys.forEach(function (k) { attempted[k] = edited[k]; });
+    function stillPending() {
+      return changedKeys.filter(function (k) { return loaded[k] !== attempted[k]; });
+    }
 
-    var i = 0;
-    function next() {
-      if (i >= writes.length) {
-        el('save-status').textContent = 'Saved (' + writes.length + ')';
-        setTimeout(loadAll, 3000);
+    sendSequentially(changedKeys, attempted, 'Sending').then(function () {
+      el('save-status').textContent = 'Sent — confirming with ATAG (~' + Math.round(POLL_CONFIRM_DELAY_MS / 1000) + 's, its connection is flaky)…';
+      return delay(POLL_CONFIRM_DELAY_MS);
+    }).then(loadAll).then(function () {
+      var pending = stillPending();
+      if (!pending.length) {
+        el('save-status').textContent = 'Confirmed (' + changedKeys.length + ')';
         return;
       }
-      el('save-status').textContent = 'Saving ' + (i + 1) + ' / ' + writes.length + '…';
-      commandItem(writes[i].itemName, writes[i].body).then(function () {
-        i++;
-        setTimeout(next, 400);
-      }).catch(function () {
-        el('save-status').textContent = 'Write ' + (i + 1) + ' failed — re-checking…';
-        setTimeout(loadAll, 3000);
+      el('save-status').textContent = pending.length + ' change' + (pending.length === 1 ? '' : 's') + " didn't apply — retrying…";
+      return sendSequentially(pending, attempted, 'Retrying').then(function () {
+        return delay(POLL_CONFIRM_DELAY_MS);
+      }).then(loadAll).then(function () {
+        var stillFailed = stillPending();
+        if (!stillFailed.length) {
+          el('save-status').textContent = 'Confirmed (' + changedKeys.length + ') after retry';
+        } else {
+          var labels = stillFailed.map(function (k) {
+            var f = FIELDS.find(function (x) { return x.key === k; });
+            return f ? f.label : k;
+          });
+          el('save-status').textContent = labels.join(', ') + ' — ATAG did not accept this, try again later';
+        }
       });
-    }
-    next();
+    }).catch(function () {
+      el('save-status').textContent = 'Write failed — re-checking…';
+      loadAll();
+    });
   });
 
   loadAll();

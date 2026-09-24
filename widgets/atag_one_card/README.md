@@ -88,6 +88,13 @@ item props for the channels you want live.
 
 ## Changelog
 
+### Version 1.1.2
+
+- Border radius bumped 4px → 12px. 4px matched the Framework7 default card radius CSS variable
+  exactly, but measured as barely visible (~2-3px rendered) against other cards on the page
+  (~7-8px actual). Going bigger for an unambiguous rounded look rather than chasing exact pixel
+  parity with a value that didn't read as "rounded" at normal viewing size.
+
 ### Version 1.1.1
 
 - Rounded corners (4px, matching the Framework7 default card radius) applied to the widget's

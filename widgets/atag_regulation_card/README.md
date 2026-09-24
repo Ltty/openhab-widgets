@@ -17,9 +17,11 @@ so a second layer of expand/collapse on top of that would just be redundant clic
 - **Central Heating** — operating mode (tap to switch thermostat ↔ weather-dependent), schedule
   base temperature, vacation temperature
 - **Weather Dependent** — heating type, insulation, building size, room influence, climate zone,
-  max preheat, summer eco mode/temperature, frost protection (mode + room/outside thresholds).
-  Visually dimmed and non-interactive while Central Heating's operating mode is `thermostat`
-  (these settings are ignored by the device in that mode)
+  max preheat, frost protection (mode + room/outside thresholds). Visually dimmed and
+  non-interactive while Central Heating's operating mode is `thermostat` (these settings are
+  ignored by the device in that mode). **Summer Eco Mode/Temperature are shown regardless of
+  operating mode** — in `thermostat` mode the device itself ignores them, but the openHAB rule
+  `Toggle Heating Season` reads them to drive the seasonal heating on/off switch instead
 - **Hot Water** — DHW base temperature, legionella protection (on/off, day, and time — a plain
   `HH:mm` text field)
 - **Display** — brightness, time zone
@@ -86,6 +88,13 @@ sent.
 ---
 
 ## Changelog
+
+### Version 2.1.0
+
+- Summer Eco Mode/Temperature are now shown regardless of Operating Mode, not just in
+  `weather-dependent` — in `thermostat` mode the openHAB rule `Toggle Heating Season` reads these
+  two items itself to drive the seasonal heating on/off switch
+- Summer Eco Mode row gets a sub-label explaining who applies it in thermostat mode
 
 ### Version 2.0.0 (BREAKING)
 

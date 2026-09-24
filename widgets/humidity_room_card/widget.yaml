@@ -37,6 +37,13 @@ props:
     required: false
     type: TEXT
     groupName: appearance
+  - default: 'false'
+    description: Hides the Safe/Elevated/Critical threshold legend rows. The zone bar and status badge already show this at a glance.
+    label: Compact
+    name: compact
+    required: false
+    type: BOOLEAN
+    groupName: appearance
   - default: '40'
     label: Safe Min (%)
     name: min
@@ -78,7 +85,7 @@ props:
     label: Thresholds
   - name: extras
     label: Valve
-timestamp: Sep 15, 2026, 8:05:06 AM
+timestamp: Sep 24, 2026, 11:58:00 AM
 component: oh-link
 config:
   action: analyzer
@@ -197,6 +204,7 @@ slots:
               text: ' '
           - component: f7-row
             config:
+              visible: =!props.compact
               style:
                 align-items: center
                 margin: 2px 0
@@ -237,6 +245,7 @@ slots:
                       text: =props.min + '–' + props.orange + ' %'
           - component: f7-row
             config:
+              visible: =!props.compact
               style:
                 align-items: center
                 margin: 2px 0
@@ -277,6 +286,7 @@ slots:
                       text: =props.orange + '–' + props.red + ' %'
           - component: f7-row
             config:
+              visible: =!props.compact
               style:
                 align-items: center
                 margin: 2px 0

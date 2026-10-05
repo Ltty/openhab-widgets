@@ -37,10 +37,12 @@ Each widget folder has its own README with full setup instructions and prop refe
 widgets/
   <widget-name>/
     README.md          ← setup guide and prop reference
-    widget.yaml        ← paste into OH widget editor
-    items/             ← optional .items files
+    widget.yaml        ← paste into OH widget editor (or widgets.yaml: a family, one key per UID)
     rules/             ← optional JS Scripting rules
 ```
+
+Widgets are UI only — they never ship items. Every item a widget reads or commands is a prop; the README documents
+the contract per prop (item type, binding channel, meaning of the state) so it can be wired to any existing model.
 
 ## Validation
 

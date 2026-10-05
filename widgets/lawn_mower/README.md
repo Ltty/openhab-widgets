@@ -50,8 +50,6 @@ In **Settings → Things**, open your automower thing. Copy the Thing UID (e.g. 
 | `Number` | `status#battery` | `automowerBatteryLevel` |
 | `DateTime` | `status#last-update` | `automowerLastUpdate` |
 
-See [`items/automower.items`](items/automower.items) for a ready-to-paste `.items` file.
-
 ### 3. Add the widget to a page
 
 1. Edit a page → drag in a **Custom Widget** block
@@ -98,8 +96,6 @@ Optionally also wire:
 
 When set, this shows the active work area name below the status text.
 
-See [`items/automower.items`](items/automower.items) for ready-to-paste item definitions for all of these.
-
 **Pause button note:** The Pause button sends `ON` to whichever item you wire to the **Manual Pause Switch** prop. Wire it to `command#pause` for a direct binding pause, or to a NAND group member for integrated weather-guard control (see Tier 2 below).
 
 ### Optional: simple manual pause
@@ -126,11 +122,11 @@ Use a NAND group so that weather guard rules and a manual pause all feed into on
 
 ### 1. Create the items
 
-Paste [`items/automower.items`](items/automower.items) into your `.items` file. The file defines:
-- The five required status items
-- A `Location` item for the GPS map
-- A `Group:Switch:NAND(OFF,ON)` named `AutomowerSchedule`
-- Six member Switch items (dark, hot, cold, frost, rain, manual)
+In your own model (any names):
+- the five required status items (above) and, for the map, a `Location` item linked to `status#position`
+- a `Group:Switch:NAND(OFF,ON)` schedule group (the rule below assumes `AutomowerSchedule`)
+- six `Switch` members of that group — darkness, high temp, low temp, frost, rain, manual pause — and set the guard
+  props (`isDark`, `isHot`, `isCold`, `isFrost`, `isRaining`, `automowerManualPause`) to them
 
 ### 2. Create the schedule rule
 

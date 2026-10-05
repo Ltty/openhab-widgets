@@ -33,9 +33,8 @@ Once installed, add a new **Ookla Speedtest** thing and note the **Thing UID** (
 
 ### 2. Create items and wire channels
 
-Paste [`items/speedtest.items`](items/speedtest.items) into your `.items` file, replacing `YOUR_THING_UID` with your actual Thing UID.
-
-These are the default item names the widget falls back to. You can use any item names — configure them via widget props (see Props reference).
+Create one item per channel in your own model (any names) and set the widget props to them. The item names in the
+first column are the props' defaults, so matching them means no prop configuration.
 
 | Item | Type | Channel | Widget prop |
 |------|------|---------|-------------|

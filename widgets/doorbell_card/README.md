@@ -35,27 +35,25 @@ The snapshot section works in two modes — choose based on your setup:
 
 In **Settings → Add-ons → Bindings**, install "IP Camera". Add your camera as a thing and note the **full Thing UID** (e.g. `ipcamera:REOLINK:abc12345`).
 
-### 2. Create items
+### 2. Link items and set the props
 
-Paste [`items/doorbell.items`](items/doorbell.items) into your `.items` file, replacing `YOUR_THING_UID` with the full ipcamera thing UID.
+Create items in your own model (any names) linked to the camera Thing's channels, then pick them in the widget props.
 
-Required items:
+Required:
 
-| Item | Type | Description |
-|------|------|-------------|
-| `GF_Entryway_Doorbell_Image` | `Image` | Receives snapshot images |
-| `GF_Entryway_Doorbell_LastEventLabel` | `String` | Last detected event description |
-| `GF_Entryway_Doorbell_LastEventTime` | `String` or `DateTime` | Timestamp of last event |
+| Prop | Item type | ipcamera channel | Meaning |
+|------|-----------|------------------|---------|
+| `imageItem` | `Image` | `image` | Snapshot image |
+| `labelItem` | `String` | `lastEventData` | Last detected event description |
+| `timeItem` | `String` or `DateTime` | `lastMotionType` (or your own timestamp item) | Time of the last event |
 
 Optional:
 
-| Item | Type | Description |
-|------|------|-------------|
-| `GF_Entryway_Doorbell_HumanDetected` | `Switch` | Person detection state |
-| `GF_Entryway_Doorbell_CarDetected` | `Switch` | Car/vehicle detection state |
-| Your lock state item | `Switch` | `ON` = locked |
-
-> You can rename the items — just update the widget props accordingly.
+| Prop | Item type | ipcamera channel | Meaning |
+|------|-----------|------------------|---------|
+| `humanItem` | `Switch` | `humanAlarmDetected` | Person detected |
+| `carItem` | `Switch` | `carAlarmDetected` | Vehicle detected |
+| `lockItem` | `Switch` | your lock binding | `ON` = locked |
 
 ### 3. Set up the live view
 

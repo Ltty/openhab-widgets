@@ -41,7 +41,13 @@ today's pickup starts, `next_start` jumps to the **following** pickup, so "today
 
 Here the join is done by the core, with no script: per bin, a `Group:DateTime:EARLIEST` contains both the
 `current_start` item and the `next_start` item. `EARLIEST` ignores NULL/UNDEF, so the group equals today's date while
-a pickup is running and the next pickup otherwise. See [`items/waste-pickups.items`](items/waste-pickups.items).
+a pickup is running and the next pickup otherwise. Per bin, in your own model:
+
+| Object | Type | Link / membership | Notes |
+|---|---|---|---|
+| bin group | `Group:DateTime:EARLIEST` | member of `pickupsGroup` | label = bin name; metadata `binColor` = hex colour |
+| current item | `DateTime` | channel `icalendar:calendar:<id>:current_start`, member of the bin group | UNDEF when no event is running |
+| next item | `DateTime` | channel `…:next_start`, member of the bin group | an existing next-pickup item can simply join the bin group |
 
 > A newly created group starts as NULL and only recalculates when a member changes. Seed it once
 > (`group.postUpdate(<earliest valid member>)`), or wait for the next calendar change (midnight).

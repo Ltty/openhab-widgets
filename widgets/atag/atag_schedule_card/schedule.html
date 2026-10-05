@@ -12,8 +12,8 @@
     --fg-dim: rgba(128,128,128,0.95);
     --line: rgba(128,128,128,0.22);
     --track: rgba(128,128,128,0.14);
-    --hot: #ea580c;
-    --cool: #0ea5e9;
+    --hot: #ea5845;
+    --cool: #1472b9;
     --danger: #dc2626;
     --font: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
@@ -241,6 +241,7 @@
   var editing = null; // {day, index, isNew}
 
   function el(id) { return document.getElementById(id); }
+  function setOff(id, off) { var b = el(id); b.disabled = off; if (off) b.setAttribute('disabled', ''); else b.removeAttribute('disabled'); }
 
   function itemForTab(tab) { return tab === 'ch' ? CH_ITEM : DHW_ITEM; }
 
@@ -279,8 +280,8 @@
   }
 
   function setButtons() {
-    el('btn-save').disabled = !dirty;
-    el('btn-revert').disabled = !dirty;
+    setOff('btn-save', !dirty);
+    setOff('btn-revert', !dirty);
     el('save-status').textContent = dirty ? 'Unsaved changes' : '';
   }
 
@@ -523,8 +524,8 @@
   el('btn-save').addEventListener('click', function () {
     var setAction = activeTab === 'ch' ? 'setChSchedulePeriod' : 'setDhwSchedulePeriod';
     var clearAction = activeTab === 'ch' ? 'clearChSchedulePeriod' : 'clearDhwSchedulePeriod';
-    el('btn-save').disabled = true;
-    el('btn-revert').disabled = true;
+    setOff('btn-save', true);
+    setOff('btn-revert', true);
 
     var writes = [];
     DAYS.forEach(function (day) {

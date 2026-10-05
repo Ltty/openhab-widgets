@@ -12,7 +12,7 @@
     --fg-dim: rgba(128,128,128,0.95);
     --line: rgba(128,128,128,0.22);
     --track: rgba(128,128,128,0.14);
-    --cool: #0ea5e9;
+    --cool: #1472b9;
     --amber: #d97706;
     --font: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
@@ -213,6 +213,7 @@
   var edited = {};   // key -> display value as currently edited (only present if changed)
 
   function el(id) { return document.getElementById(id); }
+  function setOff(id, off) { var b = el(id); b.disabled = off; if (off) b.setAttribute('disabled', ''); else b.removeAttribute('disabled'); }
 
   function fetchItem(name) {
     if (!name) return Promise.resolve(null);
@@ -418,8 +419,8 @@
 
   function updateBar() {
     var dirty = anyDirty();
-    el('btn-save').disabled = !dirty;
-    el('btn-revert').disabled = !dirty;
+    setOff('btn-save', !dirty);
+    setOff('btn-revert', !dirty);
     if (!dirty) { el('save-status').textContent = ''; return; }
     var n = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; }).length;
     el('save-status').textContent = n + ' unsaved change' + (n === 1 ? '' : 's');
@@ -485,8 +486,8 @@
   el('btn-save').addEventListener('click', function () {
     var changedKeys = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; });
     if (!changedKeys.length) return;
-    el('btn-save').disabled = true;
-    el('btn-revert').disabled = true;
+    setOff('btn-save', true);
+    setOff('btn-revert', true);
 
     var attempted = {};
     changedKeys.forEach(function (k) { attempted[k] = edited[k]; });

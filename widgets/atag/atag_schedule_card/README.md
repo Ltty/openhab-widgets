@@ -95,6 +95,11 @@ two schedule-JSON item props.
 
 ## Changelog
 
+### Version 1.2.1
+
+- Fixed: Cancel / Save never enabled after an edit (same `disabled` attribute bug as the regulation dialog)
+- Pill colours follow the ATAG portal: warm `#ea5845` for periods above the threshold, blue `#1472b9` for the rest and as the accent colour
+
 ### Version 1.2.0
 
 - Restyled to the shared design system: one 18 px card per weekday, segmented Central Heating / Hot Water switch, theme colours and font read from the Main UI (light and dark follow the app), orange / blue pills; Revert is now **Cancel**

@@ -89,6 +89,11 @@ sent.
 
 ## Changelog
 
+### Version 2.3.1
+
+- Fixed: Cancel / Save never enabled after an edit (the bar buttons are `div`s, so setting `disabled` as a property left the `disabled` attribute and its style in place); they now enable on the first change
+- Accent colour is ATAG's portal blue `#1472b9`
+
 ### Version 2.3.0
 
 - Restyled to the shared design system: section cards (18 px radius), the page, card and text colours and the font are read from the Main UI the frame sits in, so light and dark follow the app; Revert is now **Cancel**

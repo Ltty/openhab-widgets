@@ -3,56 +3,48 @@ tags: []
 props:
   parameters:
   - context: item
-    description: String item linked to status#activity. Drives the status badge (MOWING,
-      LEAVING, PARKED…).
+    description: String item linked to status#activity. Drives the status badge (MOWING, LEAVING, PARKED…).
     label: Activity Item
     name: automowerActivity
     required: true
     type: TEXT
     groupName: binding
   - context: item
-    description: String item linked to status#state. Shown as the mower's state label
-      below the activity badge.
+    description: String item linked to status#state. Shown as the mower's state label below the activity badge.
     label: State Item
     name: automowerStatus
     required: true
     type: TEXT
     groupName: binding
   - context: item
-    description: Number item linked to status#error-code. 0 = no error; the widget
-      decodes codes 1–12 and 110 into human-readable messages.
+    description: Number item linked to status#error-code. 0 = no error; the widget decodes codes 1–12 and 110 into human-readable messages.
     label: Error Code Item
     name: automowerErrorCode
     required: true
     type: TEXT
     groupName: binding
   - context: item
-    description: Number item linked to status#battery. Shown as a battery icon; tap
-      opens the Analyzer.
+    description: Number item linked to status#battery. Shown as a battery icon; tap opens the Analyzer.
     label: Battery Item
     name: automowerBatteryLevel
     required: true
     type: TEXT
     groupName: binding
   - context: item
-    description: DateTime item linked to status#last-update. Shown as a human-readable
-      timestamp.
+    description: DateTime item linked to status#last-update. Shown as a human-readable timestamp.
     label: Last Update Item
     name: automowerLastUpdate
     required: true
     type: TEXT
     groupName: binding
   - context: item
-    description: Location item linked to status#position. Enables the collapsible GPS
-      track map. Requires automower-map.html installed in /etc/openhab/html/.
+    description: Location item linked to status#position. Enables the collapsible GPS track map. Requires automower-map.html installed in /etc/openhab/html/.
     label: Position Item
     name: automowerPosition
     required: false
     type: TEXT
     groupName: map
-  - description: Persistence service used to load today's GPS track history. Must support
-      the Location item type — RRD4J (the OpenHAB default) does not. Leave blank to
-      use the OpenHAB default.
+  - description: Persistence service used to load today's GPS track history. Must support the Location item type — RRD4J (the OpenHAB default) does not. Leave blank to use the OpenHAB default.
     label: Persistence Service
     name: persistenceService
     required: false
@@ -71,84 +63,71 @@ props:
     type: TEXT
     groupName: map
   - context: item
-    description: String item linked to status#work-area. Shows the active work area
-      name in the status area when the mower is assigned to an area.
+    description: String item linked to status#work-area. Shows the active work area name in the status area when the mower is assigned to an area.
     label: Work Area Name Item
     name: automowerWorkAreaName
     required: false
     type: TEXT
     groupName: controls
   - context: item
-    description: String item for rich status detail (e.g. "87% done in main area",
-      "Next start tomorrow at 07:00"). Wire to the Summary Detail proxy item from
-      the optional synthetic status rule. When set, the work area name row is hidden
-      (the detail already includes it).
+    description: String item for rich status detail (e.g. "87% done in main area", "Next start tomorrow at 07:00"). Wire to the Summary Detail proxy item from the optional synthetic status rule. When set, the work area name row is hidden (the detail already
+      includes it).
     label: Summary Detail Item
     name: automowerSummaryDetail
     required: false
     type: TEXT
     groupName: controls
   - context: item
-    description: Number item linked to command#park. Send a number (minutes) to park
-      for that duration. Powers the 30 min / 3 hr / 24 hr options in the Home button
-      menu.
+    description: Number item linked to command#park. Send a number (minutes) to park for that duration. Powers the 30 min / 3 hr / 24 hr options in the Home button menu.
     label: Park (Timed) Item
     name: automowerPark
     required: false
     type: TEXT
     groupName: controls
   - context: item
-    description: Switch item linked to command#park-until-next-schedule. Used by the
-      Home button to park until the next scheduled start.
+    description: Switch item linked to command#park-until-next-schedule. Used by the Home button to park until the next scheduled start.
     label: Park Until Next Schedule Item
     name: automowerParkNextSchedule
     required: false
     type: TEXT
     groupName: controls
   - context: item
-    description: Switch item linked to command#park-until-further-notice. Used by the
-      Home button to park indefinitely.
+    description: Switch item linked to command#park-until-further-notice. Used by the Home button to park indefinitely.
     label: Park Until Further Notice Item
     name: automowerParkFurtherNotice
     required: false
     type: TEXT
     groupName: controls
   - context: item
-    description: Switch item linked to command#resume-schedule. Used by the Start button
-      to resume the mowing schedule.
+    description: Switch item linked to command#resume-schedule. Used by the Start button to resume the mowing schedule.
     label: Resume Schedule Item
     name: automowerResume
     required: false
     type: TEXT
     groupName: controls
   - context: item
-    description: Switch item for manual pause. ON = paused, OFF = active. Bind to command#pause
-      for direct mower control, or use a NAND group member for combined schedule +
-      weather guard control.
+    description: Switch item for manual pause. ON = paused, OFF = active. Bind to command#pause for direct mower control, or use a NAND group member for combined schedule + weather guard control.
     label: Manual Pause Switch
     name: automowerManualPause
     required: false
     type: TEXT
     groupName: schedule
   - context: item
-    description: Switch ON when it is dark or nighttime. Lights the sunset icon in
-      the guard strip.
+    description: Switch ON when it is dark or nighttime. Lights the sunset icon in the guard strip.
     label: Darkness Switch
     name: isDark
     required: false
     type: TEXT
     groupName: schedule
   - context: item
-    description: Switch ON when temperature is too high for mowing. Lights the heat
-      icon in the guard strip.
+    description: Switch ON when temperature is too high for mowing. Lights the heat icon in the guard strip.
     label: High Temp Switch
     name: isHot
     required: false
     type: TEXT
     groupName: schedule
   - context: item
-    description: Switch ON when temperature is too low for mowing. Lights the cold
-      icon in the guard strip.
+    description: Switch ON when temperature is too low for mowing. Lights the cold icon in the guard strip.
     label: Low Temp Switch
     name: isCold
     required: false
@@ -177,9 +156,13 @@ props:
     label: Control Actions
   - name: schedule
     label: Schedule & Weather Guards
-timestamp: Aug 25, 2026, 2:58:01 PM
+timestamp: Oct 5, 2026, 3:31:01 PM
 component: f7-card
-config: {}
+config:
+  style:
+    margin: '0'
+    border-radius: 18px
+    overflow: hidden
 slots:
   content:
   - component: f7-row
@@ -193,7 +176,7 @@ slots:
         config:
           icon: f7:location_fill
           style:
-            color: '#4CAF50'
+            color: '#16a34a'
             font-size: 20px
             margin-right: 8px
       - component: Label
@@ -201,28 +184,18 @@ slots:
           text: Automower
           style:
             flex: '1'
-            font-size: 16px
-            font-weight: '600'
+            font-size: 12px
+            opacity: 0.7
       - component: Label
         config:
-          text: '=(items[props.automowerErrorCode].state != 0) ? ''Error'' : (items[props.automowerActivity].state
-            === ''MOWING'') ? ''Mowing'' : (items[props.automowerActivity].state ===
-            ''LEAVING'') ? ''On the Way'' : (items[props.automowerActivity].state ===
-            ''GOING_HOME'') ? ''Going Home'' : (items[props.automowerActivity].state
-            === ''CHARGING'') ? ''Charging'' : (items[props.automowerActivity].state
-            === ''PARKED_IN_CS'') ? ''Parked'' : (items[props.automowerActivity].state
-            === ''STOPPED_IN_GARDEN'') ? ''Stopped'' : items[props.automowerActivity].displayState'
+          text: '=(items[props.automowerErrorCode].state != 0) ? ''Error'' : (items[props.automowerActivity].state === ''MOWING'') ? ''Mowing'' : (items[props.automowerActivity].state === ''LEAVING'') ? ''On the Way'' : (items[props.automowerActivity].state
+            === ''GOING_HOME'') ? ''Going Home'' : (items[props.automowerActivity].state === ''CHARGING'') ? ''Charging'' : (items[props.automowerActivity].state === ''PARKED_IN_CS'') ? ''Parked'' : (items[props.automowerActivity].state === ''STOPPED_IN_GARDEN'')
+            ? ''Stopped'' : items[props.automowerActivity].displayState'
           style:
-            background: '=(items[props.automowerErrorCode].state != 0) ? ''rgba(244,67,54,0.15)''
-              : (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state
-              === ''LEAVING'') ? ''rgba(76,175,80,0.2)'' : (items[props.automowerActivity].state
-              === ''CHARGING'') ? ''rgba(241,196,15,0.2)'' : (items[props.automowerActivity].state
-              === ''GOING_HOME'') ? ''rgba(26,188,156,0.2)'' : ''rgba(128,128,128,0.15)'''
-            color: '=(items[props.automowerErrorCode].state != 0) ? ''#f44336'' : (items[props.automowerActivity].state
-              === ''MOWING'' || items[props.automowerActivity].state === ''LEAVING'')
-              ? ''#4CAF50'' : (items[props.automowerActivity].state === ''CHARGING'')
-              ? ''#f1c40f'' : (items[props.automowerActivity].state === ''GOING_HOME'')
-              ? ''#1abc9c'' : ''#888'''
+            background: '=(items[props.automowerErrorCode].state != 0) ? ''rgba(244,67,54,0.15)'' : (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state === ''LEAVING'') ? ''rgba(76,175,80,0.2)'' : (items[props.automowerActivity].state
+              === ''CHARGING'') ? ''rgba(241,196,15,0.2)'' : (items[props.automowerActivity].state === ''GOING_HOME'') ? ''rgba(26,188,156,0.2)'' : ''rgba(128,128,128,0.15)'''
+            color: '=(items[props.automowerErrorCode].state != 0) ? ''#dc2626'' : (items[props.automowerActivity].state === ''MOWING'' || items[props.automowerActivity].state === ''LEAVING'') ? ''#16a34a'' : (items[props.automowerActivity].state === ''CHARGING'')
+              ? ''#f1c40f'' : (items[props.automowerActivity].state === ''GOING_HOME'') ? ''#1abc9c'' : ''#888'''
             border-radius: 12px
             padding: 2px 8px
             font-size: 12px
@@ -255,16 +228,14 @@ slots:
       style:
         align-items: center
         margin-bottom: 6px
-      visible: =!!(props.automowerWorkAreaName) && !props.automowerSummaryDetail &&
-        items[props.automowerWorkAreaName]?.state !== 'NULL' && items[props.automowerWorkAreaName]?.state
-        !== 'UNDEF'
+      visible: =!!(props.automowerWorkAreaName) && !props.automowerSummaryDetail && items[props.automowerWorkAreaName]?.state !== 'NULL' && items[props.automowerWorkAreaName]?.state !== 'UNDEF'
     slots:
       default:
       - component: oh-icon
         config:
           icon: f7:layers_fill
           style:
-            color: '#4CAF50'
+            color: '#16a34a'
             font-size: 14px
             margin-right: 6px
       - component: Label
@@ -279,9 +250,7 @@ slots:
       style:
         align-items: center
         margin-bottom: 6px
-      visible: =!!(props.automowerSummaryDetail) && items[props.automowerSummaryDetail]?.state
-        !== 'NULL' && items[props.automowerSummaryDetail]?.state !== 'UNDEF' && items[props.automowerSummaryDetail]?.state
-        !== 'no value'
+      visible: =!!(props.automowerSummaryDetail) && items[props.automowerSummaryDetail]?.state !== 'NULL' && items[props.automowerSummaryDetail]?.state !== 'UNDEF' && items[props.automowerSummaryDetail]?.state !== 'no value'
     slots:
       default:
       - component: oh-icon
@@ -310,8 +279,7 @@ slots:
         config:
           icon: f7:pause_circle
           style:
-            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#ff9800''
-              : ''#888'''
+            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#d97706'' : ''#888'''
             font-size: 16px
             margin-right: 8px
       - component: Label
@@ -320,21 +288,17 @@ slots:
             flex: '1'
             font-size: 13px
             font-weight: '500'
-            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#ff9800''
-              : ''#888'''
-          text: '=items[props.automowerManualPause]?.state === ''ON'' ? ''Manually
-            paused'' : ''No manual pause'''
+            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#d97706'' : ''#888'''
+          text: '=items[props.automowerManualPause]?.state === ''ON'' ? ''Manually paused'' : ''No manual pause'''
       - component: oh-icon
         config:
           action: toggle
           actionCommand: 'ON'
           actionCommandAlt: 'OFF'
           actionItem: =props.automowerManualPause
-          icon: '=items[props.automowerManualPause]?.state === ''ON'' ? ''f7:play_circle_fill''
-            : ''f7:pause_circle_fill'''
+          icon: '=items[props.automowerManualPause]?.state === ''ON'' ? ''f7:play_circle_fill'' : ''f7:pause_circle_fill'''
           style:
-            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#ff9800''
-              : ''#4CAF50'''
+            color: '=items[props.automowerManualPause]?.state === ''ON'' ? ''#d97706'' : ''#16a34a'''
             cursor: pointer
             font-size: 22px
   - component: f7-accordion-item
@@ -356,7 +320,7 @@ slots:
             config:
               icon: f7:map_fill
               style:
-                color: '#4CAF50'
+                color: '#16a34a'
                 font-size: 14px
                 margin-right: 6px
           - component: Label
@@ -385,9 +349,7 @@ slots:
               default:
               - component: oh-webframe
                 config:
-                  src: '=props.automowerPosition ? ''/static/automower-map.html?item=''
-                    + props.automowerPosition + (props.persistenceService ? ''&serviceId=''
-                    + props.persistenceService : '''') : ''about:blank'''
+                  src: '=props.automowerPosition ? ''/static/automower-map.html?item='' + props.automowerPosition + (props.persistenceService ? ''&serviceId='' + props.persistenceService : '''') : ''about:blank'''
                   height: 360
                   style:
                     width: 100%
@@ -400,8 +362,7 @@ slots:
         padding-top: 10px
         margin-top: 8px
         border-top: 1px solid rgba(128,128,128,0.15)
-      visible: =!!(props.isDark || props.isHot || props.isCold || props.isRaining
-        || props.isFrost)
+      visible: =!!(props.isDark || props.isHot || props.isCold || props.isRaining || props.isFrost)
     slots:
       default:
       - component: oh-icon
@@ -409,36 +370,31 @@ slots:
           icon: sunset
           width: 24px
           style:
-            filter: '=(props.isDark && items[props.isDark]?.state === ''ON'') ? ''grayscale(0%)''
-              : ''grayscale(100%) opacity(0.35)'''
+            filter: '=(props.isDark && items[props.isDark]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
       - component: oh-icon
         config:
           icon: temperature_hot
           width: 24px
           style:
-            filter: '=(props.isHot && items[props.isHot]?.state === ''ON'') ? ''grayscale(0%)''
-              : ''grayscale(100%) opacity(0.35)'''
+            filter: '=(props.isHot && items[props.isHot]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
       - component: oh-icon
         config:
           icon: temperature_cold
           width: 24px
           style:
-            filter: '=(props.isCold && items[props.isCold]?.state === ''ON'') ? ''grayscale(0%)''
-              : ''grayscale(100%) opacity(0.35)'''
+            filter: '=(props.isCold && items[props.isCold]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
       - component: oh-icon
         config:
           icon: rain
           width: 24px
           style:
-            filter: '=(props.isRaining && items[props.isRaining]?.state === ''ON'')
-              ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
+            filter: '=(props.isRaining && items[props.isRaining]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
       - component: oh-icon
         config:
           icon: snow
           width: 24px
           style:
-            filter: '=(props.isFrost && items[props.isFrost]?.state === ''ON'') ?
-              ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
+            filter: '=(props.isFrost && items[props.isFrost]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
   - component: f7-row
     config:
       style:
@@ -447,8 +403,7 @@ slots:
         padding-top: 10px
         margin-top: 8px
         border-top: 1px solid rgba(128,128,128,0.15)
-      visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice
-        || props.automowerResume)
+      visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice || props.automowerResume)
     slots:
       default:
       - component: oh-button
@@ -457,9 +412,9 @@ slots:
           iconF7: house_fill
           popoverOpen: .mower-park-popover
           style:
-            --f7-button-bg-color: '#3498db'
+            --f7-button-bg-color: '#6b7280'
             --f7-button-text-color: '#ffffff'
-            border-radius: 8px
+            border-radius: 12px
             flex: 1
           visible: =!!(props.automowerPark || props.automowerParkNextSchedule || props.automowerParkFurtherNotice)
       - component: oh-button
@@ -470,12 +425,11 @@ slots:
           fill: true
           iconF7: pause_fill
           style:
-            --f7-button-bg-color: '#f39c12'
+            --f7-button-bg-color: '#d97706'
             --f7-button-text-color: '#ffffff'
-            border-radius: 8px
+            border-radius: 12px
             flex: 1
-          visible: =!!(props.automowerManualPause) && (items[props.automowerActivity].state
-            === 'MOWING' || items[props.automowerActivity].state === 'LEAVING')
+          visible: =!!(props.automowerManualPause) && (items[props.automowerActivity].state === 'MOWING' || items[props.automowerActivity].state === 'LEAVING')
       - component: oh-button
         config:
           action: command
@@ -484,12 +438,11 @@ slots:
           fill: true
           iconF7: play_fill
           style:
-            --f7-button-bg-color: '#2ecc71'
+            --f7-button-bg-color: '#16a34a'
             --f7-button-text-color: '#ffffff'
-            border-radius: 8px
+            border-radius: 12px
             flex: 1
-          visible: =!!(props.automowerResume) && items[props.automowerActivity].state
-            !== 'MOWING' && items[props.automowerActivity].state !== 'LEAVING'
+          visible: =!!(props.automowerResume) && items[props.automowerActivity].state !== 'MOWING' && items[props.automowerActivity].state !== 'LEAVING'
       - component: f7-popover
         config:
           class: mower-park-popover

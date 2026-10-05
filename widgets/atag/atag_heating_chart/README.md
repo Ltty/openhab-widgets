@@ -57,6 +57,11 @@ data reflects the ATAG device's real reporting resolution, not a cosmetic curve 
 
 ## Changelog
 
+### Version 1.1.0
+
+- Chart sits in an 18 px card with a tile header (icon + title); the chart's own title is gone so it no longer collides with the date navigation
+- Legend on plain rows instead of a paged scroll legend, series `Eco Threshold` renamed `Eco`; more room under the axis
+
 ### Version 1.0.0
 
 - Extracted from a raw inline `oh-chart` block on the Indoor page (`page_d0ed112f1a`) into a

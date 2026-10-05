@@ -88,6 +88,10 @@ item props for the channels you want live.
 
 ## Changelog
 
+### Version 1.1.5
+
+- Frame uses 18 px corners, margin 0 and the full column width to line up with the other page cards
+
 ### Version 1.1.4
 
 - Fixed horizontal page scrolling introduced by 1.1.3's `margin: 16px`. Margin adds space

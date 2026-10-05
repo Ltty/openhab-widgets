@@ -63,131 +63,167 @@ props:
     label: Items
   - name: appearance
     label: Appearance
-timestamp: Oct 5, 2026, 1:23:11 PM
-component: oh-chart
+timestamp: Oct 5, 2026, 3:29:06 PM
+component: f7-card
 config:
-  height: '=(props.height || 340) + "px"'
-  options:
-    tooltip:
-      trigger: axis
-  period: D
-  chartType: ''
+  style:
+    margin: '0'
+    border-radius: 18px
+    overflow: hidden
 slots:
-  grid:
-  - component: oh-chart-grid
+  default:
+  - component: f7-card-content
     config:
-      height: 62%
-      includeLabels: true
-      left: 55px
-      right: 20px
-      top: 12%
-  legend:
-  - component: oh-chart-legend
-    config:
-      bottom: 1%
-      orient: horizontal
-      show: true
-      type: scroll
-  series:
-  - component: oh-time-series
-    config:
-      color: '#2f8fe0'
-      gridIndex: 0
-      item: =props.targetTempItem
-      lineStyle:
-        type: dashed
-      name: Target
-      service: rrd4j
-      step: end
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  - component: oh-time-series
-    config:
-      color: '#fab219'
-      gridIndex: 0
-      item: =props.outsideTempItem
-      lineStyle:
-        opacity: 0.6
-      name: Outside
-      service: rrd4j
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  - component: oh-time-series
-    config:
-      color: '#0ca30c'
-      gridIndex: 0
-      item: =props.roomTempItem
-      name: Room
-      service: rrd4j
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  - component: oh-state-series
-    config:
-      color: '#e0472f'
-      gridIndex: 0
-      item: =props.statusItem
-      label:
-        show: false
-      name: Heating
-      service: influxdb
-      stateColor:
-        'OFF': rgba(0,0,0,0)
-        'ON': rgba(224,71,47,0.18)
-      xAxisIndex: 0
-      yAxisIndex: 1
-      yHeight: 2
-      yValue: 0.5
-  - component: oh-time-series
-    config:
-      color: '#9c27b0'
-      gridIndex: 0
-      item: =props.averageOutsideTempItem
-      name: Average
-      service: rrd4j
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  - component: oh-time-series
-    config:
-      color: '#ff6f00'
-      gridIndex: 0
-      item: =props.ecoThresholdItem
-      lineStyle:
-        type: dashed
-      name: Eco Threshold
-      service: rrd4j
-      step: end
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  title:
-  - component: oh-chart-title
-    config:
-      show: true
-      text: =props.title || "Central Heating"
-  tooltip:
-  - component: oh-chart-tooltip
-    config:
-      confine: true
-      orient: horizontal
-      show: true
-      smartFormatter: true
-      trigger: axis
-  xAxis:
-  - component: oh-time-axis
-    config:
-      gridIndex: 0
-  yAxis:
-  - component: oh-value-axis
-    config:
-      gridIndex: 0
-      name: °C
-  - component: oh-value-axis
-    config:
-      gridIndex: 0
-      max: 1
-      min: 0
-      show: false
+      style:
+        padding: 14px 0 0
+    slots:
+      default:
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            align-items: center
+            justify-content: flex-start
+            gap: 6px
+            margin: '0'
+            padding: 0 14px
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: f7:thermometer
+              style:
+                font-size: 16px
+                color: '#f97316'
+          - component: Label
+            config:
+              text: =props.title || "Central Heating"
+              style:
+                font-size: 12px
+                opacity: '0.7'
+      - component: oh-chart
+        config:
+          height: =(props.height || 340) + "px"
+          options:
+            tooltip:
+              trigger: axis
+          period: D
+          chartType: ''
+        slots:
+          grid:
+          - component: oh-chart-grid
+            config:
+              top: 46px
+              bottom: 88px
+              left: 46px
+              right: 16px
+              includeLabels: true
+          legend:
+          - component: oh-chart-legend
+            config:
+              bottom: 6px
+              orient: horizontal
+              show: true
+              type: plain
+              itemGap: 12
+              itemWidth: 18
+              textStyle:
+                fontSize: 11
+          series:
+          - component: oh-time-series
+            config:
+              color: '#2f8fe0'
+              gridIndex: 0
+              item: =props.targetTempItem
+              lineStyle:
+                type: dashed
+              name: Target
+              service: rrd4j
+              step: end
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          - component: oh-time-series
+            config:
+              color: '#fab219'
+              gridIndex: 0
+              item: =props.outsideTempItem
+              lineStyle:
+                opacity: 0.6
+              name: Outside
+              service: rrd4j
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          - component: oh-time-series
+            config:
+              color: '#0ca30c'
+              gridIndex: 0
+              item: =props.roomTempItem
+              name: Room
+              service: rrd4j
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          - component: oh-state-series
+            config:
+              color: '#e0472f'
+              gridIndex: 0
+              item: =props.statusItem
+              label:
+                show: false
+              name: Heating
+              service: influxdb
+              stateColor:
+                'OFF': rgba(0,0,0,0)
+                'ON': rgba(224,71,47,0.18)
+              xAxisIndex: 0
+              yAxisIndex: 1
+              yHeight: 2
+              yValue: 0.5
+          - component: oh-time-series
+            config:
+              color: '#9c27b0'
+              gridIndex: 0
+              item: =props.averageOutsideTempItem
+              name: Average
+              service: rrd4j
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          - component: oh-time-series
+            config:
+              color: '#ff6f00'
+              gridIndex: 0
+              item: =props.ecoThresholdItem
+              lineStyle:
+                type: dashed
+              name: Eco
+              service: rrd4j
+              step: end
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          tooltip:
+          - component: oh-chart-tooltip
+            config:
+              confine: true
+              orient: horizontal
+              show: true
+              smartFormatter: true
+              trigger: axis
+          xAxis:
+          - component: oh-time-axis
+            config:
+              gridIndex: 0
+          yAxis:
+          - component: oh-value-axis
+            config:
+              gridIndex: 0
+              name: °C
+          - component: oh-value-axis
+            config:
+              gridIndex: 0
+              max: 1
+              min: 0
+              show: false

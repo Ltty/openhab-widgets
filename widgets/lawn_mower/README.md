@@ -307,6 +307,10 @@ L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
 
 ## Changelog
 
+### Version 1.4.0
+
+- Card corners 18 px with margin 0; header in the tile typography; buttons use the shared palette (neutral park, amber pause, green start); state colours aligned (green `#16a34a`, amber `#d97706`, red `#dc2626`)
+
 ### Version 1.3.1
 
 - Removed the duplicate status sentence below the activity badge — it repeated the same MOWING/CHARGING/error info already shown in the badge next to the battery icon, using a hardcoded error-code table that duplicated the binding's own `status#error-message` channel (already surfaced via the optional Summary Detail rule)

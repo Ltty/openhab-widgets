@@ -107,6 +107,10 @@ Drag in a **Custom Widget** block, set the widget type to `air_quality_card`, an
 
 ## Changelog
 
+### Version 1.0.4
+
+- Card corners 18 px with margin 0 (was 10 px with side margins) to line up with the other page cards
+
 ### Version 1.0.3
 
 - Pollutant labels (name + description) are now left-aligned within their column (v1.0.2 had them right-aligned, matching the value side — reverted per feedback to normal reading order while keeping the column itself positioned before the value)

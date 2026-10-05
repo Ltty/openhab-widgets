@@ -42,96 +42,132 @@ props:
     label: Items
   - name: appearance
     label: Appearance
-timestamp: Oct 5, 2026, 1:23:12 PM
-component: oh-chart
+timestamp: Oct 5, 2026, 3:28:38 PM
+component: f7-card
 config:
-  height: '=(props.height || 340) + "px"'
-  options:
-    tooltip:
-      trigger: axis
-  period: D
-  chartType: ''
+  style:
+    margin: '0'
+    border-radius: 18px
+    overflow: hidden
 slots:
-  grid:
-  - component: oh-chart-grid
+  default:
+  - component: f7-card-content
     config:
-      height: 62%
-      includeLabels: true
-      left: 55px
-      right: 20px
-      top: 12%
-  legend:
-  - component: oh-chart-legend
-    config:
-      bottom: 1%
-      orient: horizontal
-      show: true
-      type: scroll
-  series:
-  - component: oh-time-series
-    config:
-      color: '#2f8fe0'
-      gridIndex: 0
-      item: =props.targetTempItem
-      lineStyle:
-        type: dashed
-      name: Target
-      service: rrd4j
-      step: end
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  - component: oh-time-series
-    config:
-      color: '#0ca30c'
-      gridIndex: 0
-      item: =props.waterTempItem
-      name: Water
-      service: rrd4j
-      type: line
-      xAxisIndex: 0
-      yAxisIndex: 0
-  - component: oh-state-series
-    config:
-      color: '#e0472f'
-      gridIndex: 0
-      item: =props.statusItem
-      label:
-        show: false
-      name: Heating
-      service: influxdb
-      stateColor:
-        'OFF': rgba(0,0,0,0)
-        'ON': rgba(224,71,47,0.18)
-      xAxisIndex: 0
-      yAxisIndex: 1
-      yHeight: 2
-      yValue: 0.5
-  title:
-  - component: oh-chart-title
-    config:
-      show: true
-      text: =props.title || "Domestic Hot Water"
-  tooltip:
-  - component: oh-chart-tooltip
-    config:
-      confine: true
-      orient: horizontal
-      show: true
-      smartFormatter: true
-      trigger: axis
-  xAxis:
-  - component: oh-time-axis
-    config:
-      gridIndex: 0
-  yAxis:
-  - component: oh-value-axis
-    config:
-      gridIndex: 0
-      name: °C
-  - component: oh-value-axis
-    config:
-      gridIndex: 0
-      max: 1
-      min: 0
-      show: false
+      style:
+        padding: 14px 0 0
+    slots:
+      default:
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            align-items: center
+            justify-content: flex-start
+            gap: 6px
+            margin: '0'
+            padding: 0 14px
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: f7:drop_fill
+              style:
+                font-size: 16px
+                color: '#0ea5e9'
+          - component: Label
+            config:
+              text: =props.title || "Domestic Hot Water"
+              style:
+                font-size: 12px
+                opacity: '0.7'
+      - component: oh-chart
+        config:
+          height: =(props.height || 340) + "px"
+          options:
+            tooltip:
+              trigger: axis
+          period: D
+          chartType: ''
+        slots:
+          grid:
+          - component: oh-chart-grid
+            config:
+              top: 46px
+              bottom: 64px
+              left: 46px
+              right: 16px
+              includeLabels: true
+          legend:
+          - component: oh-chart-legend
+            config:
+              bottom: 6px
+              orient: horizontal
+              show: true
+              type: plain
+              itemGap: 12
+              itemWidth: 18
+              textStyle:
+                fontSize: 11
+          series:
+          - component: oh-time-series
+            config:
+              color: '#2f8fe0'
+              gridIndex: 0
+              item: =props.targetTempItem
+              lineStyle:
+                type: dashed
+              name: Target
+              service: rrd4j
+              step: end
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          - component: oh-time-series
+            config:
+              color: '#0ca30c'
+              gridIndex: 0
+              item: =props.waterTempItem
+              name: Water
+              service: rrd4j
+              type: line
+              xAxisIndex: 0
+              yAxisIndex: 0
+          - component: oh-state-series
+            config:
+              color: '#e0472f'
+              gridIndex: 0
+              item: =props.statusItem
+              label:
+                show: false
+              name: Heating
+              service: influxdb
+              stateColor:
+                'OFF': rgba(0,0,0,0)
+                'ON': rgba(224,71,47,0.18)
+              xAxisIndex: 0
+              yAxisIndex: 1
+              yHeight: 2
+              yValue: 0.5
+          tooltip:
+          - component: oh-chart-tooltip
+            config:
+              confine: true
+              orient: horizontal
+              show: true
+              smartFormatter: true
+              trigger: axis
+          xAxis:
+          - component: oh-time-axis
+            config:
+              gridIndex: 0
+          yAxis:
+          - component: oh-value-axis
+            config:
+              gridIndex: 0
+              name: °C
+          - component: oh-value-axis
+            config:
+              gridIndex: 0
+              max: 1
+              min: 0
+              show: false

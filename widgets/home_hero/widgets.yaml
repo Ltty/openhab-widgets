@@ -1,0 +1,803 @@
+widgets:
+  home_hero:
+    tags:
+    - home
+    props:
+      parameters:
+      - name: tempItem
+        label: Temperature item
+        description: Current outdoor temperature.
+        type: TEXT
+        default: Netatmo_Weather_Station_Outdoor_Temperature
+        context: item
+        groupName: weather
+      - name: conditionItem
+        label: Condition item
+        description: Current weather condition text.
+        type: TEXT
+        default: OpenWeatherMap_Forecast_API_Current_Condition
+        context: item
+        groupName: weather
+      - name: iconItem
+        label: Icon id item
+        description: OpenWeatherMap icon id (e.g. 03d) for today.
+        type: TEXT
+        default: OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Iconid
+        context: item
+        groupName: weather
+      - name: minItem
+        label: Today min item
+        description: Today's minimum temperature.
+        type: TEXT
+        default: OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Mintemperature
+        context: item
+        groupName: weather
+      - name: maxItem
+        label: Today max item
+        description: Today's maximum temperature.
+        type: TEXT
+        default: OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Maxtemperature
+        context: item
+        groupName: weather
+      - name: sunriseItem
+        label: Sunrise item
+        description: DateTime of today's sunrise (also picks day/night icons).
+        type: TEXT
+        default: LocalSun_Rise_Start
+        context: item
+        groupName: weather
+      - name: sunsetItem
+        label: Sunset item
+        description: DateTime of today's sunset.
+        type: TEXT
+        default: LocalSun_Set_Start
+        context: item
+        groupName: weather
+      - name: weatherPage
+        label: Weather page
+        description: Page opened when the weather block is tapped.
+        type: TEXT
+        default: page:page_1b5d6f43da
+        context: page
+        groupName: behaviour
+      - name: showSunTimes
+        label: Show sun times
+        description: Show sunrise and sunset in the metrics row.
+        type: BOOLEAN
+        default: 'true'
+        groupName: behaviour
+      - name: name
+        label: Name
+        description: Optional name appended to the greeting.
+        type: TEXT
+        default: ''
+        groupName: behaviour
+      - name: smokeGroup
+        label: Smoke alarms group
+        description: Group counting active smoke alarms (state > 0 = alarm).
+        type: TEXT
+        default: gSmokeAlerts
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: weatherWarningsGroup
+        label: Weather warnings group
+        description: Group of weather-warning event items (UNDEF / '-' = no warning).
+        type: TEXT
+        default: gWeatherWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: batteryGroup
+        label: Low battery group
+        description: Group of *_LowBattery switches; its COUNT state drives the chip.
+        type: TEXT
+        default: gBatteryWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: humidityGroup
+        label: Humidity group
+        description: Group of humidity items; per-item metadata 'thresholds' {orange, red}.
+        type: TEXT
+        default: gHumidityWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: thingsGroup
+        label: Thing status group
+        description: Group of Thing status switches (OFF = offline); metadata 'offlineExpected' hides expected-offline devices.
+        type: TEXT
+        default: gThingWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: pickupsGroup
+        label: Waste pickups group
+        description: Group of per-bin DateTime items (see waste_pickup_card).
+        type: TEXT
+        default: gWastePickups
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      parameterGroups:
+      - name: weather
+        label: Weather items
+      - name: alerts
+        label: Alert sources
+      - name: behaviour
+        label: Behaviour
+    component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 20px
+        overflow: hidden
+        background: 'linear-gradient(135deg, color-mix(in srgb, #3b82f6 16%, var(--f7-card-bg-color)), var(--f7-card-bg-color))'
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 16px
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: navigate
+              actionPage: =props.weatherPage
+              actionModal: =props.weatherPage
+              actionPageTransition: f7-cover-v
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: space-between
+                    width: 100%
+                    margin: '0'
+                    gap: 12px
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        margin: '0'
+                        padding: '0'
+                        flex: 1 1 auto
+                        min-width: '0'
+                    slots:
+                      default:
+                      - component: Label
+                        config:
+                          text: '=(h=>h<5 ? ''Good night'' : h<12 ? ''Good morning'' : h<18 ? ''Good afternoon'' : h<22 ? ''Good evening'' : ''Good night'')(dayjs().hour())+(props.name ? '', ''+props.name : '''')'
+                          style:
+                            display: block
+                            font-size: 22px
+                            font-weight: '700'
+                            line-height: '1.15'
+                      - component: Label
+                        config:
+                          text: =dayjs().format('dddd, D MMMM')
+                          style:
+                            display: block
+                            font-size: 13px
+                            opacity: '0.7'
+                            margin-top: 3px
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        flex-direction: column
+                        align-items: flex-end
+                        margin: '0'
+                        padding: '0'
+                        flex: 0 0 auto
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: center
+                            justify-content: flex-end
+                            gap: 8px
+                            margin: '0'
+                        slots:
+                          default:
+                          - component: oh-icon
+                            config:
+                              icon: '=(id=>(m=>''f7:''+(m ? m[(dayjs().isBefore(dayjs(items[props.sunriseItem].state)) || dayjs().isAfter(dayjs(items[props.sunsetItem].state))) ? 1 : 0] : ''cloud_fill''))({''01'':[''sun_max_fill'',''moon_stars_fill''],''02'':[''cloud_sun_fill'',''cloud_moon_fill''],''03'':[''cloud_fill'',''cloud_fill''],''04'':[''smoke_fill'',''smoke_fill''],''09'':[''cloud_rain_fill'',''cloud_rain_fill''],''10'':[''cloud_sun_rain_fill'',''cloud_moon_rain_fill''],''11'':[''cloud_bolt_rain_fill'',''cloud_bolt_rain_fill''],''13'':[''snow'',''snow''],''50'':[''cloud_fog_fill'',''cloud_fog_fill'']}[id.slice(0,2)]))(items[props.iconItem].state)'
+                              style:
+                                font-size: 34px
+                                color: '=(id=>id.slice(0,2)===''01'' ? ((dayjs().isBefore(dayjs(items[props.sunriseItem].state)) || dayjs().isAfter(dayjs(items[props.sunsetItem].state))) ? ''#6366f1'' : ''#f59e0b'') : ''#3b82f6'')(items[props.iconItem].state)'
+                          - component: Label
+                            config:
+                              text: =Math.round(Number.parseFloat(items[props.tempItem].state))+'°'
+                              style:
+                                font-size: 32px
+                                font-weight: '700'
+                                line-height: '1'
+                      - component: Label
+                        config:
+                          text: =(s=>s.charAt(0).toUpperCase()+s.slice(1))(items[props.conditionItem].state)
+                          style:
+                            display: block
+                            font-size: 12px
+                            opacity: '0.7'
+                            margin-top: 4px
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-wrap: wrap
+                justify-content: flex-start
+                gap: 6px 18px
+                margin: 12px 0 0
+                width: 100%
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:thermometer
+                      style:
+                        font-size: 15px
+                        opacity: '0.75'
+                  - component: Label
+                    config:
+                      text: =Math.round(Number.parseFloat(items[props.minItem].state))+'° / '+Math.round(Number.parseFloat(items[props.maxItem].state))+'°'
+                      style:
+                        font-size: 13px
+                        font-weight: '500'
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                  visible: =props.showSunTimes
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:sunrise_fill
+                      style:
+                        font-size: 15px
+                        opacity: '0.75'
+                  - component: Label
+                    config:
+                      text: =dayjs(items[props.sunriseItem].state).format('HH:mm')
+                      style:
+                        font-size: 13px
+                        font-weight: '500'
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                  visible: =props.showSunTimes
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:sunset_fill
+                      style:
+                        font-size: 15px
+                        opacity: '0.75'
+                  - component: Label
+                    config:
+                      text: =dayjs(items[props.sunsetItem].state).format('HH:mm')
+                      style:
+                        font-size: 13px
+                        font-weight: '500'
+          - component: widget:home_hero_alerts
+            config:
+              weatherPage: =props.weatherPage
+              smokeGroup: =props.smokeGroup
+              weatherWarningsGroup: =props.weatherWarningsGroup
+              batteryGroup: =props.batteryGroup
+              humidityGroup: =props.humidityGroup
+              thingsGroup: =props.thingsGroup
+              pickupsGroup: =props.pickupsGroup
+  home_hero_alerts:
+    tags:
+    - home
+    props:
+      parameters:
+      - name: smokeGroup
+        label: Smoke alarms group
+        description: Group counting active smoke alarms (state > 0 = alarm).
+        type: TEXT
+        default: gSmokeAlerts
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: weatherWarningsGroup
+        label: Weather warnings group
+        description: Group of weather-warning event items (UNDEF / '-' = no warning).
+        type: TEXT
+        default: gWeatherWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: batteryGroup
+        label: Low battery group
+        description: Group of *_LowBattery switches; its COUNT state drives the chip.
+        type: TEXT
+        default: gBatteryWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: humidityGroup
+        label: Humidity group
+        description: Group of humidity items; per-item metadata 'thresholds' {orange, red}.
+        type: TEXT
+        default: gHumidityWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: thingsGroup
+        label: Thing status group
+        description: Group of Thing status switches (OFF = offline); metadata 'offlineExpected' hides expected-offline devices.
+        type: TEXT
+        default: gThingWarnings
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: pickupsGroup
+        label: Waste pickups group
+        description: Group of per-bin DateTime items (see waste_pickup_card).
+        type: TEXT
+        default: gWastePickups
+        context: item
+        filterCriteria:
+        - name: type
+          value: Group
+        groupName: alerts
+      - name: weatherPage
+        label: Weather page
+        description: Page opened by a weather-warning chip.
+        type: TEXT
+        default: page:page_1b5d6f43da
+        context: page
+        groupName: alerts
+      parameterGroups:
+      - name: alerts
+        label: Alert sources
+    component: f7-row
+    config:
+      style:
+        display: flex
+        flex-wrap: wrap
+        justify-content: flex-start
+        gap: 8px
+        margin: 14px 0 0
+        width: 100%
+    slots:
+      default:
+      - component: oh-link
+        config:
+          style:
+            color: inherit
+            display: block
+            text-decoration: none
+          visible: =Number(items[props.smokeGroup].state)>0
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: inline-flex
+                align-items: center
+                gap: 6px
+                margin: '0'
+                padding: 5px 12px
+                border-radius: 16px
+                color: '#dc2626'
+                background: 'color-mix(in srgb, #dc2626 16%, transparent)'
+            slots:
+              default:
+              - component: oh-icon
+                config:
+                  icon: f7:flame_fill
+                  style:
+                    font-size: 14px
+                    color: '#dc2626'
+              - component: Label
+                config:
+                  text: ='Smoke alarm · '+Number(items[props.smokeGroup].state)
+                  style:
+                    font-size: 12px
+                    font-weight: '600'
+                    white-space: nowrap
+                    color: '#dc2626'
+      - component: oh-repeater
+        config:
+          for: w
+          groupItem: =props.weatherWarningsGroup
+          sourceType: itemsInGroup
+          map: '({i: loop.w.name})'
+          fragment: true
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: navigate
+              actionPage: =props.weatherPage
+              actionModal: =props.weatherPage
+              actionPageTransition: f7-cover-v
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+              visible: =(s=>!['UNDEF','-','undefined','NULL'].includes(s))(items[loop.w.i].state)
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
+                    color: '#d97706'
+                    background: 'color-mix(in srgb, #d97706 16%, transparent)'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:cloud_bolt_rain_fill
+                      style:
+                        font-size: 14px
+                        color: '#d97706'
+                  - component: Label
+                    config:
+                      text: =items[loop.w.i].state
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '#d97706'
+      - component: widget:waste_pickup_chips
+        config:
+          pickupsGroup: =props.pickupsGroup
+      - component: oh-repeater
+        config:
+          for: b
+          groupItem: =props.batteryGroup
+          sourceType: itemsInGroup
+          fragment: true
+          map: '({i: loop.b.name, n: (loop.b.metadata && loop.b.metadata.display) ? loop.b.metadata.display.config.device : loop.b.label, l: (loop.b.metadata && loop.b.metadata.display) ? loop.b.metadata.display.config.location : ''''})'
+          fetchMetadata: display
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: sheet
+              actionModal: widget:home_low_batteries
+              actionModalConfig:
+                rows: =loop.b_source
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+              visible: =Number(items[props.batteryGroup].state)>0 && loop.b_idx==0
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
+                    color: '#d97706'
+                    background: 'color-mix(in srgb, #d97706 16%, transparent)'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:battery_25
+                      style:
+                        font-size: 14px
+                        color: '#d97706'
+                  - component: Label
+                    config:
+                      text: =Number(items[props.batteryGroup].state)+' low battery'
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '#d97706'
+      - component: oh-repeater
+        config:
+          for: h
+          groupItem: =props.humidityGroup
+          sourceType: itemsInGroup
+          fragment: true
+          map: '({i: loop.h.name, n: loop.h.label.replace('' Humidity'',''''), o: (loop.h.metadata && loop.h.metadata.thresholds) ? Number.parseFloat(loop.h.metadata.thresholds.config.orange) : 65, r: (loop.h.metadata && loop.h.metadata.thresholds) ? Number.parseFloat(loop.h.metadata.thresholds.config.red)
+            : 70})'
+          fetchMetadata: thresholds
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: sheet
+              actionModal: widget:home_humidity
+              actionModalConfig:
+                rows: =loop.h_source
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+              visible: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length>0 && loop.h_idx==0
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
+                    color: '#0891b2'
+                    background: 'color-mix(in srgb, #0891b2 16%, transparent)'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:drop_fill
+                      style:
+                        font-size: 14px
+                        color: '#0891b2'
+                  - component: Label
+                    config:
+                      text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length+' humid'
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '#0891b2'
+      - component: oh-repeater
+        config:
+          for: t
+          groupItem: =props.thingsGroup
+          sourceType: itemsInGroup
+          fragment: true
+          map: '({i: loop.t.name, n: loop.t.label, k: ((loop.t.tags||[]).slice(1)[0]||'''').split('':'')[0], s: loop.t.state, e: !!(loop.t.metadata && loop.t.metadata.offlineExpected)})'
+          fetchMetadata: offlineExpected
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: sheet
+              actionModal: widget:home_offline_devices
+              actionModalConfig:
+                rows: =loop.t_source
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+              visible: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)>0 && loop.t_idx==0'
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
+                    color: '#6b7280'
+                    background: 'color-mix(in srgb, #6b7280 16%, transparent)'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:wifi_slash
+                      style:
+                        font-size: 14px
+                        color: '#6b7280'
+                  - component: Label
+                    config:
+                      text: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)+'' offline'''
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '#6b7280'
+  home_humidity:
+    tags:
+    - home
+    props:
+      parameters:
+      - name: rows
+        label: Rows
+        description: 'Array of {i: humidity item, n: room, o: orange threshold, r: red threshold}; supplied by home_hero_alerts.'
+        type: TEXT
+      parameterGroups: []
+    component: f7-block
+    config:
+      label: Humidity
+      style:
+        height: auto
+        max-height: 88vh
+        --f7-sheet-height: auto
+        margin: '0'
+        padding: '0'
+        background: var(--f7-page-bg-color)
+    slots:
+      default:
+      - component: oh-list
+        config:
+          inset: true
+          strong: true
+          mediaList: true
+          style:
+            margin: 16px 16px 24px
+        slots:
+          default:
+          - component: oh-repeater
+            config:
+              for: r
+              sourceType: array
+              in: =props.rows
+              filter: Number.parseFloat(items[loop.r.i].state) > loop.r.o
+            slots:
+              default:
+              - component: oh-list-item
+                config:
+                  icon: f7:drop_fill
+                  iconColor: '=Number.parseFloat(items[loop.r.i].state)>loop.r.r ? ''red'' : (Number.parseFloat(items[loop.r.i].state)>loop.r.o ? ''orange'' : ''green'')'
+                  title: =loop.r.n
+                  subtitle: '=Number.parseFloat(items[loop.r.i].state)>loop.r.r ? ''Critical'' : (Number.parseFloat(items[loop.r.i].state)>loop.r.o ? ''Elevated'' : ''OK'')'
+                  after: =Number.parseFloat(items[loop.r.i].state)+' %'
+  home_low_batteries:
+    tags:
+    - home
+    props:
+      parameters:
+      - name: rows
+        label: Rows
+        description: 'Array of {i: low-battery switch, n: device, l: location}; supplied by home_hero_alerts.'
+        type: TEXT
+      parameterGroups: []
+    component: f7-block
+    config:
+      label: Low batteries
+      style:
+        height: auto
+        max-height: 88vh
+        --f7-sheet-height: auto
+        margin: '0'
+        padding: '0'
+        background: var(--f7-page-bg-color)
+    slots:
+      default:
+      - component: oh-list
+        config:
+          inset: true
+          strong: true
+          mediaList: true
+          style:
+            margin: 16px 16px 24px
+        slots:
+          default:
+          - component: oh-repeater
+            config:
+              for: r
+              sourceType: array
+              in: =props.rows
+              filter: items[loop.r.i].state === 'ON'
+            slots:
+              default:
+              - component: oh-list-item
+                config:
+                  icon: f7:battery_25
+                  iconColor: orange
+                  title: =loop.r.n
+                  subtitle: =loop.r.l
+                  after: Low
+  home_offline_devices:
+    tags:
+    - home
+    props:
+      parameters:
+      - name: rows
+        label: Rows
+        description: 'Array of {i: status item, n: label, k: binding, s: state, e: expected-offline}; supplied by home_hero_alerts.'
+        type: TEXT
+      parameterGroups: []
+    component: f7-block
+    config:
+      label: Offline devices
+      style:
+        height: auto
+        max-height: 88vh
+        --f7-sheet-height: auto
+        margin: '0'
+        padding: '0'
+        background: var(--f7-page-bg-color)
+    slots:
+      default:
+      - component: oh-list
+        config:
+          inset: true
+          strong: true
+          mediaList: true
+          style:
+            margin: 16px 16px 8px
+        slots:
+          default:
+          - component: oh-repeater
+            config:
+              for: r
+              sourceType: array
+              in: =props.rows
+              filter: '!loop.r.e && loop.r.s === ''OFF'''
+            slots:
+              default:
+              - component: oh-list-item
+                config:
+                  icon: f7:wifi_slash
+                  iconColor: gray
+                  title: =loop.r.n
+                  subtitle: =loop.r.k
+      - component: Label
+        config:
+          text: =props.rows.filter(x=>x.e).length+' expected-offline device(s) hidden'
+          visible: =props.rows.filter(x=>x.e).length>0
+          style:
+            display: block
+            font-size: 12px
+            opacity: '0.6'
+            margin: 0 32px 24px

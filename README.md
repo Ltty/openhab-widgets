@@ -15,12 +15,14 @@ Custom OpenHAB Main UI widgets for home automation.
 | [atag_schedule_card](widgets/atag_schedule_card/) | ATAG ONE weekly CH/DHW schedule editor | 5.x |
 | [atag_regulation_card](widgets/atag_regulation_card/) | ATAG ONE regulation settings — central heating, weather-dependent, hot water, display | 5.x |
 | [atag_diagnostics_card](widgets/atag_diagnostics_card/) | ATAG ONE read-only boiler diagnostics | 5.x |
+| [home_hero](widgets/home_hero/) | Home page hero: greeting, weather, sun times and exception-driven alert chips (waste, batteries, humidity, offline) with detail sheets (one `widgets.yaml`) | 5.x |
+| [waste_pickup_card](widgets/waste_pickup_card/) | Waste collection card (replaces `garbage_list_v1`) + `row`/`chips`/`schedule` parts (one `widgets.yaml`) — group-driven, sorted by date, relative days, bin colours from item metadata | 5.x |
 
 ---
 
 ## How to install a widget
 
-1. Copy the widget's `widget.yaml` content
+1. Copy the widget's `widget.yaml` content (families use one `widgets.yaml` with a `widgets:` map, one key per UID)
 2. In OpenHAB Main UI, open **Developer Tools → Widgets** (sidebar)
 3. Click **+** → **Code** tab → paste → **Save**
 4. Add the widget to any page via **Custom Widget** block
@@ -39,6 +41,13 @@ widgets/
     items/             ← optional .items files
     rules/             ← optional JS Scripting rules
 ```
+
+## Validation
+
+`scripts/` has two helpers (`npm install` there once): `node scripts/check-expressions.mjs` parses every `=` expression
+in all `widget.yaml` with the same grammar Main UI uses (it is *not* plain JavaScript — no block-bodied arrows, no
+`const`, only `items/props/loop/vars/Math/Number/dayjs/…`), and `node scripts/test-waste-logic.mjs` runs date-logic
+fixtures (DST included) against the waste widgets' real expressions.
 
 ## Contributing
 

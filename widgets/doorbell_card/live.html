@@ -90,9 +90,23 @@ if (!src) {
   // wait until the playlist content changes (ffmpeg is rewriting it) before attaching the player.
   var startItem = params.get('startItem') || 'GF_Entryway_Doorbell_StartStream';
   var staticSrc = params.get('static') || '/static/doorbell/hls/ipcamera.m3u8';
-  try {
-    fetch('/rest/items/' + startItem, {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: 'ON'});
-  } catch(ex) {}
+  function setStream(cmd) {
+    var url = '/rest/items/' + startItem;
+    try {
+      if (!(navigator.sendBeacon && navigator.sendBeacon(url, new Blob([cmd], {type: 'text/plain'})))) throw 0;
+    } catch(ex) {
+      try { fetch(url, {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: cmd, keepalive: true}); } catch(e2) {}
+    }
+  }
+  setStream('ON');
+  // Nobody watching -> OFF (keep-alive 1: the binding stops ffmpeg within ~8-16 s). Covers closing
+  // the popup/tab and backgrounding the app; coming back reloads and restarts the stream.
+  window.addEventListener('pagehide', function() { setStream('OFF'); });
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) { setStream('OFF'); wasHidden = true; }
+    else if (wasHidden) { location.reload(); }
+  });
+  var wasHidden = false;
 
   function fetchPlaylist(url) {
     return fetch(url, {cache: 'no-store'}).then(function(r) { return r.ok ? r.text() : ''; }, function() { return ''; });

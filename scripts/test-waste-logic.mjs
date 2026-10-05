@@ -8,10 +8,12 @@ const load = (n) => fam[n];
 const row = load('waste_pickup_row'), chips = load('waste_pickup_chips'), card = load('waste_pickup_card');
 const rel = row.slots.default[2].config.text.slice(1);
 const rowBg = row.config.style.background.slice(1);
-const chip = chips.slots.default[0].slots.default[0];
-const chipVisible = chip.config.visible.slice(1);
+// chips render through repeaters: outer (bins) -> inner `in: =due ? [1] : []` -> link
+const dueRepeater = chips.slots.default[0].slots.default[0];
+const chip = dueRepeater.slots.default[0];
+const chipVisible = '(' + dueRepeater.config.in.slice(1) + ').length > 0';
 const chipText = chip.slots.default[0].slots.default[1].config.text.slice(1);
-const rowsRepeater = card.slots.default[0].slots.default[1].slots.default[0].slots.default[0];
+const rowsRepeater = card.slots.default[0].slots.default[1].slots.default[0].slots.default[0].slots.default[0];
 const cardIn = rowsRepeater.config.in.slice(1), cardFilter = rowsRepeater.config.filter;
 
 let fails = 0;

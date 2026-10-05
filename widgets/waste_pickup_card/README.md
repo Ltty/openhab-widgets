@@ -1,5 +1,7 @@
 # waste_pickup_card — Waste Collection Card (replaces `garbage_list_v1`)
 
+![Waste collection card](screenshots/card.png)
+
 A modern, group-driven waste collection card for the OpenHAB Main UI. One configuration prop (a group), no item
 names in the page config, rows sorted by date with relative days, and today's pickup highlighted in the bin's colour.
 
@@ -67,6 +69,11 @@ Replace the block with `widget:waste_pickup_card` (no config needed with the def
 `node scripts/check-expressions.mjs` — parses every expression with the same parser Main UI uses.
 
 ## Changelog
+### Version 1.1.0
+
+- Editor-safe: the card's row list and the chips render through repeaters instead of `visible`, so the page editor no longer shows the list once per bin or a chip for every bin
+- Card corners 18 px
+
 ### Version 1.0.0
 
 - Initial release (replaces `garbage_list_v1`): group-driven, DST-safe, sorted, relative dates, metadata colours.

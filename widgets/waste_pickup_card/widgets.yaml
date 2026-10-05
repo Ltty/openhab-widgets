@@ -3,7 +3,6 @@ widgets:
     tags:
     - waste
     - card
-    timestamp: Oct 5, 2026, 1:21:35 PM
     props:
       parameters:
       - name: pickupsGroup
@@ -29,11 +28,12 @@ widgets:
         min: 1
         max: 12
       parameterGroups: []
+    timestamp: 2026-10-05T14:46:56.711+0200
     component: f7-card
     config:
       style:
         margin: '0'
-        border-radius: 16px
+        border-radius: 18px
     slots:
       default:
       - component: f7-card-content
@@ -62,33 +62,39 @@ widgets:
               fragment: true
             slots:
               default:
-              - component: f7-row
+              - component: oh-repeater
                 config:
-                  style:
-                    display: block
-                    margin: '0'
-                    padding: '0'
-                  visible: =loop.u_idx==0
+                  for: f
+                  sourceType: array
+                  in: '=loop.u_idx==0 ? [1] : []'
+                  fragment: true
                 slots:
                   default:
-                  - component: oh-repeater
+                  - component: f7-row
                     config:
-                      for: r
-                      sourceType: array
-                      in: '=loop.u_source.slice().sort((a,b)=>(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[a.i].state))-(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[b.i].state))).slice(0,props.maxItems)'
-                      filter: (d=>!d.isValid() || !d.isBefore(dayjs(),'day'))(dayjs(items[loop.r.i].state))
-                      fragment: true
+                      style:
+                        display: block
+                        margin: '0'
+                        padding: '0'
                     slots:
                       default:
-                      - component: widget:waste_pickup_row
+                      - component: oh-repeater
                         config:
-                          dateItem: =loop.r.i
-                          label: =loop.r.n
-                          color: =loop.r.c
+                          for: r
+                          sourceType: array
+                          in: '=loop.u_source.slice().sort((a,b)=>(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[a.i].state))-(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[b.i].state))).slice(0,props.maxItems)'
+                          filter: (d=>!d.isValid() || !d.isBefore(dayjs(),'day'))(dayjs(items[loop.r.i].state))
+                          fragment: true
+                        slots:
+                          default:
+                          - component: widget:waste_pickup_row
+                            config:
+                              dateItem: =loop.r.i
+                              label: =loop.r.n
+                              color: =loop.r.c
   waste_pickup_chips:
     tags:
     - waste
-    timestamp: Oct 5, 2026, 1:21:36 PM
     props:
       parameters:
       - name: pickupsGroup
@@ -102,6 +108,7 @@ widgets:
         - name: type
           value: Group
       parameterGroups: []
+    timestamp: 2026-10-05T14:46:56.721+0200
     component: f7-row
     config:
       style:
@@ -118,50 +125,56 @@ widgets:
           fragment: true
         slots:
           default:
-          - component: oh-link
+          - component: oh-repeater
             config:
-              action: sheet
-              actionModal: widget:waste_pickup_schedule
-              actionModalConfig:
-                rows: =loop.u_source
-              style:
-                color: inherit
-                display: block
-                text-decoration: none
-              visible: =(dayjs(items[loop.u.i].state).isSame(dayjs(),'day') || dayjs(items[loop.u.i].state).isSame(dayjs().add(1,'day'),'day'))
+              for: d
+              sourceType: array
+              in: '=((dayjs(items[loop.u.i].state).isSame(dayjs(),''day'') || dayjs(items[loop.u.i].state).isSame(dayjs().add(1,''day''),''day''))) ? [1] : []'
+              fragment: true
             slots:
               default:
-              - component: f7-row
+              - component: oh-link
                 config:
+                  action: sheet
+                  actionModal: widget:waste_pickup_schedule
+                  actionModalConfig:
+                    rows: =loop.u_source
                   style:
-                    display: inline-flex
-                    align-items: center
-                    gap: 6px
-                    margin: '0'
-                    padding: 5px 12px
-                    border-radius: 16px
-                    color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
-                    background: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? loop.u.c : ''color-mix(in srgb, ''+loop.u.c+'' 16%, transparent)'''
+                    color: inherit
+                    display: block
+                    text-decoration: none
                 slots:
                   default:
-                  - component: oh-icon
+                  - component: f7-row
                     config:
-                      icon: f7:trash
                       style:
-                        font-size: 14px
+                        display: inline-flex
+                        align-items: center
+                        gap: 6px
+                        margin: '0'
+                        padding: 5px 12px
+                        border-radius: 16px
                         color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
-                  - component: Label
-                    config:
-                      text: '=loop.u.n+'' · ''+((dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''today'' : ''tomorrow'')'
-                      style:
-                        font-size: 12px
-                        font-weight: '600'
-                        white-space: nowrap
-                        color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
+                        background: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? loop.u.c : ''color-mix(in srgb, ''+loop.u.c+'' 16%, transparent)'''
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:trash
+                          style:
+                            font-size: 14px
+                            color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
+                      - component: Label
+                        config:
+                          text: '=loop.u.n+'' · ''+((dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''today'' : ''tomorrow'')'
+                          style:
+                            font-size: 12px
+                            font-weight: '600'
+                            white-space: nowrap
+                            color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
   waste_pickup_row:
     tags:
     - waste
-    timestamp: Oct 5, 2026, 1:21:37 PM
     props:
       parameters:
       - name: dateItem
@@ -181,6 +194,7 @@ widgets:
         type: TEXT
         default: '#6b7280'
       parameterGroups: []
+    timestamp: 2026-10-05T13:21:37.856+0200
     component: f7-row
     config:
       style:
@@ -252,7 +266,6 @@ widgets:
   waste_pickup_schedule:
     tags:
     - waste
-    timestamp: Oct 5, 2026, 1:21:38 PM
     props:
       parameters:
       - name: rows
@@ -260,6 +273,7 @@ widgets:
         description: 'Array of {i: date item, n: name, c: colour}; supplied by waste_pickup_chips.'
         type: TEXT
       parameterGroups: []
+    timestamp: 2026-10-05T13:21:38.690+0200
     component: f7-block
     config:
       label: Next pickups

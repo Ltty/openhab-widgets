@@ -1,8 +1,10 @@
 # home_hero — home page hero card
 
+![Hero card](screenshots/hero.png)
+
 Greeting (Good morning / afternoon / evening / night + date), weather (day/night icon, current temperature,
 condition), today's min/max and sunrise/sunset, and an exception-driven alert chip row (see
-[`home_hero_alerts`](../home_hero_alerts/)). Everything is configurable through props with this house's items as
+`home_hero_alerts`, see below). Everything is configurable through props with this house's items as
 defaults, so a page needs no config: add `widget:home_hero` in a full-width grid column.
 
 ## Props
@@ -16,6 +18,7 @@ defaults, so a page needs no config: add `widget:home_hero` in a full-width grid
 | Behaviour | `weatherPage` | Outdoor page | Opened when the weather block (or a warning chip) is tapped |
 | | `showSunTimes` | `true` | Show sunrise/sunset |
 | | `name` | empty | Appended to the greeting |
+| Doorbell | `doorbellLabelItem`, `doorbellTimeItem`, `doorbellCamera`, `doorbellMinutes` | `GF_Entryway_Doorbell_LastEventLabel`, `…_LastEventTime`, `ipcamera:reolink:f2c0eb4ea2`, `10` | Chip "Person at the front door · 3 min ago" for N minutes after an event; tap opens `doorbell_live` (popup, from the doorbell_card family). Empty time item = no chip |
 | Alerts | `smokeGroup`, `weatherWarningsGroup`, `batteryGroup`, `humidityGroup`, `thingsGroup`, `pickupsGroup` | `gSmokeAlerts`, `gWeatherWarnings`, `gBatteryWarnings`, `gHumidityWarnings`, `gThingWarnings`, `gWastePickups` | Passed to `home_hero_alerts` |
 
 Look and feel (colours, chip order, greeting hours) is deliberately not configurable.
@@ -34,14 +37,24 @@ widget editor create one widget per key (UID = key) and paste that entry's body.
 | `home_humidity` | humidity sheet |
 
 Also needs the waste widgets (`waste_pickup_chips`, `waste_pickup_schedule`, `waste_pickup_row`) from
-[`../waste_pickup_card/`](../waste_pickup_card/). On the page give the entry a `config` object (`{}` is enough) or the
-editor shows no props.
+[`../waste_pickup_card/`](../waste_pickup_card/) and the live view popup `doorbell_live` from
+[`../doorbell_card/`](../doorbell_card/) (used by the doorbell chip). On the page give the entry a `config` object
+(`{}` is enough) or the editor shows no props.
 
-## Related widgets
-`home_hero_alerts` (chip row) → `waste_pickup_chips` / `home_low_batteries` / `home_humidity` / `home_offline_devices`
-(bottom sheets). Keep the hero as one widget so the page editor (which ignores `visible`) shows one block.
+## How it fits together
+`home_hero` embeds `home_hero_alerts` (the chip row). Chips open bottom sheets: `home_low_batteries`, `home_humidity`,
+`home_offline_devices` and, for waste, `waste_pickup_schedule`; the doorbell chip opens the `doorbell_live` popup. The
+chips' data is prefetched with the page, so sheets open instantly. Chips and rows render through repeaters, so the page
+editor shows exactly the chips that are currently active instead of every variant.
 
 ## Changelog
+
+### Version 1.1.0
+
+- Doorbell chip: shows the last doorbell event for `doorbellMinutes` after it happened (new Doorbell props); tap opens the `doorbell_live` popup
+- Editor-safe: chips are rendered through repeaters instead of `visible`, so the page editor shows only the active chips (no stacked duplicates)
+- Metrics row (min/max, sunrise, sunset) left-aligned; card corners 18 px to match the other home page cards
+
 ### Version 1.0.0
 
-- Initial release.
+- Initial release: greeting, weather, min/max and sun times; alert chips in urgency order (smoke, weather warnings, waste, batteries, humidity, offline) with detail sheets; every item and group is a prop

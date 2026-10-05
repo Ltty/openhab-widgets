@@ -2,7 +2,6 @@ widgets:
   home_hero:
     tags:
     - home
-    timestamp: Oct 5, 2026, 1:21:29 PM
     props:
       parameters:
       - name: tempItem
@@ -133,6 +132,36 @@ widgets:
         - name: type
           value: Group
         groupName: alerts
+      - name: doorbellLabelItem
+        label: Doorbell event text item
+        description: String item with the last doorbell event text; leave empty to disable the doorbell chip.
+        type: TEXT
+        default: GF_Entryway_Doorbell_LastEventLabel
+        required: false
+        groupName: doorbell
+        context: item
+      - name: doorbellTimeItem
+        label: Doorbell event time item
+        description: DateTime item with the last doorbell event time.
+        type: TEXT
+        default: GF_Entryway_Doorbell_LastEventTime
+        required: false
+        groupName: doorbell
+        context: item
+      - name: doorbellCamera
+        label: Doorbell camera Thing UID
+        description: ipcamera Thing UID; tapping the chip opens the live view (widget doorbell_live).
+        type: TEXT
+        default: ipcamera:reolink:f2c0eb4ea2
+        required: false
+        groupName: doorbell
+      - name: doorbellMinutes
+        label: Doorbell chip duration (min)
+        description: Show the chip for this many minutes after an event.
+        type: INTEGER
+        default: '10'
+        required: false
+        groupName: doorbell
       parameterGroups:
       - name: weather
         label: Weather items
@@ -140,11 +169,14 @@ widgets:
         label: Alert sources
       - name: behaviour
         label: Behaviour
+      - name: doorbell
+        label: Doorbell
+    timestamp: 2026-10-05T14:33:10.461+0200
     component: f7-card
     config:
       style:
         margin: '0'
-        border-radius: 20px
+        border-radius: 18px
         overflow: hidden
         background: 'linear-gradient(135deg, color-mix(in srgb, #3b82f6 16%, var(--f7-card-bg-color)), var(--f7-card-bg-color))'
     slots:
@@ -331,10 +363,13 @@ widgets:
               humidityGroup: =props.humidityGroup
               thingsGroup: =props.thingsGroup
               pickupsGroup: =props.pickupsGroup
+              doorbellLabelItem: =props.doorbellLabelItem
+              doorbellTimeItem: =props.doorbellTimeItem
+              doorbellCamera: =props.doorbellCamera
+              doorbellMinutes: =props.doorbellMinutes
   home_hero_alerts:
     tags:
     - home
-    timestamp: Oct 5, 2026, 1:21:29 PM
     props:
       parameters:
       - name: smokeGroup
@@ -404,9 +439,42 @@ widgets:
         default: page:page_1b5d6f43da
         context: page
         groupName: alerts
+      - name: doorbellLabelItem
+        label: Doorbell event text item
+        description: String item with the last doorbell event text; leave empty to disable the doorbell chip.
+        type: TEXT
+        default: GF_Entryway_Doorbell_LastEventLabel
+        required: false
+        groupName: doorbell
+        context: item
+      - name: doorbellTimeItem
+        label: Doorbell event time item
+        description: DateTime item with the last doorbell event time.
+        type: TEXT
+        default: GF_Entryway_Doorbell_LastEventTime
+        required: false
+        groupName: doorbell
+        context: item
+      - name: doorbellCamera
+        label: Doorbell camera Thing UID
+        description: ipcamera Thing UID; tapping the chip opens the live view (widget doorbell_live).
+        type: TEXT
+        default: ipcamera:reolink:f2c0eb4ea2
+        required: false
+        groupName: doorbell
+      - name: doorbellMinutes
+        label: Doorbell chip duration (min)
+        description: Show the chip for this many minutes after an event.
+        type: INTEGER
+        default: '10'
+        required: false
+        groupName: doorbell
       parameterGroups:
       - name: alerts
         label: Alert sources
+      - name: doorbell
+        label: Doorbell
+    timestamp: 2026-10-05T14:46:56.679+0200
     component: f7-row
     config:
       style:
@@ -418,42 +486,96 @@ widgets:
         width: 100%
     slots:
       default:
-      - component: oh-link
+      - component: oh-repeater
         config:
-          style:
-            color: inherit
-            display: block
-            text-decoration: none
-          visible: =Number(items[props.smokeGroup].state)>0
+          for: x
+          sourceType: array
+          in: '=(Number(items[props.smokeGroup].state)>0) ? [1] : []'
+          fragment: true
         slots:
           default:
-          - component: f7-row
+          - component: oh-link
             config:
               style:
-                display: inline-flex
-                align-items: center
-                gap: 6px
-                margin: '0'
-                padding: 5px 12px
-                border-radius: 16px
-                color: '#dc2626'
-                background: 'color-mix(in srgb, #dc2626 16%, transparent)'
+                color: inherit
+                display: block
+                text-decoration: none
             slots:
               default:
-              - component: oh-icon
+              - component: f7-row
                 config:
-                  icon: f7:flame_fill
                   style:
-                    font-size: 14px
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
                     color: '#dc2626'
-              - component: Label
+                    background: 'color-mix(in srgb, #dc2626 16%, transparent)'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:flame_fill
+                      style:
+                        font-size: 14px
+                        color: '#dc2626'
+                  - component: Label
+                    config:
+                      text: ='Smoke alarm · '+Number(items[props.smokeGroup].state)
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '#dc2626'
+      - component: oh-repeater
+        config:
+          for: x
+          sourceType: array
+          in: '=(!!props.doorbellTimeItem && (t=>t.isValid() && dayjs().diff(t,''minute'') < (props.doorbellMinutes || 10))(dayjs((items[props.doorbellTimeItem]||{}).state))) ? [1] : []'
+          fragment: true
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: '=props.doorbellCamera ? ''popup'' : '''''
+              actionModal: widget:doorbell_live
+              actionModalConfig:
+                cameraThing: =props.doorbellCamera
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+            slots:
+              default:
+              - component: f7-row
                 config:
-                  text: ='Smoke alarm · '+Number(items[props.smokeGroup].state)
                   style:
-                    font-size: 12px
-                    font-weight: '600'
-                    white-space: nowrap
-                    color: '#dc2626'
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
+                    color: '#ea580c'
+                    background: 'color-mix(in srgb, #ea580c 16%, transparent)'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:bell_fill
+                      style:
+                        font-size: 14px
+                        color: '#ea580c'
+                  - component: Label
+                    config:
+                      text: '=((items[props.doorbellLabelItem]||{}).state || ''Doorbell'')+'' · ''+(m=>m<1 ? ''just now'' : m+'' min ago'')(dayjs().diff(dayjs((items[props.doorbellTimeItem]||{}).state),''minute''))'
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '#ea580c'
       - component: oh-repeater
         config:
           for: w
@@ -461,6 +583,7 @@ widgets:
           sourceType: itemsInGroup
           map: '({i: loop.w.name})'
           fragment: true
+          filter: (s=>!['UNDEF','-','undefined','NULL'].includes(s))(items[loop.w.name].state)
         slots:
           default:
           - component: oh-link
@@ -473,7 +596,6 @@ widgets:
                 color: inherit
                 display: block
                 text-decoration: none
-              visible: =(s=>!['UNDEF','-','undefined','NULL'].includes(s))(items[loop.w.i].state)
             slots:
               default:
               - component: f7-row
@@ -516,46 +638,53 @@ widgets:
           fetchMetadata: display
         slots:
           default:
-          - component: oh-link
+          - component: oh-repeater
             config:
-              action: sheet
-              actionModal: widget:home_low_batteries
-              actionModalConfig:
-                rows: =loop.b_source
-              style:
-                color: inherit
-                display: block
-                text-decoration: none
-              visible: =Number(items[props.batteryGroup].state)>0 && loop.b_idx==0
+              for: c
+              sourceType: array
+              in: '=(Number(items[props.batteryGroup].state)>0 && loop.b_idx==0) && loop.b_idx === 0 ? [1] : []'
+              fragment: true
             slots:
               default:
-              - component: f7-row
+              - component: oh-link
                 config:
+                  action: sheet
+                  actionModal: widget:home_low_batteries
+                  actionModalConfig:
+                    rows: =loop.b_source
                   style:
-                    display: inline-flex
-                    align-items: center
-                    gap: 6px
-                    margin: '0'
-                    padding: 5px 12px
-                    border-radius: 16px
-                    color: '#d97706'
-                    background: 'color-mix(in srgb, #d97706 16%, transparent)'
+                    color: inherit
+                    display: block
+                    text-decoration: none
                 slots:
                   default:
-                  - component: oh-icon
+                  - component: f7-row
                     config:
-                      icon: f7:battery_25
                       style:
-                        font-size: 14px
+                        display: inline-flex
+                        align-items: center
+                        gap: 6px
+                        margin: '0'
+                        padding: 5px 12px
+                        border-radius: 16px
                         color: '#d97706'
-                  - component: Label
-                    config:
-                      text: =Number(items[props.batteryGroup].state)+' low battery'
-                      style:
-                        font-size: 12px
-                        font-weight: '600'
-                        white-space: nowrap
-                        color: '#d97706'
+                        background: 'color-mix(in srgb, #d97706 16%, transparent)'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:battery_25
+                          style:
+                            font-size: 14px
+                            color: '#d97706'
+                      - component: Label
+                        config:
+                          text: =Number(items[props.batteryGroup].state)+' low battery'
+                          style:
+                            font-size: 12px
+                            font-weight: '600'
+                            white-space: nowrap
+                            color: '#d97706'
       - component: oh-repeater
         config:
           for: h
@@ -567,46 +696,53 @@ widgets:
           fetchMetadata: thresholds
         slots:
           default:
-          - component: oh-link
+          - component: oh-repeater
             config:
-              action: sheet
-              actionModal: widget:home_humidity
-              actionModalConfig:
-                rows: =loop.h_source
-              style:
-                color: inherit
-                display: block
-                text-decoration: none
-              visible: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length>0 && loop.h_idx==0
+              for: c
+              sourceType: array
+              in: '=(loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length>0 && loop.h_idx==0) && loop.h_idx === 0 ? [1] : []'
+              fragment: true
             slots:
               default:
-              - component: f7-row
+              - component: oh-link
                 config:
+                  action: sheet
+                  actionModal: widget:home_humidity
+                  actionModalConfig:
+                    rows: =loop.h_source
                   style:
-                    display: inline-flex
-                    align-items: center
-                    gap: 6px
-                    margin: '0'
-                    padding: 5px 12px
-                    border-radius: 16px
-                    color: '#0891b2'
-                    background: 'color-mix(in srgb, #0891b2 16%, transparent)'
+                    color: inherit
+                    display: block
+                    text-decoration: none
                 slots:
                   default:
-                  - component: oh-icon
+                  - component: f7-row
                     config:
-                      icon: f7:drop_fill
                       style:
-                        font-size: 14px
+                        display: inline-flex
+                        align-items: center
+                        gap: 6px
+                        margin: '0'
+                        padding: 5px 12px
+                        border-radius: 16px
                         color: '#0891b2'
-                  - component: Label
-                    config:
-                      text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length+' humid'
-                      style:
-                        font-size: 12px
-                        font-weight: '600'
-                        white-space: nowrap
-                        color: '#0891b2'
+                        background: 'color-mix(in srgb, #0891b2 16%, transparent)'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:drop_fill
+                          style:
+                            font-size: 14px
+                            color: '#0891b2'
+                      - component: Label
+                        config:
+                          text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length+' humid'
+                          style:
+                            font-size: 12px
+                            font-weight: '600'
+                            white-space: nowrap
+                            color: '#0891b2'
       - component: oh-repeater
         config:
           for: t
@@ -617,50 +753,56 @@ widgets:
           fetchMetadata: offlineExpected
         slots:
           default:
-          - component: oh-link
+          - component: oh-repeater
             config:
-              action: sheet
-              actionModal: widget:home_offline_devices
-              actionModalConfig:
-                rows: =loop.t_source
-              style:
-                color: inherit
-                display: block
-                text-decoration: none
-              visible: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)>0 && loop.t_idx==0'
+              for: c
+              sourceType: array
+              in: '=((Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)>0 && loop.t_idx==0) && loop.t_idx === 0 ? [1] : []'
+              fragment: true
             slots:
               default:
-              - component: f7-row
+              - component: oh-link
                 config:
+                  action: sheet
+                  actionModal: widget:home_offline_devices
+                  actionModalConfig:
+                    rows: =loop.t_source
                   style:
-                    display: inline-flex
-                    align-items: center
-                    gap: 6px
-                    margin: '0'
-                    padding: 5px 12px
-                    border-radius: 16px
-                    color: '#6b7280'
-                    background: 'color-mix(in srgb, #6b7280 16%, transparent)'
+                    color: inherit
+                    display: block
+                    text-decoration: none
                 slots:
                   default:
-                  - component: oh-icon
+                  - component: f7-row
                     config:
-                      icon: f7:wifi_slash
                       style:
-                        font-size: 14px
+                        display: inline-flex
+                        align-items: center
+                        gap: 6px
+                        margin: '0'
+                        padding: 5px 12px
+                        border-radius: 16px
                         color: '#6b7280'
-                  - component: Label
-                    config:
-                      text: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)+'' offline'''
-                      style:
-                        font-size: 12px
-                        font-weight: '600'
-                        white-space: nowrap
-                        color: '#6b7280'
+                        background: 'color-mix(in srgb, #6b7280 16%, transparent)'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:wifi_slash
+                          style:
+                            font-size: 14px
+                            color: '#6b7280'
+                      - component: Label
+                        config:
+                          text: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)+'' offline'''
+                          style:
+                            font-size: 12px
+                            font-weight: '600'
+                            white-space: nowrap
+                            color: '#6b7280'
   home_humidity:
     tags:
     - home
-    timestamp: Oct 5, 2026, 1:21:34 PM
     props:
       parameters:
       - name: rows
@@ -668,6 +810,7 @@ widgets:
         description: 'Array of {i: humidity item, n: room, o: orange threshold, r: red threshold}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
+    timestamp: 2026-10-05T13:21:34.701+0200
     component: f7-block
     config:
       label: Humidity
@@ -707,7 +850,6 @@ widgets:
   home_low_batteries:
     tags:
     - home
-    timestamp: Oct 5, 2026, 1:21:33 PM
     props:
       parameters:
       - name: rows
@@ -715,6 +857,7 @@ widgets:
         description: 'Array of {i: low-battery switch, n: device, l: location}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
+    timestamp: 2026-10-05T13:21:33.104+0200
     component: f7-block
     config:
       label: Low batteries
@@ -754,7 +897,6 @@ widgets:
   home_offline_devices:
     tags:
     - home
-    timestamp: Oct 5, 2026, 1:21:31 PM
     props:
       parameters:
       - name: rows
@@ -762,6 +904,7 @@ widgets:
         description: 'Array of {i: status item, n: label, k: binding, s: state, e: expected-offline}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
+    timestamp: 2026-10-05T13:21:31.555+0200
     component: f7-block
     config:
       label: Offline devices

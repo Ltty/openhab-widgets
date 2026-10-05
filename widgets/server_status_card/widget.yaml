@@ -131,6 +131,38 @@ props:
     context: item
     default: Systeminfo_Data_Received
     groupName: network
+  - name: rxRateItem
+    label: Download rate item
+    description: Number:DataTransferRate (Mbit/s), also drawn as 24 h trend. Produced by a rule from the counters.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Data_Rate_Down
+    groupName: network
+  - name: txRateItem
+    label: Upload rate item
+    description: Number:DataTransferRate (Mbit/s).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Data_Rate_Up
+    groupName: network
+  - name: netNameItem
+    label: Interface name item
+    description: String item with the interface name (e.g. br0).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Net_Name
+    groupName: network
+  - name: netIpItem
+    label: IP address item
+    description: String item with the IP address.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Net_IP
+    groupName: network
   - name: txItem
     label: Data sent item
     description: Number:DataAmount (bytes since boot).
@@ -168,6 +200,7 @@ props:
     label: Network
   - name: controls
     label: Controls
+timestamp: Oct 5, 2026, 4:05:07 PM
 component: f7-card
 config:
   style:
@@ -602,8 +635,10 @@ slots:
                   style:
                     display: flex
                     flex-direction: column
-                    gap: 14px
-                    margin: 6px 0 0
+                    align-items: center
+                    gap: 10px
+                    margin: 4px 0 0
+                    width: 100%
                 slots:
                   default:
                   - component: f7-row
@@ -611,8 +646,9 @@ slots:
                       style:
                         display: flex
                         align-items: center
-                        justify-content: center
-                        width: 100%
+                        justify-content: flex-start
+                        width: 132px
+                        max-width: 100%
                         gap: 8px
                         margin: '0'
                     slots:
@@ -630,17 +666,34 @@ slots:
                             margin: '0'
                         slots:
                           default:
-                          - component: Label
+                          - component: f7-row
                             config:
-                              text: '=(props.rxItem && items[props.rxItem] && items[props.rxItem].state !== ''NULL'' && items[props.rxItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.rxItem].state)/1000000000).toFixed(1)+'' GB'' : ''–'''
                               style:
-                                display: block
-                                font-size: 20px
-                                font-weight: '700'
-                                line-height: '1.1'
+                                display: flex
+                                align-items: baseline
+                                justify-content: flex-start
+                                gap: 4px
+                                margin: '0'
+                            slots:
+                              default:
+                              - component: Label
+                                config:
+                                  text: '=(props.rxRateItem && items[props.rxRateItem] && items[props.rxRateItem].state !== ''NULL'' && items[props.rxRateItem].state !== ''UNDEF'') ? (v=>v>=100 ? v.toFixed(0) : v>=10 ? v.toFixed(1) : v.toFixed(2))(Number.parseFloat(items[props.rxRateItem].state))
+                                    : ''–'''
+                                  style:
+                                    font-size: 20px
+                                    font-weight: '700'
+                                    line-height: '1.1'
+                              - component: Label
+                                config:
+                                  text: Mbit/s
+                                  style:
+                                    font-size: 11px
+                                    opacity: '0.75'
                           - component: Label
                             config:
-                              text: received
+                              text: '=(props.rxItem && items[props.rxItem] && items[props.rxItem].state !== ''NULL'' && items[props.rxItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.rxItem].state)/1000000000).toFixed(1)+'' GB ''+''received''
+                                : '''''
                               style:
                                 display: block
                                 font-size: 11px
@@ -650,8 +703,9 @@ slots:
                       style:
                         display: flex
                         align-items: center
-                        justify-content: center
-                        width: 100%
+                        justify-content: flex-start
+                        width: 132px
+                        max-width: 100%
                         gap: 8px
                         margin: '0'
                     slots:
@@ -669,24 +723,59 @@ slots:
                             margin: '0'
                         slots:
                           default:
-                          - component: Label
+                          - component: f7-row
                             config:
-                              text: '=(props.txItem && items[props.txItem] && items[props.txItem].state !== ''NULL'' && items[props.txItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.txItem].state)/1000000000).toFixed(1)+'' GB'' : ''–'''
                               style:
-                                display: block
-                                font-size: 20px
-                                font-weight: '700'
-                                line-height: '1.1'
+                                display: flex
+                                align-items: baseline
+                                justify-content: flex-start
+                                gap: 4px
+                                margin: '0'
+                            slots:
+                              default:
+                              - component: Label
+                                config:
+                                  text: '=(props.txRateItem && items[props.txRateItem] && items[props.txRateItem].state !== ''NULL'' && items[props.txRateItem].state !== ''UNDEF'') ? (v=>v>=100 ? v.toFixed(0) : v>=10 ? v.toFixed(1) : v.toFixed(2))(Number.parseFloat(items[props.txRateItem].state))
+                                    : ''–'''
+                                  style:
+                                    font-size: 20px
+                                    font-weight: '700'
+                                    line-height: '1.1'
+                              - component: Label
+                                config:
+                                  text: Mbit/s
+                                  style:
+                                    font-size: 11px
+                                    opacity: '0.75'
                           - component: Label
                             config:
-                              text: sent
+                              text: '=(props.txItem && items[props.txItem] && items[props.txItem].state !== ''NULL'' && items[props.txItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.txItem].state)/1000000000).toFixed(1)+'' GB ''+''sent'' :
+                                '''''
                               style:
                                 display: block
                                 font-size: 11px
                                 opacity: '0.75'
+              - component: oh-repeater
+                config:
+                  for: t
+                  sourceType: array
+                  in: '=props.rxRateItem ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: oh-trend
+                    config:
+                      trendItem: =props.rxRateItem
+                      trendGradient:
+                      - '#0ea5e9'
+                      - '#0ea5e9'
+                      trendStrokeWidth: '2'
+                      trendSampling: '10'
               - component: Label
                 config:
-                  text: LAN bridge, since boot
+                  text: '=((props.netNameItem && items[props.netNameItem] && items[props.netNameItem].state !== ''NULL'' && items[props.netNameItem].state !== ''UNDEF'') ? items[props.netNameItem].state : '''')+(((props.netNameItem && items[props.netNameItem]
+                    && items[props.netNameItem].state !== ''NULL'' && items[props.netNameItem].state !== ''UNDEF'') && (props.netIpItem && items[props.netIpItem] && items[props.netIpItem].state !== ''NULL'' && items[props.netIpItem].state !== ''UNDEF''))
+                    ? '' · '' : '''')+((props.netIpItem && items[props.netIpItem] && items[props.netIpItem].state !== ''NULL'' && items[props.netIpItem].state !== ''UNDEF'') ? items[props.netIpItem].state : '''')'
                   style:
                     display: block
                     width: 100%

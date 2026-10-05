@@ -1,0 +1,293 @@
+widgets:
+  waste_pickup_card:
+    tags:
+    - waste
+    - card
+    props:
+      parameters:
+      - name: pickupsGroup
+        label: Pickups group
+        description: Group whose members are one DateTime item (or DateTime group) per bin; label = bin name; optional metadata 'binColor' = hex colour.
+        type: TEXT
+        default: gWastePickups
+        context: item
+        required: false
+        filterCriteria:
+        - name: type
+          value: Group
+      - name: title
+        label: Title
+        description: Card title.
+        type: TEXT
+        default: Waste collection
+      - name: maxItems
+        label: Max bins shown
+        description: Show only the next N pickups.
+        type: INTEGER
+        default: '4'
+        min: 1
+        max: 12
+      parameterGroups: []
+    component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 16px
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 12px 4px 8px
+        slots:
+          default:
+          - component: Label
+            config:
+              text: =props.title
+              style:
+                display: block
+                font-size: 13px
+                font-weight: '600'
+                letter-spacing: 0.02em
+                opacity: '0.65'
+                margin: 0 12px 4px
+          - component: oh-repeater
+            config:
+              for: u
+              groupItem: =props.pickupsGroup
+              sourceType: itemsInGroup
+              fetchMetadata: binColor
+              map: '({i: loop.u.name, n: loop.u.label.replace('' Waste'',''''), c: (loop.u.metadata && loop.u.metadata.binColor) ? loop.u.metadata.binColor.value : ''#6b7280''})'
+              fragment: true
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: block
+                    margin: '0'
+                    padding: '0'
+                  visible: =loop.u_idx==0
+                slots:
+                  default:
+                  - component: oh-repeater
+                    config:
+                      for: r
+                      sourceType: array
+                      in: '=loop.u_source.slice().sort((a,b)=>(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[a.i].state))-(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[b.i].state))).slice(0,props.maxItems)'
+                      filter: (d=>!d.isValid() || !d.isBefore(dayjs(),'day'))(dayjs(items[loop.r.i].state))
+                      fragment: true
+                    slots:
+                      default:
+                      - component: widget:waste_pickup_row
+                        config:
+                          dateItem: =loop.r.i
+                          label: =loop.r.n
+                          color: =loop.r.c
+  waste_pickup_chips:
+    tags:
+    - waste
+    props:
+      parameters:
+      - name: pickupsGroup
+        label: Pickups group
+        description: Group whose members are one DateTime item (or DateTime group) per bin; label = bin name; optional metadata 'binColor' = hex colour.
+        type: TEXT
+        default: gWastePickups
+        context: item
+        required: false
+        filterCriteria:
+        - name: type
+          value: Group
+      parameterGroups: []
+    component: f7-row
+    config:
+      style:
+        display: contents
+    slots:
+      default:
+      - component: oh-repeater
+        config:
+          for: u
+          groupItem: =props.pickupsGroup
+          sourceType: itemsInGroup
+          fetchMetadata: binColor
+          map: '({i: loop.u.name, n: loop.u.label.replace('' Waste'',''''), c: (loop.u.metadata && loop.u.metadata.binColor) ? loop.u.metadata.binColor.value : ''#6b7280''})'
+          fragment: true
+        slots:
+          default:
+          - component: oh-link
+            config:
+              action: sheet
+              actionModal: widget:waste_pickup_schedule
+              actionModalConfig:
+                rows: =loop.u_source
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+              visible: =(dayjs(items[loop.u.i].state).isSame(dayjs(),'day') || dayjs(items[loop.u.i].state).isSame(dayjs().add(1,'day'),'day'))
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 6px
+                    margin: '0'
+                    padding: 5px 12px
+                    border-radius: 16px
+                    color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
+                    background: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? loop.u.c : ''color-mix(in srgb, ''+loop.u.c+'' 16%, transparent)'''
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:trash
+                      style:
+                        font-size: 14px
+                        color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
+                  - component: Label
+                    config:
+                      text: '=loop.u.n+'' · ''+((dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''today'' : ''tomorrow'')'
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+                        color: '=(dayjs(items[loop.u.i].state).isSame(dayjs(),''day'')) ? ''#ffffff'' : loop.u.c'
+  waste_pickup_row:
+    tags:
+    - waste
+    props:
+      parameters:
+      - name: dateItem
+        label: Pickup date item
+        description: DateTime item holding the effective next pickup of one bin (its own bin group works best).
+        type: TEXT
+        required: true
+        context: item
+      - name: label
+        label: Bin name
+        description: Display name of the bin.
+        type: TEXT
+        required: true
+      - name: color
+        label: Bin colour
+        description: CSS colour for the bin (hex).
+        type: TEXT
+        default: '#6b7280'
+      parameterGroups: []
+    component: f7-row
+    config:
+      style:
+        display: flex
+        align-items: center
+        gap: 12px
+        margin: '0'
+        padding: 10px 12px
+        border-radius: 14px
+        background: '=(dayjs(items[props.dateItem].state).isSame(dayjs(),''day'')) ? ''color-mix(in srgb, ''+props.color+'' 14%, transparent)'' : ''transparent'''
+    slots:
+      default:
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            align-items: center
+            justify-content: center
+            margin: '0'
+            width: 36px
+            height: 36px
+            border-radius: 50%
+            flex: 0 0 auto
+            background: =props.color
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: f7:trash
+              style:
+                font-size: 18px
+                color: '#ffffff'
+      - component: f7-row
+        config:
+          style:
+            display: block
+            flex: 1 1 auto
+            min-width: '0'
+            margin: '0'
+            padding: '0'
+        slots:
+          default:
+          - component: Label
+            config:
+              text: =props.label
+              style:
+                display: block
+                font-size: 14px
+                font-weight: '600'
+                line-height: '1.2'
+          - component: Label
+            config:
+              text: '=(d=>d.isValid() ? d.format(''ddd D MMM'') : ''—'')(dayjs(items[props.dateItem].state))'
+              style:
+                display: block
+                font-size: 12px
+                opacity: '0.7'
+                margin-top: 2px
+      - component: Label
+        config:
+          text: '=(d=>!d.isValid() ? '''' : d.isSame(dayjs(),''day'') ? ''Today'' : d.isSame(dayjs().add(1,''day''),''day'') ? ''Tomorrow'' : ''in ''+d.startOf(''day'').diff(dayjs().startOf(''day''),''day'')+'' days'')(dayjs(items[props.dateItem].state))'
+          style:
+            flex: 0 0 auto
+            font-size: 13px
+            font-weight: '600'
+            white-space: nowrap
+            color: '=((dayjs(items[props.dateItem].state).isSame(dayjs(),''day'')) || (dayjs(items[props.dateItem].state).isSame(dayjs().add(1,''day''),''day''))) ? props.color : ''inherit'''
+            opacity: '=((dayjs(items[props.dateItem].state).isSame(dayjs(),''day'')) || (dayjs(items[props.dateItem].state).isSame(dayjs().add(1,''day''),''day''))) ? ''1'' : ''0.7'''
+  waste_pickup_schedule:
+    tags:
+    - waste
+    props:
+      parameters:
+      - name: rows
+        label: Rows
+        description: 'Array of {i: date item, n: name, c: colour}; supplied by waste_pickup_chips.'
+        type: TEXT
+      parameterGroups: []
+    component: f7-block
+    config:
+      label: Next pickups
+      style:
+        height: auto
+        max-height: 88vh
+        --f7-sheet-height: auto
+        margin: '0'
+        padding: '0'
+        background: var(--f7-page-bg-color)
+    slots:
+      default:
+      - component: f7-block
+        config:
+          strong: true
+          inset: true
+          style:
+            margin: 16px 16px 24px
+            padding: 4px 0
+        slots:
+          default:
+          - component: oh-repeater
+            config:
+              for: r
+              sourceType: array
+              in: '=props.rows.slice().sort((a,b)=>(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[a.i].state))-(x=>x.isValid() ? x.valueOf() : 9e15)(dayjs(items[b.i].state)))'
+              filter: (d=>!d.isValid() || !d.isBefore(dayjs(),'day'))(dayjs(items[loop.r.i].state))
+              fragment: true
+            slots:
+              default:
+              - component: widget:waste_pickup_row
+                config:
+                  dateItem: =loop.r.i
+                  label: =loop.r.n
+                  color: =loop.r.c

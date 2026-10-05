@@ -15,6 +15,16 @@ Custom OpenHAB Main UI widgets for home automation.
 | [gas_cost_card](widgets/gas_cost_card/) | Cost card/tile for gas and electricity: period cost, YoY badge, forecast vs. last period, optional live value and 24 h trend line | 5.x |
 | [speedtest_card](widgets/speedtest_card/) | Ookla Speedtest card: download and upload tiles with plan pill and trend, ping/jitter, quality indicators, refresh icon — native components only | 5.x |
 
+### Page building blocks
+
+| Widget | Description | OH Version |
+|--------|-------------|------------|
+| [stat_tile](widgets/stat_tile/) | Half-width glance tile: icon, value, unit, pill, sub line, 24 h trend; opens the analyzer or a page | 5.x |
+| [nav_tile](widgets/nav_tile/) | Navigation/action row: navigate, popup, photo viewer or command with confirmation | 5.x |
+| [weather_card](widgets/weather_card/) | Current weather, next 6 hours and 6 days from the OpenWeatherMap forecast items | 5.x |
+| [weather_warnings_card](widgets/weather_warnings_card/) | Active weather warnings (nothing shown without a warning) | 5.x |
+| [device_status_card](widgets/device_status_card/) | Low batteries and offline devices lists that only appear when needed | 5.x |
+
 ### Garden, climate and heating
 
 | Widget | Description | OH Version |
@@ -22,7 +32,7 @@ Custom OpenHAB Main UI widgets for home automation.
 | [air_quality_card](widgets/air_quality_card/) | European Air Quality Index card — verdict, driving pollutant, 6-band strip, per-pollutant detail | 5.x |
 | [ATAG ONE](widgets/atag/) | Six widgets for the ATAG ONE thermostat/boiler: control face, weekly schedule editor, regulation settings, diagnostics, heating and hot water charts | 5.x |
 | [lawn_mower](widgets/lawn_mower/) | Husqvarna Automower status card with GPS track map, weather guards and manual pause | 5.x |
-| [humidity_room_card](widgets/humidity_room_card/) | Per-room humidity + temperature card with zone bar and optional heating-valve indicator | 5.x |
+| [humidity_room_card](widgets/humidity_room_card/) | Per-room humidity tile: value, status pill, zone bar, temperature and setpoint | 5.x |
 
 ---
 

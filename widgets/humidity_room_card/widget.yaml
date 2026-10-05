@@ -37,14 +37,24 @@ props:
     required: false
     type: TEXT
     groupName: appearance
-  - default: '40'
-    label: Safe Min (%)
+  - default: '20'
+    label: Scale start (%)
     name: min
     required: false
     type: INTEGER
     min: 0
     max: 100
     groupName: thresholds
+    description: Left end of the zone bar. With the default 20–80 scale, 50 % sits in the middle.
+  - default: '80'
+    label: Scale end (%)
+    name: max
+    required: false
+    type: INTEGER
+    min: 0
+    max: 100
+    groupName: thresholds
+    description: Right end of the zone bar; higher values are pinned to the end.
   - default: '60'
     label: Elevated max (%)
     name: orange
@@ -77,7 +87,7 @@ props:
     label: Thresholds
   - name: extras
     label: Valve
-timestamp: Oct 5, 2026, 6:34:27 PM
+timestamp: Oct 5, 2026, 7:58:32 PM
 component: oh-link
 config:
   action: analyzer
@@ -192,8 +202,9 @@ slots:
                 height: 6px
                 border-radius: 3px
                 margin: 10px 0 0
-                background: '=''linear-gradient(90deg, #28a745 0%, #28a745 ''+(((props.orange || 60) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%, #f59e0b ''+(((props.orange || 60) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%,
-                  #f59e0b ''+(((props.red || 70) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%, #dc3545 ''+(((props.red || 70) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%, #dc3545 100%)'''
+                background: '=''linear-gradient(90deg, #28a745 0%, #28a745 ''+(Math.min(100, ((props.orange || 60) - (props.min || 20)) / ((props.max || 80) - (props.min || 20)) * 100))+''%, #f59e0b ''+(Math.min(100, ((props.orange || 60) - (props.min
+                  || 20)) / ((props.max || 80) - (props.min || 20)) * 100))+''%, #f59e0b ''+(Math.min(100, ((props.red || 70) - (props.min || 20)) / ((props.max || 80) - (props.min || 20)) * 100))+''%, #dc3545 ''+(Math.min(100, ((props.red || 70) - (props.min
+                  || 20)) / ((props.max || 80) - (props.min || 20)) * 100))+''%, #dc3545 100%)'''
             slots:
               default:
               - component: f7-row
@@ -207,7 +218,7 @@ slots:
                     border-radius: 2px
                     background: var(--f7-card-bg-color)
                     box-shadow: 0 0 0 1px rgba(128,128,128,0.6)
-                    left: '=(Math.max(0, Math.min(100, (((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state))) - (props.min || 40)) / (100 - (props.min || 40)) * 100)))+''%'''
+                    left: '=(Math.max(0, Math.min(100, (((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state))) - (props.min || 20)) / ((props.max || 80) - (props.min || 20)) * 100)))+''%'''
           - component: f7-row
             config:
               style:

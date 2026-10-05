@@ -8,7 +8,7 @@ Half-width tile in the shared page design: room icon and name, humidity as a 26 
 
 - Room icon + name; optional heating-valve icon (blue = any valve open, dim = all closed)
 - Humidity value coloured green / amber / red by the thresholds, with the status pill
-- Zone bar from `min` to 100 % (safe / elevated / critical) with the current position
+- Zone bar from `min` to `max` (default 20–80 %, so 50 % is the middle; safe / elevated / critical) with the current position
 - `22.9 °C · Set 30 °C` sub line
 - Tapping the tile opens the analyzer for the humidity, temperature, setpoint and valve items
 
@@ -26,7 +26,8 @@ Half-width tile in the shared page design: room icon and name, humidity as a 26 
 | `setpointItem` | No | — | Thermostat setpoint item |
 | `title` | No | item label | Room display name |
 | `icon` | No | `f7:house` | Icon id (e.g. `iconify:mdi:sofa`) |
-| `min` | No | `40` | Lower bound of the zone bar (%) |
+| `min` | No | `20` | Left end of the zone bar (%) |
+| `max` | No | `80` | Right end of the zone bar (%); higher values are pinned to the end |
 | `orange` | No | `60` | Elevated above this (%) |
 | `red` | No | `70` | Critical above this (%) |
 | `valveItems` | No | — | Comma-separated heating valve `_STATE` switches for the valve icon |
@@ -39,6 +40,10 @@ Half-width tile in the shared page design: room icon and name, humidity as a 26 
 ---
 
 ## Changelog
+
+### Version 2.2.0
+
+- Zone bar scale is now 20–80 % (new prop `max`, `min` default 40 → 20) instead of 40–100 %: with tight per-room levels the old scale made the green zone a third of the bar and the red zone more than half; 50 % is now the middle of the bar
 
 ### Version 2.1.0
 

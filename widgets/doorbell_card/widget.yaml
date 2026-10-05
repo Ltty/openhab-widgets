@@ -123,9 +123,9 @@ slots:
               text: =props.cardTitle || 'Front Door'
           - component: oh-icon
             config:
-              icon: =props.lockItem && items[props.lockItem] && items[props.lockItem].state === 'ON' ? 'f7:lock_fill' : 'f7:lock_open_fill'
+              icon: '=props.lockItem && items[props.lockItem] && items[props.lockItem].state === ''ON'' ? ''f7:lock_fill'' : ''f7:lock_open_fill'''
               style:
-                color: =props.lockItem && items[props.lockItem] && items[props.lockItem].state === 'ON' ? 'var(--f7-theme-color)' : 'green'
+                color: '=props.lockItem && items[props.lockItem] && items[props.lockItem].state === ''ON'' ? ''var(--f7-theme-color)'' : ''green'''
                 font-size: 18px
               visible: =!!props.lockItem
       - component: Label
@@ -135,7 +135,7 @@ slots:
             font-size: 14px
             font-weight: "500"
             margin-bottom: 2px
-          text: =items[props.labelItem] && items[props.labelItem].state !== 'NULL' ? items[props.labelItem].state : '–'
+          text: '=items[props.labelItem] && items[props.labelItem].state !== ''NULL'' ? items[props.labelItem].state : ''–'''
       - component: Label
         config:
           style:
@@ -143,7 +143,7 @@ slots:
             display: block
             font-size: 12px
             margin-bottom: 8px
-          text: =items[props.timeItem] && items[props.timeItem].state !== 'NULL' ? items[props.timeItem].displayState : '–'
+          text: '=items[props.timeItem] && items[props.timeItem].state !== ''NULL'' ? items[props.timeItem].displayState : ''–'''
       - component: f7-row
         config:
           style:
@@ -251,7 +251,7 @@ slots:
             font-size: 11px
             margin-bottom: 4px
             margin-top: 8px
-          text: =props.snapshotFolder ? 'Recent captures' : 'Latest capture'
+          text: '=props.snapshotFolder ? ''Recent captures'' : ''Latest capture'''
       - component: oh-image
         config:
           item: =props.imageItem

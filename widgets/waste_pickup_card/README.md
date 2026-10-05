@@ -67,4 +67,6 @@ Replace the block with `widget:waste_pickup_card` (no config needed with the def
 `node scripts/check-expressions.mjs` — parses every expression with the same parser Main UI uses.
 
 ## Changelog
-- **1.0.0** — initial release (replaces `garbage_list_v1`): group-driven, DST-safe, sorted, relative dates, metadata colours.
+### Version 1.0.0
+
+- Initial release (replaces `garbage_list_v1`): group-driven, DST-safe, sorted, relative dates, metadata colours.

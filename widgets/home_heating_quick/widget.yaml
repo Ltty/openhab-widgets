@@ -1,0 +1,166 @@
+uid: home_heating_quick
+tags:
+- home
+timestamp: Oct 5, 2026, 1:21:03 PM
+props:
+  parameters:
+  - name: commandItem
+    label: Command item
+    description: String item that receives fireplacemorning / vacation<days> / cancel; a rule maps them to the thermostat (see rules/).
+    type: TEXT
+    context: item
+    default: gHeatingQuick
+    required: false
+  - name: modeItem
+    label: Mode item
+    description: String item with the heating mode (auto, manual, fireplace, holiday, extend).
+    type: TEXT
+    context: item
+    default: Atag_One_CH_mode
+    required: false
+  - name: targetItem
+    label: Target temperature item
+    description: Number item with the current target temperature (shown in automatic mode).
+    type: TEXT
+    context: item
+    default: GF_LivingDining_ATAGOne_CHTargettemperature
+    required: false
+  - name: seasonItem
+    label: Heating season switch
+    description: Switch, ON = heating season; distinguishes 'Manual mode' from 'Heating season is off'.
+    type: TEXT
+    context: item
+    default: gSceneHVAC
+    required: false
+  parameterGroups: []
+component: f7-block
+config:
+  label: Heating
+  style:
+    height: auto
+    max-height: 88vh
+    --f7-sheet-height: auto
+    margin: '0'
+    padding: '0'
+    background: var(--f7-page-bg-color)
+slots:
+  default:
+  - component: oh-list
+    config:
+      inset: true
+      strong: true
+      dividersIos: true
+      style:
+        margin: 16px 16px 8px
+      mediaList: true
+    slots:
+      default:
+      - component: oh-list-item
+        config:
+          icon: f7:flame_fill
+          iconColor: '#ea580c'
+          title: Fireplace
+          subtitle: '=((n,t)=>''Until ''+n.add(Math.min(24,Math.max(1,Math.ceil(t.diff(n)/3600000-0.05))),''hour'').format(''HH:mm''))(dayjs(),(t=>t.diff(dayjs())<3600000 ? t.add(1,''day'') : t)(dayjs().hour(7).minute(0).second(0).millisecond(0)))'
+          action: command
+          actionItem: =props.commandItem
+          actionCommand: fireplacemorning
+          actionFeedback: Fireplace mode on
+          sheetClose: true
+      - component: oh-list-item
+        config:
+          icon: f7:arrow_counterclockwise
+          iconColor: '#6b7280'
+          title: Back to Auto
+          subtitle: =({'fireplace':'Ends fireplace mode','holiday':'Ends vacation mode','extend':'Ends extended heating'}[items[props.modeItem].state]||'')
+          action: command
+          actionItem: =props.commandItem
+          actionCommand: cancel
+          actionFeedback: Back to Auto
+          sheetClose: true
+          visible: =['fireplace','holiday','extend'].includes(items[props.modeItem].state)
+  - component: Label
+    config:
+      text: '=(m=>m===''fireplace'' ? ''Fireplace mode is on'' : m===''holiday'' ? ''Vacation mode is on'' : m===''extend'' ? ''Extended heating is on'' : m===''auto'' ? ''Automatic · target ''+Number.parseFloat(items[props.targetItem].state).toFixed(0)+''°''
+        : items[props.seasonItem].state===''ON'' ? ''Manual mode'' : ''Heating season is off'')(items[props.modeItem].state)'
+      style:
+        display: block
+        font-size: 13px
+        opacity: '0.6'
+        margin: 0 32px 20px
+  - component: Label
+    config:
+      text: VACATION
+      style:
+        display: block
+        font-size: 13px
+        font-weight: '600'
+        letter-spacing: 0.04em
+        opacity: '0.6'
+        margin: 0 32px 8px
+  - component: f7-block
+    config:
+      strong: true
+      inset: true
+      style:
+        margin: 0 16px 24px
+        padding: 16px
+    slots:
+      default:
+      - component: f7-segmented
+        config:
+          strong: true
+          round: true
+          style:
+            margin: 0 0 16px
+        slots:
+          default:
+          - component: oh-button
+            config:
+              text: 3 days
+              active: =(vars.days||7)==3
+              action: variable
+              actionVariable: days
+              actionVariableValue: 3
+              style:
+                text-transform: none
+          - component: oh-button
+            config:
+              text: 5 days
+              active: =(vars.days||7)==5
+              action: variable
+              actionVariable: days
+              actionVariableValue: 5
+              style:
+                text-transform: none
+          - component: oh-button
+            config:
+              text: 7 days
+              active: =(vars.days||7)==7
+              action: variable
+              actionVariable: days
+              actionVariableValue: 7
+              style:
+                text-transform: none
+          - component: oh-button
+            config:
+              text: 14 days
+              active: =(vars.days||7)==14
+              action: variable
+              actionVariable: days
+              actionVariableValue: 14
+              style:
+                text-transform: none
+      - component: oh-button
+        config:
+          text: ='Start vacation · '+(vars.days||7)+' days'
+          large: true
+          fill: true
+          round: true
+          action: command
+          actionItem: =props.commandItem
+          actionCommand: ='vacation'+(vars.days||7)
+          actionFeedback: Vacation mode started
+          sheetClose: true
+          style:
+            text-transform: none
+            font-weight: '600'

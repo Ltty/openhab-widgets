@@ -42,4 +42,6 @@ editor shows no props.
 (bottom sheets). Keep the hero as one widget so the page editor (which ignores `visible`) shows one block.
 
 ## Changelog
-- **1.0.0** — initial release.
+### Version 1.0.0
+
+- Initial release.

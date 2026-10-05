@@ -2,6 +2,7 @@ widgets:
   home_hero:
     tags:
     - home
+    timestamp: Oct 5, 2026, 1:21:29 PM
     props:
       parameters:
       - name: tempItem
@@ -333,6 +334,7 @@ widgets:
   home_hero_alerts:
     tags:
     - home
+    timestamp: Oct 5, 2026, 1:21:29 PM
     props:
       parameters:
       - name: smokeGroup
@@ -658,6 +660,7 @@ widgets:
   home_humidity:
     tags:
     - home
+    timestamp: Oct 5, 2026, 1:21:34 PM
     props:
       parameters:
       - name: rows
@@ -704,6 +707,7 @@ widgets:
   home_low_batteries:
     tags:
     - home
+    timestamp: Oct 5, 2026, 1:21:33 PM
     props:
       parameters:
       - name: rows
@@ -750,6 +754,7 @@ widgets:
   home_offline_devices:
     tags:
     - home
+    timestamp: Oct 5, 2026, 1:21:31 PM
     props:
       parameters:
       - name: rows

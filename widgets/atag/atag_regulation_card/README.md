@@ -1,7 +1,9 @@
 # atag_regulation_card — ATAG ONE Regulation Settings
 
 The ATAG ONE's "Regulation" settings screen — central heating, weather-dependent control, hot
-water, and display — as a four-section accordion card.
+water and display — as a dialog with **staged edits and a Save button**. Opened as a popup from a
+`nav_tile`; the HTML companion follows the shared design system (section cards, theme colours and
+font read from the Main UI, ATAG blue `#1472b9`).
 
 ---
 
@@ -11,25 +13,23 @@ water, and display — as a four-section accordion card.
 
 ## What it shows
 
-Four always-visible sections (flat, not collapsible — this card only ever appears inside a popup,
-so a second layer of expand/collapse on top of that would just be redundant clicking):
+Three sections, each a rounded card with a plain title above it:
 
-- **Central Heating** — operating mode (tap to switch thermostat ↔ weather-dependent), schedule
-  base temperature, vacation temperature
-- **Weather Dependent** — heating type, insulation, building size, room influence, climate zone,
-  max preheat, frost protection (mode + room/outside thresholds). Visually dimmed and
-  non-interactive while Central Heating's operating mode is `thermostat` (these settings are
-  ignored by the device in that mode). **Summer Eco Mode/Temperature are shown regardless of
-  operating mode** — in `thermostat` mode the device itself ignores them, but the openHAB rule
-  `Toggle Heating Season` reads them to drive the seasonal heating on/off switch instead
-- **Hot Water** — DHW base temperature, legionella protection (on/off, day, and time — a plain
-  `HH:mm` text field)
-- **Display** — brightness, time zone
+- **General** — season, display brightness (10–100 %), time zone
+- **Central Heating** — operating mode (thermostat / weather-dependent), schedule base and vacation
+  temperature, summer eco mode and temperature, frost protection (mode, room / outside threshold).
+  The weather-dependent rows (heating type, insulation, building size, room influence, climate zone,
+  max preheat) are hidden while the operating mode is `thermostat`, because the device ignores them
+  then. **Summer Eco Mode/Temperature are shown regardless of operating mode** — in `thermostat`
+  mode the device itself ignores them, but the openHAB rule `Toggle Heating Season` reads them to
+  drive the seasonal heating on/off switch instead
+- **Hot Water** — DHW base temperature, legionella protection (on/off, day, time as `HH:mm`)
 
-Every enum setting (Operating Mode, Heating Type, Insulation, Building Size, Room Influence, Max
-Preheat, Frost Protection, Legionella Day, Time Zone) is tappable — `action: "options"` opens the
-native selection sheet. A plain `oh-list-item` bound only via `item:` shows nothing and does
-nothing (see Gotchas).
+Edits are only staged locally; **Save** sends the changed items one by one (400 ms apart), waits out
+one binding poll (~70 s), re-reads and retries once what did not stick — the ATAG drops requests
+silently. Leaving the dialog with Back discards unsaved edits (there is no Cancel button). Do not
+close the dialog while it reads "Sending…" or "confirming…". The frame stretches to the bottom of the
+dialog, so the Save bar sits at the very bottom and only the list scrolls.
 
 ## Quick start
 
@@ -40,10 +40,17 @@ nothing (see Gotchas).
 3. Paste the contents of [`widget.yaml`](widget.yaml)
 4. Click **Save**
 
-### 2. Add to a page
+### 2. Deploy the companion HTML
+
+Upload [`regulation.html`](regulation.html) to `$OPENHAB_CONF/html/atag/regulation.html` (served at
+`/static/atag/regulation.html`). Bump `?v=N` in the widget's `src` expression whenever the file
+changes — browsers cache it.
+
+### 3. Add to a page
 
 Add a Custom Widget block, set type to `atag_regulation_card`, and set the item props for the
-channels you want to expose.
+channels you want to expose. Typical use: `nav_tile` with `action: popup`, `modal: widget:atag_regulation_card`
+and the item props in `modalConfig`.
 
 ---
 
@@ -58,14 +65,11 @@ water setpoint, not the binding's `hotwater#target-temperature` channel — that
 derived/read-only on the device side and a known broken write path (see the `atagone` binding's
 own test notes).
 
-**Unit note**: `displayBrightnessItem` steps 0.1–1.0 (a fraction, matching its actual reported
-scale), not 10–100 as its channel's own `%`-pattern implies — `oh-stepper-item` reads and writes
-the item's raw base-unit value directly and does not apply `unit` metadata for display or
-conversion.
+**`displayBrightnessItem` note**: a `Number:Dimensionless` fraction (0.3 = 30 %); the dialog shows and
+steps it in percent and sends the fraction.
 
 **`legionellaProtectionTimeItem` note**: a plain `String` item in `HH:mm` format (e.g. `07:00`).
-The widget validates the format client-side and rejects an edit that doesn't match before it's
-sent.
+The dialog validates the format and rejects an edit that doesn't match before it is staged.
 
 ## Requirements
 
@@ -74,16 +78,10 @@ sent.
 
 ## Gotchas
 
-- **`oh-list-item` bound via `item:` alone renders nothing and does nothing** — no value shown, no
-  tap affordance, confirmed via live DOM inspection (a plain `<div>`, not even an `<a>`). Add
-  `action: "options"` to get the standard tap-to-open-a-selection-sheet behavior for a String item
-  with enum options; the row then renders as an `<a class="item-link">` with a `›` chevron and
-  opens a native picker on tap. This isn't documented in `describe_widget('oh-list-item')`'s prop
-  list (which only covers title/subtitle/icon/badge/listButton) — `action` is accepted anyway as
-  an "extra" config key per the component's own action-grammar support.
-- **A flex row needs an explicit `width: 100%` inside a card-content column, or it shrink-wraps**
-  — without it, `flex: "1"` on a child has no free space to grow into, so trailing content sits
-  stranded mid-row instead of flush right. See `humidity_room_card`'s header row for the same fix.
+- The bar buttons are `div`s: enable / disable them through the `disabled` **attribute** (the `[disabled]`
+  style keys off it), not the DOM property.
+- The frame resizes itself to its popup (`frameElement`) and reads colours and font from the parent
+  Main UI, so it must be served from the same origin (`/static/…`).
 
 ---
 

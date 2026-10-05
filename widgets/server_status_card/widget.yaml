@@ -130,6 +130,37 @@ props:
     required: false
     default: SD card
     groupName: storage
+  - name: logsPctItem
+    label: Log volume used % item
+    description: 'Optional zram log volume (ratio or %): bar under the SD card ring. Empty = hidden.'
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Logs_UsedPercent
+    groupName: storage
+  - name: logsUsedItem
+    label: Log volume used item
+    description: Number:DataAmount.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Logs_Used
+    groupName: storage
+  - name: logsTotalItem
+    label: Log volume total item
+    description: Number:DataAmount.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Logs_Total
+    groupName: storage
+  - name: logsTitle
+    label: Log volume label
+    description: Label of the log bar.
+    type: TEXT
+    required: false
+    default: Logs
+    groupName: storage
   - name: ssdPctItem
     label: SSD used % item
     description: Number (ratio or %) of the SSD volume — ring.
@@ -248,7 +279,7 @@ props:
     label: Network
   - name: controls
     label: Controls
-timestamp: Oct 5, 2026, 6:33:00 PM
+timestamp: Oct 5, 2026, 6:47:54 PM
 component: f7-card
 config:
   style:
@@ -696,7 +727,7 @@ slots:
                       actionModal: widget:info_popover
                       actionModalConfig:
                         title: SD card
-                        text: Used space of the SD card ('/'), where the operating system and openHAB live.
+                        text: 'Used space of the SD card (''/''), where the operating system and openHAB live. The bar is the log volume: logs are kept in compressed RAM (zram) to spare the SD card; when it is full, new log lines are lost.'
                       style:
                         display: inline-flex
                         color: inherit
@@ -746,6 +777,54 @@ slots:
                     font-size: 11px
                     opacity: '0.75'
                     text-align: center
+              - component: oh-repeater
+                config:
+                  for: l
+                  sourceType: array
+                  in: '=props.logsPctItem && items[props.logsPctItem] && items[props.logsPctItem].state !== ''NULL'' && items[props.logsPctItem].state !== ''UNDEF'' ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        margin: '0'
+                        width: 100%
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            position: relative
+                            height: 5px
+                            border-radius: 3px
+                            background: rgba(128,128,128,0.2)
+                            margin: 2px 0 0
+                            overflow: hidden
+                            width: 100%
+                        slots:
+                          default:
+                          - component: f7-row
+                            config:
+                              style:
+                                display: block
+                                height: 5px
+                                margin: '0'
+                                border-radius: 3px
+                                background: '=(v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.logsPctItem].state))>85 ? ''#dc3545'' : (v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.logsPctItem].state))>70 ? ''#f59e0b'' : ''#64748b'''
+                                width: '=Math.min(100,(v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.logsPctItem].state)))+''%'''
+                      - component: Label
+                        config:
+                          text: '=(props.logsTitle || ''Logs'')+'' ''+Math.round((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.logsPctItem].state)))+'' % · ''+(Number.parseFloat(items[props.logsUsedItem].state)/1000000000).toFixed(1)+'' GB'''
+                          style:
+                            display: block
+                            width: 100%
+                            font-size: 11px
+                            opacity: '0.75'
+                            text-align: center
+                            margin-top: 3px
           - component: f7-row
             config:
               style:

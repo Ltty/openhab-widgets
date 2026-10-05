@@ -2,7 +2,7 @@
 
 ![Server status card](screenshots/card.png)
 
-One grouped card for the machine openHAB runs on, organised by layer: **Compute** (CPU load ring, load average, temperature bar with clock speed), **Memory** (RAM ring, swap bar, openHAB Java heap bar), **SD card** and **SSD** (used rings with used/total GB), a **network** row (received/sent since boot with icons, IP address and interface) and the **controls** Reboot and Shut down. The tiles wrap: two per row on a phone, all four in one row on wide screens. Every tile has an info icon that opens a short explanation (`info_popover`).
+One grouped card for the machine openHAB runs on, organised by layer: **Compute** (CPU load ring, load average, temperature bar with clock speed), **Memory** (RAM ring, swap bar, openHAB Java heap bar), **SD card** (used ring plus a bar for the zram log volume) and **SSD** (used rings with used/total GB), a **network** row (received/sent since boot with icons, IP address and interface) and the **controls** Reboot and Shut down. The tiles wrap: two per row on a phone, all four in one row on wide screens. Every tile has an info icon that opens a short explanation (`info_popover`).
 
 Native components only (`f7-gauge`, `f7-card`, `oh-button`); optional parts (the two buttons) render through repeaters. Reboot and shutdown send `ON` to exec
 switch items and always ask for confirmation first — shutdown needs physical access to start again; leave `rebootItem` / `shutdownItem` empty to hide a button.
@@ -29,6 +29,10 @@ link the data sent/received items to the channel group of your real interface.
 | `storageUsedItem` | `Systeminfo_UsedStorage` | Number:DataAmount (bytes). |
 | `storageTotalItem` | `Systeminfo_Total_Storage` | Number:DataAmount (bytes). |
 | `storageTitle` | `SD card` | Title of the first storage tile. |
+| `logsPctItem` | `Systeminfo_Logs_UsedPercent` | Optional zram log volume (ratio or %): bar under the SD card ring. Empty = hidden. |
+| `logsUsedItem` | `Systeminfo_Logs_Used` | Number:DataAmount. |
+| `logsTotalItem` | `Systeminfo_Logs_Total` | Number:DataAmount. |
+| `logsTitle` | `Logs` | Label of the log bar. |
 | `ssdPctItem` | `Systeminfo_SSD_UsedPercent` | Number (ratio or %) of the SSD volume — ring. |
 | `ssdUsedItem` | `Systeminfo_SSD_Used` | Number:DataAmount. |
 | `ssdTotalItem` | `Systeminfo_SSD_Total` | Number:DataAmount. |
@@ -44,6 +48,10 @@ link the data sent/received items to the channel group of your real interface.
 | `shutdownItem` | `gSystem_Shutdown` | Exec switch; ON powers the server off (with confirmation). Empty = no button. |
 
 ## Changelog
+
+### Version 1.5.0
+
+- SD card tile: bar for the zram log volume ("Logs 29 % · 0.3 GB"); new props `logsPctItem`, `logsUsedItem`, `logsTotalItem`, `logsTitle`
 
 ### Version 1.4.0
 

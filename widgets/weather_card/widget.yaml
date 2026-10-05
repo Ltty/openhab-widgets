@@ -71,25 +71,11 @@ props:
     groupName: current
   - name: blindsOpenItem
     label: Blinds open time item
-    description: Optional DateTime item the morning blind routine is triggered from (e.g. civil dawn start). Empty = no blinds line.
+    description: Optional DateTime item the morning blind routine is triggered from; its time is shown as is (the astro channel adds the offset and earliest limit). Empty = no blinds line.
     type: TEXT
     required: false
     context: item
     default: LocalSun_CivilDawn_Start
-    groupName: blinds
-  - name: blindsOpenOffset
-    label: Blinds open offset (min)
-    description: Minutes the routine adds to that item's time (the offset in the rule's DateTime trigger).
-    type: INTEGER
-    required: false
-    default: '20'
-    groupName: blinds
-  - name: blindsOpenClamp
-    label: Blinds open earliest (hh:mm)
-    description: If the open time item equals this time (the astro channel's 'earliest' limit clamps it), the offset is not added — matches the rule, which opens at the limit without delay. Empty = always add.
-    type: TEXT
-    required: false
-    default: 06:15
     groupName: blinds
   - name: blindsCloseItem
     label: Blinds close time item
@@ -128,7 +114,7 @@ props:
     label: Blinds
   - name: forecast
     label: Forecast
-timestamp: Oct 5, 2026, 7:23:14 PM
+timestamp: Oct 5, 2026, 7:41:22 PM
 component: f7-card
 config:
   style:
@@ -274,17 +260,60 @@ slots:
               default:
               - component: oh-icon
                 config:
-                  icon: iconify:mdi:blinds-open
+                  icon: iconify:mdi:blinds
                   style:
                     font-size: 16px
                     opacity: '0.75'
-              - component: Label
+              - component: f7-row
                 config:
-                  text: '=''Blinds open ''+(d=>(props.blindsOpenClamp && d.format(''HH:mm:ss'') === props.blindsOpenClamp+'':00'') ? d : d.add(props.blindsOpenOffset || 0,''minute''))(dayjs(items[props.blindsOpenItem].state)).format(''HH:mm'')+((props.blindsCloseItem
-                    && items[props.blindsCloseItem] && items[props.blindsCloseItem].state !== ''UNDEF'') ? '' · close ''+dayjs(items[props.blindsCloseItem].state).add(props.blindsCloseOffset || 0,''minute'').format(''HH:mm'') : '''')'
                   style:
-                    font-size: 13px
-                    font-weight: '500'
+                    display: flex
+                    align-items: center
+                    gap: 2px
+                    margin: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:arrow_up
+                      style:
+                        font-size: 14px
+                        opacity: '0.75'
+                  - component: Label
+                    config:
+                      text: =dayjs(items[props.blindsOpenItem].state).format('HH:mm')
+                      style:
+                        font-size: 13px
+                        font-weight: '500'
+              - component: oh-repeater
+                config:
+                  for: bc
+                  sourceType: array
+                  in: '=(props.blindsCloseItem && items[props.blindsCloseItem] && items[props.blindsCloseItem].state !== ''NULL'' && items[props.blindsCloseItem].state !== ''UNDEF'') ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        gap: 2px
+                        margin: 0 0 0 6px
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:arrow_down
+                          style:
+                            font-size: 14px
+                            opacity: '0.75'
+                      - component: Label
+                        config:
+                          text: =dayjs(items[props.blindsCloseItem].state).add(props.blindsCloseOffset || 0,'minute').format('HH:mm')
+                          style:
+                            font-size: 13px
+                            font-weight: '500'
       - &id001
         component: f7-row
         config:

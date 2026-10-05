@@ -94,7 +94,7 @@ widgets:
         label: Event Detection
       - name: appearance
         label: Appearance
-    timestamp: 2026-10-05T14:44:10.163+0200
+    timestamp: Oct 5, 2026, 2:44:10 PM
     component: f7-card
     config:
       style:
@@ -291,7 +291,7 @@ widgets:
         type: TEXT
         required: true
       parameterGroups: []
-    timestamp: 2026-10-05T13:46:36.339+0200
+    timestamp: Oct 5, 2026, 1:46:36 PM
     component: f7-block
     config:
       label: Live view

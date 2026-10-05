@@ -20,14 +20,9 @@ Custom OpenHAB Main UI widgets for home automation.
 | Widget | Description | OH Version |
 |--------|-------------|------------|
 | [air_quality_card](widgets/air_quality_card/) | European Air Quality Index card — verdict, driving pollutant, 6-band strip, per-pollutant detail | 5.x |
+| [ATAG ONE](widgets/atag/) | Six widgets for the ATAG ONE thermostat/boiler: control face, weekly schedule editor, regulation settings, diagnostics, heating and hot water charts | 5.x |
 | [lawn_mower](widgets/lawn_mower/) | Husqvarna Automower status card with GPS track map, weather guards and manual pause | 5.x |
 | [humidity_room_card](widgets/humidity_room_card/) | Per-room humidity + temperature card with zone bar and optional heating-valve indicator | 5.x |
-| [atag_one_card](widgets/atag_one_card/) | ATAG ONE thermostat control face — current/target temperature, mode selector, vacation/extend/fireplace pickers | 5.x |
-| [atag_schedule_card](widgets/atag_schedule_card/) | ATAG ONE weekly CH/DHW schedule editor | 5.x |
-| [atag_regulation_card](widgets/atag_regulation_card/) | ATAG ONE regulation settings — central heating, weather-dependent, hot water, display | 5.x |
-| [atag_diagnostics_card](widgets/atag_diagnostics_card/) | ATAG ONE read-only boiler diagnostics | 5.x |
-| [atag_heating_chart](widgets/atag_heating_chart/) | ATAG ONE central heating daily chart — target vs. room vs. outside temperature | 5.x |
-| [atag_hotwater_chart](widgets/atag_hotwater_chart/) | ATAG ONE domestic hot water daily chart — target vs. current water temperature | 5.x |
 
 ---
 
@@ -46,7 +41,7 @@ Each widget folder has its own README with full setup instructions and prop refe
 
 ```
 widgets/
-  <widget-name>/
+  <widget-name>/          (or <group>/<widget-name>/ for a device group such as widgets/atag/)
     README.md          ← setup guide and prop reference
     widget.yaml        ← paste into OH widget editor (or widgets.yaml: a family, one key per UID)
     rules/             ← optional JS Scripting rules

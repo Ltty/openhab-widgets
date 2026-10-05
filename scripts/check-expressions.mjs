@@ -12,7 +12,13 @@ const SCOPE = new Set(['items', 'props', 'config', 'fn', 'const', 'vars', 'loop'
   'device', 'screen', 'JSON', 'dayjs', 'user', 'translation', 't', 'true', 'false', 'null', 'undefined']);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'widgets');
 const files = process.argv.length > 2 ? process.argv.slice(2)
-  : fs.readdirSync(root).flatMap(d => ['widget.yaml', 'widgets.yaml'].map(n => path.join(root, d, n))).filter(f => fs.existsSync(f));
+  : fs.readdirSync(root).flatMap(d => {
+      const dir = path.join(root, d);
+      // a folder is either a widget (widget.yaml / widgets.yaml) or a group of widgets (e.g. widgets/atag/<widget>/)
+      const dirs = fs.existsSync(path.join(dir, 'widget.yaml')) || fs.existsSync(path.join(dir, 'widgets.yaml')) ? [dir]
+        : fs.readdirSync(dir, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => path.join(dir, e.name));
+      return dirs.flatMap(x => ['widget.yaml', 'widgets.yaml'].map(n => path.join(x, n)));
+    }).filter(f => fs.existsSync(f));
 
 function collect(node, out) {
   if (Array.isArray(node)) return node.forEach(n => collect(n, out));

@@ -1,4 +1,4 @@
-uid: speedtest_glance_card
+uid: speedtest_card
 tags:
 - home
 - network
@@ -82,7 +82,7 @@ props:
     label: Plan
   - name: look
     label: Look
-timestamp: 2026-10-05T14:30:07.300+0200
+timestamp: Oct 5, 2026, 3:12:07 PM
 component: f7-block
 config:
   style:

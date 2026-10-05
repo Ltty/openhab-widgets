@@ -1,4 +1,4 @@
-uid: cost_glance_tile
+uid: gas_cost_card
 tags:
 - home
 - energy
@@ -115,7 +115,7 @@ props:
     label: Cost data
   - name: live
     label: Live value
-timestamp: 2026-10-05T14:06:32.114+0200
+timestamp: Oct 5, 2026, 3:12:07 PM
 component: oh-link
 config:
   action: '=props.page ? ''navigate'' : '''''

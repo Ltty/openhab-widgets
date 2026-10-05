@@ -1,4 +1,4 @@
-# cost_glance_tile — cost tile with live value and trend
+# gas_cost_card — cost card/tile for gas and electricity
 
 ![Cost tiles with live value and trend](screenshots/tiles.png)
 
@@ -30,6 +30,14 @@ Example: electricity = `Shelly_…EnergyBillingPeriod_Cost` (+ `_YoYPercent`, `_
 
 ## Changelog
 
+### Version 2.0.0 (BREAKING)
+
+- Rebuilt in the style of the home page tiles (header with icon and title, 26 px cost, YoY pill, forecast/last-year line); works as a half-width tile or a plain cost card
+- **Prop `item` renamed `costItem`**; `yoyItem`, `predictedItem`, `prevTotalItem` and `title` are unchanged
+- New optional props: `icon`, `color`, `page` (tap target), `liveItem`, `activeItem`, `idleText`, `liveScale`, `liveUnit`, `trendItem`, `trendSampling` — a live value (e.g. W, m³/h) top right and a 24 h trend line; leave them empty for a plain card
+- Costs are shown rounded in euro ("€935") and forecast and last year share one line ("Fcst €1383 · Last €1326")
+- Corners 18 px, margin 0; `title` defaults to "Cost"; used for both gas and electricity
+
 ### Version 1.0.0
 
-- Initial release.
+- Imported into the repo (existed live only); `Card title` default is now "Cost" (was "Gas – Calendar Year"); card corners 18 px with margin 0 to match the home page cards

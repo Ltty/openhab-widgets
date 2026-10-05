@@ -1,7 +1,6 @@
 uid: home_heating_quick
 tags:
 - home
-timestamp: Oct 5, 2026, 1:21:03 PM
 props:
   parameters:
   - name: commandItem
@@ -33,6 +32,7 @@ props:
     default: gSceneHVAC
     required: false
   parameterGroups: []
+timestamp: 2026-10-05T13:21:03.684+0200
 component: f7-block
 config:
   label: Heating

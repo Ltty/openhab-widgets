@@ -1,5 +1,7 @@
 # home_heating_quick — heating quick-mode sheet
 
+![Heating sheet](screenshots/sheet.png)
+
 Bottom sheet for the one-tap heating modes: **Fireplace** until the next morning (07:00), **Vacation** for
 3 / 5 / 7 / 14 days, and **Back to Auto** (only shown while a timed mode runs). A status line shows the current mode.
 Native list rows, segmented control and button only.

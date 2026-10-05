@@ -89,6 +89,10 @@ sent.
 
 ## Changelog
 
+### Version 2.3.2
+
+- Removed the Revert / Cancel button: the dialog's Back button already discards unsaved edits, so Save is the only action in the bar. Do not close the dialog while it reads "Sending…" or "confirming…" — the pending changes would not be sent or retried
+
 ### Version 2.3.1
 
 - Fixed: Cancel / Save never enabled after an edit (the bar buttons are `div`s, so setting `disabled` as a property left the `disabled` attribute and its style in place); they now enable on the first change

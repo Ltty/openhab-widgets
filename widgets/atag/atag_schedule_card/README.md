@@ -26,7 +26,7 @@ screen — a 24 h timeline per day with editable temperature periods.
 - "+ Add period" per day (max 6, matching the ATAG ONE controller's own limit)
 - Save writes only the changed periods via the binding's per-period Thing Actions, sequentially
   with a pause between writes (the device firmware requires ≥ 2 s between requests)
-- Cancel discards unsaved local edits
+- Leaving the dialog with Back discards unsaved local edits (there is no separate Cancel button); switching the CH / DHW tab with unsaved edits asks first
 
 ## Requirements — read this first
 
@@ -94,6 +94,10 @@ two schedule-JSON item props.
 ---
 
 ## Changelog
+
+### Version 1.2.2
+
+- Removed the Cancel button: the dialog's Back button already discards unsaved edits, so Save is the only action in the bar. Do not close the dialog while it reads "Saving n / m…" — the remaining periods would not be written
 
 ### Version 1.2.1
 

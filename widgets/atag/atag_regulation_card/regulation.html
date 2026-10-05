@@ -83,7 +83,6 @@
   <div id="scroll"></div>
   <div id="bar">
     <div id="save-status"></div>
-    <div class="btn" id="btn-revert" disabled>Cancel</div>
     <div class="btn primary" id="btn-save" disabled>Save</div>
   </div>
 </div>
@@ -420,16 +419,11 @@
   function updateBar() {
     var dirty = anyDirty();
     setOff('btn-save', !dirty);
-    setOff('btn-revert', !dirty);
     if (!dirty) { el('save-status').textContent = ''; return; }
     var n = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; }).length;
     el('save-status').textContent = n + ' unsaved change' + (n === 1 ? '' : 's');
   }
 
-  el('btn-revert').addEventListener('click', function () {
-    edited = {};
-    render();
-  });
 
   function commandItem(name, value) {
     return fetch('/rest/items/' + encodeURIComponent(name), {
@@ -487,7 +481,6 @@
     var changedKeys = Object.keys(edited).filter(function (k) { return edited[k] !== loaded[k]; });
     if (!changedKeys.length) return;
     setOff('btn-save', true);
-    setOff('btn-revert', true);
 
     var attempted = {};
     changedKeys.forEach(function (k) { attempted[k] = edited[k]; });

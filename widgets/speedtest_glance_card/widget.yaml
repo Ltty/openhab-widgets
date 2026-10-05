@@ -1,0 +1,657 @@
+uid: speedtest_glance_card
+tags:
+- home
+- network
+- card
+props:
+  parameters:
+  - name: downloadItem
+    label: Download item
+    description: Number:DataTransferRate item (Mbit/s) with the last download speed.
+    type: TEXT
+    required: true
+    context: item
+    groupName: items
+  - name: uploadItem
+    label: Upload item
+    description: Number:DataTransferRate item (Mbit/s) with the last upload speed.
+    type: TEXT
+    required: true
+    context: item
+    groupName: items
+  - name: pingItem
+    label: Ping item
+    description: Number:Time item (ms).
+    type: TEXT
+    required: false
+    context: item
+    groupName: items
+  - name: jitterItem
+    label: Jitter item
+    description: Number:Time item; the binding reports seconds, shown in ms.
+    type: TEXT
+    required: false
+    context: item
+    groupName: items
+  - name: dateItem
+    label: Test time item
+    description: DateTime item with the time of the last test.
+    type: TEXT
+    required: false
+    context: item
+    groupName: items
+  - name: triggerItem
+    label: Run-test switch item
+    description: Switch item that starts a new test (ON); shows 'Running…' while ON. Empty = no refresh icon.
+    type: TEXT
+    required: false
+    context: item
+    groupName: items
+  - name: planDown
+    label: Plan download (Mbit/s)
+    description: Contracted download speed; the pill compares against it.
+    type: INTEGER
+    required: false
+    default: '150'
+    groupName: plan
+  - name: planUp
+    label: Plan upload (Mbit/s)
+    description: Contracted upload speed.
+    type: INTEGER
+    required: false
+    default: '20'
+    groupName: plan
+  - name: title
+    label: Title
+    description: Title of the connection card.
+    type: TEXT
+    required: false
+    default: Internet
+    groupName: look
+  - name: page
+    label: Target page
+    description: Page opened when a speed tile is tapped (e.g. page:page_abc).
+    type: TEXT
+    required: false
+    context: page
+    groupName: look
+  parameterGroups:
+  - name: items
+    label: Speedtest items
+  - name: plan
+    label: Plan
+  - name: look
+    label: Look
+timestamp: 2026-10-05T14:30:07.300+0200
+component: f7-block
+config:
+  style:
+    margin: '0'
+    padding: 4px
+slots:
+  default:
+  - component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 18px
+        min-width: '0'
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 12px 12px 12px
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                gap: 6px
+                margin: '0'
+            slots:
+              default:
+              - component: oh-icon
+                config:
+                  icon: f7:wifi
+                  style:
+                    font-size: 16px
+                    color: '#0ea5e9'
+              - component: Label
+                config:
+                  text: =props.title || 'Internet'
+                  style:
+                    font-size: 12px
+                    opacity: '0.7'
+                    flex: '1'
+              - component: Label
+                config:
+                  text: '=(props.dateItem && items[props.dateItem] && items[props.dateItem].state !== ''NULL'' && items[props.dateItem].state !== ''UNDEF'') ? (props.triggerItem && items[props.triggerItem] && items[props.triggerItem].state === ''ON'' ?
+                    ''Running…'' : (m=>m<1 ? ''just now'' : m<60 ? m+'' min ago'' : Math.round(m/60)+'' h ago'')(dayjs().diff(dayjs(items[props.dateItem].state),''minute''))) : '''''
+                  style:
+                    font-size: 12px
+                    font-weight: '600'
+                    white-space: nowrap
+              - component: oh-link
+                config:
+                  action: command
+                  actionItem: =props.triggerItem
+                  actionCommand: 'ON'
+                  actionFeedback: Speed test started
+                  visible: =!!props.triggerItem
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    justify-content: center
+                    width: 22px
+                    height: 22px
+                    margin: -3px -4px -3px 0
+                    color: inherit
+                    opacity: '0.55'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:arrow_clockwise
+                      style:
+                        font-size: 14px
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                gap: 8px
+                margin: 10px 0 0
+                flex-wrap: nowrap
+            slots:
+              default:
+              - component: oh-link
+                config:
+                  action: '=props.page ? ''navigate'' : '''''
+                  actionPage: =props.page
+                  actionModal: =props.page
+                  actionPageTransition: f7-cover-v
+                  style:
+                    color: inherit
+                    display: block
+                    text-decoration: none
+                    flex: 1 1 0
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        margin: '0'
+                        padding: 10px 12px 6px
+                        border-radius: 14px
+                        overflow: hidden
+                        border: 1px solid rgba(128,128,128,0.25)
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: center
+                            justify-content: flex-start
+                            gap: 6px
+                            margin: '0'
+                        slots:
+                          default:
+                          - component: oh-icon
+                            config:
+                              icon: f7:arrow_down_circle_fill
+                              style:
+                                font-size: 16px
+                                color: '#0ea5e9'
+                          - component: Label
+                            config:
+                              text: Download
+                              style:
+                                font-size: 12px
+                                opacity: '0.7'
+                                flex: '1'
+                          - component: oh-icon
+                            config:
+                              icon: f7:chevron_right
+                              style:
+                                font-size: 12px
+                                opacity: '0.4'
+                              visible: =!!props.page
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: baseline
+                            justify-content: flex-start
+                            gap: 6px
+                            margin: 6px 0 0
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: '=(props.downloadItem && items[props.downloadItem] && items[props.downloadItem].state !== ''NULL'' && items[props.downloadItem].state !== ''UNDEF'') ? Number.parseFloat(items[props.downloadItem].state).toFixed(1) : ''–'''
+                              style:
+                                font-size: 26px
+                                font-weight: '700'
+                                line-height: '1.1'
+                          - component: Label
+                            config:
+                              text: Mbit/s
+                              style:
+                                font-size: 12px
+                                opacity: '0.75'
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            justify-content: flex-start
+                            margin: 4px 0 0
+                            min-height: 20px
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: '=(props.downloadItem && items[props.downloadItem] && items[props.downloadItem].state !== ''NULL'' && items[props.downloadItem].state !== ''UNDEF'') ? ''▼ ''+(100-(Math.round(Number.parseFloat(items[props.downloadItem].state)
+                                / (props.planDown || 150) * 100)))+'' % below plan'' : '''''
+                              style:
+                                border-radius: 12px
+                                font-size: 12px
+                                font-weight: '500'
+                                padding: 1px 8px
+                                background: '=(Math.round(Number.parseFloat(items[props.downloadItem].state) / (props.planDown || 150) * 100)) >= 80 ? ''rgba(255,159,10,0.18)'' : ''rgba(220,53,69,0.15)'''
+                                color: '=(Math.round(Number.parseFloat(items[props.downloadItem].state) / (props.planDown || 150) * 100)) >= 80 ? ''#d98200'' : ''#dc3545'''
+                              visible: =(props.downloadItem && items[props.downloadItem] && items[props.downloadItem].state !== 'NULL' && items[props.downloadItem].state !== 'UNDEF') && (Math.round(Number.parseFloat(items[props.downloadItem].state) / (props.planDown
+                                || 150) * 100)) < 100
+                      - component: oh-trend
+                        config:
+                          trendItem: =props.downloadItem
+                          trendGradient:
+                          - '#0ea5e9'
+                          - '#0ea5e9'
+                          trendStrokeWidth: '2'
+                          trendSampling: '30'
+                          visible: =!!props.downloadItem
+              - component: oh-link
+                config:
+                  action: '=props.page ? ''navigate'' : '''''
+                  actionPage: =props.page
+                  actionModal: =props.page
+                  actionPageTransition: f7-cover-v
+                  style:
+                    color: inherit
+                    display: block
+                    text-decoration: none
+                    flex: 1 1 0
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        margin: '0'
+                        padding: 10px 12px 6px
+                        border-radius: 14px
+                        overflow: hidden
+                        border: 1px solid rgba(128,128,128,0.25)
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: center
+                            justify-content: flex-start
+                            gap: 6px
+                            margin: '0'
+                        slots:
+                          default:
+                          - component: oh-icon
+                            config:
+                              icon: f7:arrow_up_circle_fill
+                              style:
+                                font-size: 16px
+                                color: '#6366f1'
+                          - component: Label
+                            config:
+                              text: Upload
+                              style:
+                                font-size: 12px
+                                opacity: '0.7'
+                                flex: '1'
+                          - component: oh-icon
+                            config:
+                              icon: f7:chevron_right
+                              style:
+                                font-size: 12px
+                                opacity: '0.4'
+                              visible: =!!props.page
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: baseline
+                            justify-content: flex-start
+                            gap: 6px
+                            margin: 6px 0 0
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: '=(props.uploadItem && items[props.uploadItem] && items[props.uploadItem].state !== ''NULL'' && items[props.uploadItem].state !== ''UNDEF'') ? Number.parseFloat(items[props.uploadItem].state).toFixed(1) : ''–'''
+                              style:
+                                font-size: 26px
+                                font-weight: '700'
+                                line-height: '1.1'
+                          - component: Label
+                            config:
+                              text: Mbit/s
+                              style:
+                                font-size: 12px
+                                opacity: '0.75'
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            justify-content: flex-start
+                            margin: 4px 0 0
+                            min-height: 20px
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: '=(props.uploadItem && items[props.uploadItem] && items[props.uploadItem].state !== ''NULL'' && items[props.uploadItem].state !== ''UNDEF'') ? ''▼ ''+(100-(Math.round(Number.parseFloat(items[props.uploadItem].state)
+                                / (props.planUp || 20) * 100)))+'' % below plan'' : '''''
+                              style:
+                                border-radius: 12px
+                                font-size: 12px
+                                font-weight: '500'
+                                padding: 1px 8px
+                                background: '=(Math.round(Number.parseFloat(items[props.uploadItem].state) / (props.planUp || 20) * 100)) >= 80 ? ''rgba(255,159,10,0.18)'' : ''rgba(220,53,69,0.15)'''
+                                color: '=(Math.round(Number.parseFloat(items[props.uploadItem].state) / (props.planUp || 20) * 100)) >= 80 ? ''#d98200'' : ''#dc3545'''
+                              visible: =(props.uploadItem && items[props.uploadItem] && items[props.uploadItem].state !== 'NULL' && items[props.uploadItem].state !== 'UNDEF') && (Math.round(Number.parseFloat(items[props.uploadItem].state) / (props.planUp
+                                || 20) * 100)) < 100
+                      - component: oh-trend
+                        config:
+                          trendItem: =props.uploadItem
+                          trendGradient:
+                          - '#6366f1'
+                          - '#6366f1'
+                          trendStrokeWidth: '2'
+                          trendSampling: '30'
+                          visible: =!!props.uploadItem
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                justify-content: center
+                gap: 12px
+                margin: 12px 0 0
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    margin: '0'
+                    flex: '1'
+                    text-align: center
+                  visible: =!!props.pingItem
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: '=(props.pingItem && items[props.pingItem] && items[props.pingItem].state !== ''NULL'' && items[props.pingItem].state !== ''UNDEF'') ? Number.parseFloat(items[props.pingItem].state).toFixed(1)+'' ms'' : ''–'''
+                      style:
+                        font-size: 16px
+                        font-weight: '700'
+                        line-height: '1.2'
+                        text-align: center
+                  - component: Label
+                    config:
+                      text: Ping
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        text-align: center
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    margin: '0'
+                    flex: '1'
+                    text-align: center
+                  visible: =!!props.jitterItem
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: '=(props.jitterItem && items[props.jitterItem] && items[props.jitterItem].state !== ''NULL'' && items[props.jitterItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.jitterItem].state) * 1000).toFixed(1)+'' ms'' : ''–'''
+                      style:
+                        font-size: 16px
+                        font-weight: '700'
+                        line-height: '1.2'
+                        text-align: center
+                  - component: Label
+                    config:
+                      text: Jitter
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        text-align: center
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                justify-content: space-between
+                gap: 4px
+                margin: 10px 0 0
+                padding: 10px 0 0
+                border-top: 1px solid rgba(128,128,128,0.2)
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 3px
+                    margin: '0'
+                    flex: '1'
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:desktopcomputer
+                      style:
+                        font-size: 18px
+                        opacity: '0.8'
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        gap: 3px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-repeater
+                        config:
+                          for: i
+                          sourceType: array
+                          in: =[0,1,2,3,4]
+                          fragment: true
+                        slots:
+                          default:
+                          - component: f7-row
+                            config:
+                              style:
+                                width: 6px
+                                height: 6px
+                                border-radius: 50%
+                                margin: '0'
+                                background: '=(s=>loop.i < s ? (s>=4 ? ''#28a745'' : s>=2 ? ''#ff9f0a'' : ''#dc3545'') : ''rgba(128,128,128,0.25)'')((d=>d>=100?5:d>=50?4:d>=25?3:d>=10?2:d>=5?1:0)(Number.parseFloat(items[props.downloadItem].state)) || 0)'
+                  - component: Label
+                    config:
+                      text: Browsing
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        white-space: nowrap
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 3px
+                    margin: '0'
+                    flex: '1'
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:gamecontroller_fill
+                      style:
+                        font-size: 18px
+                        opacity: '0.8'
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        gap: 3px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-repeater
+                        config:
+                          for: i
+                          sourceType: array
+                          in: =[0,1,2,3,4]
+                          fragment: true
+                        slots:
+                          default:
+                          - component: f7-row
+                            config:
+                              style:
+                                width: 6px
+                                height: 6px
+                                border-radius: 50%
+                                margin: '0'
+                                background: '=(s=>loop.i < s ? (s>=4 ? ''#28a745'' : s>=2 ? ''#ff9f0a'' : ''#dc3545'') : ''rgba(128,128,128,0.25)'')((p=>p<=20?5:p<=30?4:p<=50?3:p<=100?2:p<=150?1:0)(Number.parseFloat(items[props.pingItem].state)) || 0)'
+                  - component: Label
+                    config:
+                      text: Gaming
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        white-space: nowrap
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 3px
+                    margin: '0'
+                    flex: '1'
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:tv
+                      style:
+                        font-size: 18px
+                        opacity: '0.8'
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        gap: 3px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-repeater
+                        config:
+                          for: i
+                          sourceType: array
+                          in: =[0,1,2,3,4]
+                          fragment: true
+                        slots:
+                          default:
+                          - component: f7-row
+                            config:
+                              style:
+                                width: 6px
+                                height: 6px
+                                border-radius: 50%
+                                margin: '0'
+                                background: '=(s=>loop.i < s ? (s>=4 ? ''#28a745'' : s>=2 ? ''#ff9f0a'' : ''#dc3545'') : ''rgba(128,128,128,0.25)'')((d=>d>=50?5:d>=25?4:d>=15?3:d>=5?2:d>=3?1:0)(Number.parseFloat(items[props.downloadItem].state)) || 0)'
+                  - component: Label
+                    config:
+                      text: Streaming
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        white-space: nowrap
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    gap: 3px
+                    margin: '0'
+                    flex: '1'
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:videocam_fill
+                      style:
+                        font-size: 18px
+                        opacity: '0.8'
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        gap: 3px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-repeater
+                        config:
+                          for: i
+                          sourceType: array
+                          in: =[0,1,2,3,4]
+                          fragment: true
+                        slots:
+                          default:
+                          - component: f7-row
+                            config:
+                              style:
+                                width: 6px
+                                height: 6px
+                                border-radius: 50%
+                                margin: '0'
+                                background: '=(s=>loop.i < s ? (s>=4 ? ''#28a745'' : s>=2 ? ''#ff9f0a'' : ''#dc3545'') : ''rgba(128,128,128,0.25)'')((u=>u>=20?5:u>=10?4:u>=5?3:u>=2?2:u>=1?1:0)(Number.parseFloat(items[props.uploadItem].state)) || 0)'
+                  - component: Label
+                    config:
+                      text: Video call
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        white-space: nowrap

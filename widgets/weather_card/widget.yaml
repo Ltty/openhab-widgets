@@ -69,6 +69,36 @@ props:
     context: item
     default: Netatmo_Weather_Station_Soil_Temp
     groupName: current
+  - name: blindsOpenItem
+    label: Blinds open time item
+    description: Optional DateTime item the morning blind routine is triggered from (e.g. civil dawn start). Empty = no blinds line.
+    type: TEXT
+    required: false
+    context: item
+    default: LocalSun_CivilDawn_Start
+    groupName: blinds
+  - name: blindsOpenOffset
+    label: Blinds open offset (min)
+    description: Minutes the routine adds to that item's time (the offset in the rule's DateTime trigger).
+    type: INTEGER
+    required: false
+    default: '20'
+    groupName: blinds
+  - name: blindsCloseItem
+    label: Blinds close time item
+    description: Optional DateTime item the evening blind routine is triggered from (e.g. civil dusk end).
+    type: TEXT
+    required: false
+    context: item
+    default: LocalSun_CivilDusk_End
+    groupName: blinds
+  - name: blindsCloseOffset
+    label: Blinds close offset (min)
+    description: Minutes the routine adds to that item's time.
+    type: INTEGER
+    required: false
+    default: '12'
+    groupName: blinds
   - name: updatedItem
     label: Last measurement item
     description: DateTime of the last station measurement.
@@ -87,9 +117,11 @@ props:
   parameterGroups:
   - name: current
     label: Current weather
+  - name: blinds
+    label: Blinds
   - name: forecast
     label: Forecast
-timestamp: Oct 5, 2026, 6:41:05 PM
+timestamp: Oct 5, 2026, 7:16:21 PM
 component: f7-card
 config:
   style:
@@ -212,6 +244,37 @@ slots:
               - component: Label
                 config:
                   text: =dayjs(items[props.sunsetItem].state).format('HH:mm')
+                  style:
+                    font-size: 13px
+                    font-weight: '500'
+      - component: oh-repeater
+        config:
+          for: bl
+          sourceType: array
+          in: '=(props.blindsOpenItem && items[props.blindsOpenItem] && items[props.blindsOpenItem].state !== ''NULL'' && items[props.blindsOpenItem].state !== ''UNDEF'') ? [1] : []'
+          fragment: true
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                gap: 6px
+                margin: 8px 0 0
+            slots:
+              default:
+              - component: oh-icon
+                config:
+                  icon: iconify:mdi:blinds-open
+                  style:
+                    font-size: 16px
+                    opacity: '0.75'
+              - component: Label
+                config:
+                  text: '=''Blinds open ''+dayjs(items[props.blindsOpenItem].state).add(props.blindsOpenOffset || 0,''minute'').format(''HH:mm'')+((props.blindsCloseItem && items[props.blindsCloseItem] && items[props.blindsCloseItem].state !== ''UNDEF'')
+                    ? '' · close ''+dayjs(items[props.blindsCloseItem].state).add(props.blindsCloseOffset || 0,''minute'').format(''HH:mm'') : '''')'
                   style:
                     font-size: 13px
                     font-weight: '500'

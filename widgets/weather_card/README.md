@@ -10,19 +10,30 @@ Item convention: `<forecastPrefix>Hours01..06_Timestamp/_Iconid/_Temperature` an
 (the openHAB OpenWeatherMap binding's forecast channel groups).
 
 ## Props
-| Prop | Required | Default | Description |
-|---|---|---|---|
-| `tempItem` | No | `Netatmo_Weather_Station_Outdoor_Temperature` | Current outdoor temperature. |
-| `conditionItem` | No | `OpenWeatherMap_Forecast_API_Current_Condition` | Condition text (String). |
-| `iconItem` | No | `OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Iconid` | OpenWeatherMap icon id of today (e.g. 03d); the night variant is picked from the trailing d/n. |
-| `minItem` | No | `OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Mintemperature` | Today's minimum temperature. |
-| `maxItem` | No | `OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Maxtemperature` | Today's maximum temperature. |
-| `sunriseItem` | No | `LocalSun_Rise_Start` | DateTime item. |
-| `sunsetItem` | No | `LocalSun_Set_Start` | DateTime item. |
-| `updatedItem` | No | `Netatmo_Weather_Station_Measures_Timestamp` | DateTime of the last station measurement. |
-| `forecastPrefix` | No | `OpenWeatherMap_Forecast_API_Forecasts_Forecast` | Prefix of the OpenWeatherMap forecast items: <prefix>Hours01..06_Timestamp/_Iconid/_Temperature and <prefix>Today/Tomorrow/Day2..Day5_Iconid/_Mintemperature/_Maxtemperature. |
+| Prop | Default | Description |
+|---|---|---|
+| `tempItem` | `Netatmo_Weather_Station_Outdoor_Temperature` | Current outdoor temperature. |
+| `conditionItem` | `OpenWeatherMap_Forecast_API_Current_Condition` | Condition text (String). |
+| `iconItem` | `OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Iconid` | OpenWeatherMap icon id of today (e.g. 03d); the night variant is picked from the trailing d/n. |
+| `minItem` | `OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Mintemperature` | Today's minimum temperature. |
+| `maxItem` | `OpenWeatherMap_Forecast_API_Forecasts_ForecastToday_Maxtemperature` | Today's maximum temperature. |
+| `sunriseItem` | `LocalSun_Rise_Start` | DateTime item. |
+| `sunsetItem` | `LocalSun_Set_Start` | DateTime item. |
+| `soilItem` | `Netatmo_Weather_Station_Soil_Temp` | Optional soil temperature, shown after min/max. |
+| `blindsOpenItem` | `LocalSun_CivilDawn_Start` | Optional DateTime item the morning blind routine is triggered from (e.g. civil dawn start). Empty = no blinds line. |
+| `blindsOpenOffset` | `20` | Minutes the routine adds to that item's time (the offset in the rule's DateTime trigger). |
+| `blindsCloseItem` | `LocalSun_CivilDusk_End` | Optional DateTime item the evening blind routine is triggered from (e.g. civil dusk end). |
+| `blindsCloseOffset` | `12` | Minutes the routine adds to that item's time. |
+| `updatedItem` | `Netatmo_Weather_Station_Measures_Timestamp` | DateTime of the last station measurement. |
+| `forecastPrefix` | `OpenWeatherMap_Forecast_API_Forecasts_Forecast` | Prefix of the OpenWeatherMap forecast items: <prefix>Hours01..06_Timestamp/_Iconid/_Temperature and <prefix>Today/Tomorrow/Day2..Day5_Iconid/_Mintemperature/_Maxtemperature. |
+
+The blinds line shows when the automation opens and closes the blinds: the time of the item the routine is triggered from plus the offset configured in the rule's DateTime trigger. Keep the two offset props equal to the rule offsets; leave `blindsOpenItem` empty to hide the line.
 
 ## Changelog
+
+### Version 1.2.0
+
+- Optional blinds line ("Blinds open 06:56 · close 19:19") from the dawn/dusk items the blind routines use plus their trigger offsets (new props `blindsOpenItem`, `blindsOpenOffset`, `blindsCloseItem`, `blindsCloseOffset`)
 
 ### Version 1.1.0
 

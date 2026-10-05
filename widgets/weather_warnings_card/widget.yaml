@@ -16,7 +16,6 @@ props:
   parameterGroups:
   - name: source
     label: Source
-timestamp: Oct 5, 2026, 6:41:05 PM
 component: f7-row
 config:
   style:

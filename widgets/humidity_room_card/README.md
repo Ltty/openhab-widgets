@@ -1,69 +1,50 @@
-# humidity_room_card — Per-Room Humidity & Temperature Card
+# humidity_room_card — Per-Room Humidity & Temperature Tile
 
-A compact OpenHAB Main UI widget that shows a room's current humidity with a colour-coded status badge, a zone bar visualising the safe/elevated/critical thresholds, and the current temperature and setpoint.
+Half-width tile in the shared page design: room icon and name, humidity as a 26 px value in its status colour, an **OK / Elevated / Critical** pill, a slim zone bar with a position marker, and temperature plus thermostat setpoint. Place two per row.
 
----
-
-## Screenshot
-
-![Humidity Room Card](screenshots/card.png)
+![Humidity room tiles](screenshots/card.png)
 
 ## What it shows
 
-- Room icon + name + **OK / Elevated / Critical** badge (green / amber / red)
-- Large humidity value, colour-coded by threshold
-- CSS gradient zone bar with a live position indicator
-- Three-row legend: Safe · Elevated · Critical with configurable ranges
-- Current temperature and thermostat setpoint (optional)
-- Optional heating-valve indicator in the header — a small icon (blue = any valve open, dim = all
-  closed) with a count badge when more than one valve item is configured
-- Tapping the card opens the Analyzer for the humidity, temperature, and valve items
+- Room icon + name; optional heating-valve icon (blue = any valve open, dim = all closed)
+- Humidity value coloured green / amber / red by the thresholds, with the status pill
+- Zone bar from `min` to 100 % (safe / elevated / critical) with the current position
+- `22.9 °C · Set 30 °C` sub line
+- Tapping the tile opens the analyzer for the humidity, temperature, setpoint and valve items
 
----
+## Install and use
 
-## Quick start
+1. Developer Tools → Widgets → **+** → **Code** → paste [`widget.yaml`](widget.yaml) → **Save**
+2. In a page, in an `oh-grid-col width 50` (padding 4 px), add a Custom Widget `humidity_room_card` and set the **Humidity Item**
 
-### 1. Install the widget
-
-1. Open **Developer Tools → Widgets** in the Main UI sidebar
-2. Click **+** → **Code** tab
-3. Paste the contents of [`widget.yaml`](widget.yaml)
-4. Click **Save**
-
-### 2. Add to a page
-
-1. Edit a page → drag in a **Custom Widget** block
-2. Set the widget type to `humidity_room_card`
-3. Set the **Humidity Item** prop to your humidity item name
-4. Optionally set a room name, icon, and threshold values
-
----
-
-## Props reference
+## Props
 
 | Prop | Required | Default | Description |
 |------|----------|---------|-------------|
-| `item` | Yes | — | Humidity item (e.g. `FF_KidsRoom_Climate_Humidity`) |
+| `item` | Yes | — | Humidity item (0–100 % or 0–1 ratio) |
 | `tempItem` | No | — | Temperature item |
 | `setpointItem` | No | — | Thermostat setpoint item |
 | `title` | No | item label | Room display name |
-| `icon` | No | `f7:house` | Icon name (e.g. `iconify:mdi:sofa`) |
-| `compact` | No | `false` | Hides the Safe/Elevated/Critical legend rows unconditionally — use when placing several cards per row and you don't need the legend on any screen size (there's no reliable way to key this off viewport width in a widget expression — see 1.2.2 changelog) |
-| `min` | No | `40` | Safe zone lower bound (%) — the floor of the "Safe" label in the legend |
-| `orange` | No | `60` | Elevated threshold — above this is amber (%) |
-| `red` | No | `70` | Critical threshold — above this is red (%) |
-| `valveItems` | No | — | Comma-separated heating actuator `_STATE` Switch item(s) for this room. Shows a header icon (blue when any is `ON`, dim otherwise) with a count badge when more than one is given |
-
----
+| `icon` | No | `f7:house` | Icon id (e.g. `iconify:mdi:sofa`) |
+| `min` | No | `40` | Lower bound of the zone bar (%) |
+| `orange` | No | `60` | Elevated above this (%) |
+| `red` | No | `70` | Critical above this (%) |
+| `valveItems` | No | — | Comma-separated heating valve `_STATE` switches for the valve icon |
 
 ## Requirements
 
 - OpenHAB 5.x (tested on 5.2.x)
-- A Number or Number:Dimensionless humidity item (0–100 % or 0–1 ratio both accepted)
+- A Number or Number:Dimensionless humidity item
 
 ---
 
 ## Changelog
+
+### Version 2.0.0 (BREAKING)
+
+- Rebuilt as a half-width tile in the shared page design (18 px card, 26 px value, status pill, slim zone bar, sub line)
+- **Prop `compact` removed** — the threshold legend is gone from the tile (show one legend line per page instead)
+- The valve icon no longer shows a count badge
 
 ### Version 1.2.2
 

@@ -5,21 +5,21 @@ tags:
 props:
   parameters:
   - context: item
-    description: Humidity item from your climate sensor. Accepts 0–100 % or 0–1 ratio — drives the large value, zone bar, and status badge.
+    description: Humidity item (0–100 % or 0–1 ratio) — drives the value, status pill and zone bar.
     label: Humidity Item
     name: item
     required: true
     type: TEXT
     groupName: sensor
   - context: item
-    description: Temperature item — shown as the large number at the bottom of the card.
+    description: Temperature item — shown in the sub line.
     label: Temperature Item
     name: tempItem
     required: false
     type: TEXT
     groupName: sensor
   - context: item
-    description: 'Thermostat setpoint item — shown as "Set: X °C" next to the temperature.'
+    description: Thermostat setpoint item — shown as "Set X °C" in the sub line.
     label: Setpoint Item
     name: setpointItem
     required: false
@@ -36,13 +36,6 @@ props:
     name: icon
     required: false
     type: TEXT
-    groupName: appearance
-  - default: 'false'
-    description: Hides the Safe/Elevated/Critical threshold legend rows on narrow (phone-width, <768px) screens, where cards sit two-per-row. The legend still shows on wider screens regardless of this setting, since there's room for it there.
-    label: Compact
-    name: compact
-    required: false
-    type: BOOLEAN
     groupName: appearance
   - default: '40'
     label: Safe Min (%)
@@ -69,8 +62,7 @@ props:
     max: 100
     groupName: thresholds
   - context: item
-    description: Comma-separated list of one or more HomeMatic actuator _STATE Switch items for this room's heating valve(s). Shows a small icon in the header — blue when any valve is open, dim when all
-      closed — with a count badge when more than one item is given.
+    description: Comma-separated heating valve switch items. Shows a valve icon in the header — blue when any valve is open, dim when all are closed.
     label: Valve Item(s)
     name: valveItems
     required: false
@@ -85,7 +77,6 @@ props:
     label: Thresholds
   - name: extras
     label: Valve
-timestamp: Sep 24, 2026, 12:36:31 PM
 component: oh-link
 config:
   action: analyzer
@@ -99,270 +90,130 @@ slots:
   - component: f7-card
     config:
       style:
+        margin: '0'
+        border-radius: 18px
         min-width: '0'
     slots:
       default:
       - component: f7-card-content
         config:
           style:
-            padding: 12px 16px 12px
+            padding: 14px 14px 12px
         slots:
           default:
           - component: f7-row
             config:
               style:
                 display: flex
-                width: 100%
                 align-items: center
-                margin: 0 0 8px
-                min-height: 24px
+                justify-content: flex-start
+                gap: 6px
+                margin: '0'
             slots:
               default:
               - component: oh-icon
                 config:
                   icon: =props.icon || 'f7:house'
                   style:
-                    flex: 0 0 auto
-                    font-size: 18px
-                    margin-right: 8px
-                    opacity: '0.7'
-              - component: f7-col
+                    font-size: 16px
+                    color: '=[''#28a745'',''#d98200'',''#dc3545''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
+              - component: Label
                 config:
+                  text: '=props.title || (items[props.item] ? items[props.item].label : '''')'
                   style:
+                    font-size: 12px
+                    opacity: '0.7'
                     flex: '1'
-                    min-width: '0'
-                    font-size: 14px
-                    font-weight: '500'
-                    padding: '0'
+                    white-space: nowrap
                     overflow: hidden
                     text-overflow: ellipsis
-                    white-space: nowrap
+              - component: oh-repeater
+                config:
+                  for: v
+                  sourceType: array
+                  in: '=(props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).length > 0 ? [1] : []'
+                  fragment: true
                 slots:
                   default:
-                  - component: Label
+                  - component: oh-icon
                     config:
-                      text: =props.title || items[props.item].label
+                      icon: '=(props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state===''ON'') ? ''iconify:mdi:valve-open'' : ''iconify:mdi:valve-closed'''
+                      style:
+                        font-size: 15px
+                        color: '=(props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state===''ON'') ? ''#0ea5e9'' : ''inherit'''
+                        opacity: '=(props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state===''ON'') ? ''1'' : ''0.35'''
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: baseline
+                justify-content: flex-start
+                gap: 6px
+                margin: 6px 0 0
+            slots:
+              default:
               - component: Label
                 config:
+                  text: '=(props.item && items[props.item] && items[props.item].state !== ''NULL'' && items[props.item].state !== ''UNDEF'') ? Math.round((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state))) : ''–'''
                   style:
-                    background: '=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : ''50'')) > props.red) ? ''rgba(208,59,59,0.15)'' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item]
-                      ? items[props.item].state : ''50'')) > props.orange) ? ''rgba(250,178,25,0.15)'' : ''rgba(12,163,12,0.15)'''
+                    font-size: 26px
+                    font-weight: '700'
+                    line-height: '1.1'
+                    color: '=[''#28a745'',''#d98200'',''#dc3545''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
+              - component: Label
+                config:
+                  text: '%'
+                  style:
+                    font-size: 12px
+                    opacity: '0.75'
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                justify-content: flex-start
+                margin: 4px 0 0
+            slots:
+              default:
+              - component: Label
+                config:
+                  text: '=[''OK'',''Elevated'',''Critical''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
+                  style:
                     border-radius: 12px
-                    color: '=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : ''50'')) > props.red) ? ''#d03b3b'' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item]
-                      ? items[props.item].state : ''50'')) > props.orange) ? ''#fab219'' : ''#0ca30c'''
-                    display: inline-block
                     font-size: 12px
                     font-weight: '500'
-                    padding: 3px 12px
-                    flex: 0 0 auto
-                    margin-left: auto
-                    white-space: nowrap
-                  text: '=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : ''50'')) > props.red) ? ''Critical'' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item]
-                    ? items[props.item].state : ''50'')) > props.orange) ? ''Elevated'' : ''OK'''
-              - component: oh-icon
+                    padding: 1px 8px
+                    background: '=[''rgba(40,167,69,0.15)'',''rgba(255,159,10,0.18)'',''rgba(220,53,69,0.15)''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
+                    color: '=[''#28a745'',''#d98200'',''#dc3545''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
+          - component: f7-row
+            config:
+              style:
+                display: block
+                position: relative
+                height: 6px
+                border-radius: 3px
+                margin: 10px 0 0
+                background: '=''linear-gradient(90deg, #28a745 0%, #28a745 ''+(((props.orange || 60) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%, #f59e0b ''+(((props.orange || 60) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%,
+                  #f59e0b ''+(((props.red || 70) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%, #dc3545 ''+(((props.red || 70) - (props.min || 40)) / (100 - (props.min || 40)) * 100)+''%, #dc3545 100%)'''
+            slots:
+              default:
+              - component: f7-row
                 config:
-                  visible: =!!(props.valveItems && props.valveItems.trim())
-                  icon: '=((props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state===''ON'')) ? ''iconify:mdi:valve-open'' : ''iconify:mdi:valve-closed'''
                   style:
-                    flex: 0 0 auto
-                    font-size: 14px
-                    color: '=((props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state===''ON'')) ? ''#2f8fe0'' : ''inherit'''
-                    opacity: '=((props.valveItems||'''').split('','').map(s=>s.trim()).filter(s=>!!s).some(n=>items[n]&&items[n].state===''ON'')) ? ''1'' : ''0.4'''
-                    margin-left: 6px
-              - component: Label
-                config:
-                  visible: =(((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).length)>1)
-                  style:
-                    font-size: 10px
-                    opacity: '0.7'
-                    margin-left: 6px
-                  text: =((props.valveItems||'').split(',').map(s=>s.trim()).filter(s=>!!s).length)
+                    position: absolute
+                    top: -3px
+                    width: 3px
+                    height: 12px
+                    margin: '0'
+                    border-radius: 2px
+                    background: var(--f7-card-bg-color)
+                    box-shadow: 0 0 0 1px rgba(128,128,128,0.6)
+                    left: '=(Math.max(0, Math.min(100, (((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state))) - (props.min || 40)) / (100 - (props.min || 40)) * 100)))+''%'''
           - component: Label
             config:
+              text: '=((props.tempItem && items[props.tempItem] && items[props.tempItem].state !== ''NULL'') ? Number.parseFloat(items[props.tempItem].state).toFixed(1)+'' °C'' : ''–'')+((props.setpointItem && items[props.setpointItem] && items[props.setpointItem].state
+                !== ''NULL'') ? '' · Set ''+Number.parseFloat(items[props.setpointItem].state).toFixed(0)+'' °C'' : '''')'
               style:
-                color: '=((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ? items[props.item].state : ''50'')) > props.red) ? ''#d03b3b'' : ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item] ?
-                  items[props.item].state : ''50'')) > props.orange) ? ''#fab219'' : ''#0ca30c'''
                 display: block
-                font-size: 28px
-                font-weight: '600'
-                line-height: '1.1'
-                margin: 0 0 8px
-              text: '=items[props.item] ? ((v=>v<=1?v*100:v)(Number.parseFloat(items[props.item].state))).toFixed(0) + '' %'' : ''–'''
-          - component: Label
-            config:
-              style:
-                background-image: '=''linear-gradient(rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.9) 100%), linear-gradient(to right, #0ca30c '' + (props.orange||60) + ''%, #fab219 '' + (props.orange||60)
-                  + ''%, #fab219 '' + (props.red||70) + ''%, #d03b3b '' + (props.red||70) + ''%)'''
-                background-position: '=''calc('' + (items[props.item] ? (v=>v<=1?v*100:v)(Number.parseFloat(items[props.item].state)) : 50) + ''% - 1.5px) 0, 0 0'''
-                background-repeat: no-repeat, no-repeat
-                background-size: 3px 100%, 100% 100%
-                border-radius: 4px
-                display: block
-                height: 12px
-                margin: 0 0 8px
-                padding: '0'
-              text: ' '
-          - component: f7-row
-            config:
-              visible: =!props.compact
-              style:
-                align-items: center
-                margin: 2px 0
-            slots:
-              default:
-              - component: Label
-                config:
-                  style:
-                    color: '#0ca30c'
-                    flex: 0 0 auto
-                    font-size: 10px
-                    line-height: '1'
-                    margin-right: 5px
-                  text: ●
-              - component: f7-col
-                config:
-                  style:
-                    color: '#0ca30c'
-                    font-size: 12px
-                    padding: '0'
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: Safe
-              - component: f7-col
-                config:
-                  style:
-                    color: '#0ca30c'
-                    flex: 0 0 auto
-                    font-size: 12px
-                    padding: '0'
-                    text-align: right
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: =props.min + '–' + props.orange + ' %'
-          - component: f7-row
-            config:
-              visible: =!props.compact
-              style:
-                align-items: center
-                margin: 2px 0
-            slots:
-              default:
-              - component: Label
-                config:
-                  style:
-                    color: '#fab219'
-                    flex: 0 0 auto
-                    font-size: 10px
-                    line-height: '1'
-                    margin-right: 5px
-                  text: ●
-              - component: f7-col
-                config:
-                  style:
-                    color: '#fab219'
-                    font-size: 12px
-                    padding: '0'
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: Elevated
-              - component: f7-col
-                config:
-                  style:
-                    color: '#fab219'
-                    flex: 0 0 auto
-                    font-size: 12px
-                    padding: '0'
-                    text-align: right
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: =props.orange + '–' + props.red + ' %'
-          - component: f7-row
-            config:
-              visible: =!props.compact
-              style:
-                align-items: center
-                margin: 2px 0
-            slots:
-              default:
-              - component: Label
-                config:
-                  style:
-                    color: '#d03b3b'
-                    flex: 0 0 auto
-                    font-size: 10px
-                    line-height: '1'
-                    margin-right: 5px
-                  text: ●
-              - component: f7-col
-                config:
-                  style:
-                    color: '#d03b3b'
-                    font-size: 12px
-                    padding: '0'
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: Critical
-              - component: f7-col
-                config:
-                  style:
-                    color: '#d03b3b'
-                    flex: 0 0 auto
-                    font-size: 12px
-                    padding: '0'
-                    text-align: right
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: ='> ' + props.red + ' %'
-          - component: Label
-            config:
-              style:
-                border-top: 1px solid var(--f7-list-border-color, rgba(0,0,0,0.12))
-                display: block
-                margin: 8px 0
-              text: ''
-          - component: f7-row
-            config:
-              style:
-                align-items: center
-                margin: '0'
-            slots:
-              default:
-              - component: f7-col
-                config:
-                  style:
-                    flex: '1'
-                    padding: '0'
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      style:
-                        display: block
-                        font-size: 22px
-                        font-weight: '600'
-                      text: '=items[props.tempItem] ? (Number.parseFloat(items[props.tempItem].state).toFixed(1) + '' °C'') : ''–'''
-              - component: f7-col
-                config:
-                  style:
-                    flex: 0 0 auto
-                    font-size: 12px
-                    opacity: '0.55'
-                    padding: '0'
-                    text-align: right
-                slots:
-                  default:
-                  - component: Label
-                    config:
-                      text: '=''Set: '' + (items[props.setpointItem] ? Number.parseFloat(items[props.setpointItem].state).toFixed(0) + '' °C'' : ''–'')'
+                font-size: 11px
+                opacity: '0.75'
+                margin-top: 8px

@@ -99,7 +99,7 @@ props:
     label: Content
   - name: action
     label: Tap action
-timestamp: Oct 5, 2026, 3:33:50 PM
+timestamp: Oct 5, 2026, 3:46:07 PM
 component: oh-link
 config:
   action: '=props.analyzerItems ? ''analyzer'' : (props.page ? ''navigate'' : '''')'
@@ -120,6 +120,7 @@ slots:
         border-radius: 18px
         min-width: '0'
         height: '=props.height ? props.height+''px'' : ''auto'''
+        overflow: hidden
     slots:
       default:
       - component: f7-card-content

@@ -23,6 +23,7 @@ Custom OpenHAB Main UI widgets for home automation.
 | [nav_tile](widgets/nav_tile/) | Navigation/action row: navigate, popup, photo viewer or command with confirmation | 5.x |
 | [weather_card](widgets/weather_card/) | Current weather, next 6 hours and 6 days from the OpenWeatherMap forecast items | 5.x |
 | [weather_warnings_card](widgets/weather_warnings_card/) | Active weather warnings (nothing shown without a warning) | 5.x |
+| [server_status_card](widgets/server_status_card/) | Server hardware card grouped by layer: compute, memory (+swap), storage, network with ring gauges, plus reboot / shut down | 5.x |
 | [device_status_card](widgets/device_status_card/) | Low batteries and offline devices lists that only appear when needed | 5.x |
 
 ### Garden, climate and heating

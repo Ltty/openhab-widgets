@@ -3,7 +3,7 @@
 ![glance tile for any value](screenshots/tiles.png)
 
 Half-width tile in the shared page design (18 px card, icon + 12 px title, 26 px bold value with unit, optional status pill,
-11 px sub line and a 24 h trend line). Used for conditions, rain/wind and the system status, next to `gas_cost_card`
+11 px sub line and a 24 h trend line). Used for conditions and rain/wind on the Outdoor page, next to `gas_cost_card`
 and `humidity_room_card`. Native components only; optional parts render through repeaters, so the page editor shows exactly
 what is configured.
 

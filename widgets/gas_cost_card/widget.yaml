@@ -115,7 +115,7 @@ props:
     label: Cost data
   - name: live
     label: Live value
-timestamp: Oct 5, 2026, 3:12:07 PM
+timestamp: Oct 5, 2026, 3:46:07 PM
 component: oh-link
 config:
   action: '=props.page ? ''navigate'' : '''''
@@ -134,6 +134,7 @@ slots:
         margin: '0'
         border-radius: 18px
         min-width: '0'
+        overflow: hidden
     slots:
       default:
       - component: f7-card-content

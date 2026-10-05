@@ -1,0 +1,691 @@
+uid: server_status_card
+tags:
+- system
+- card
+props:
+  parameters:
+  - name: title
+    label: Title
+    description: Card title (default Raspberry Pi).
+    type: TEXT
+    required: false
+    default: Raspberry Pi
+    groupName: general
+  - name: modelItem
+    label: Model item
+    description: String item with the hardware name, e.g. Raspberry Pi 5 Model B.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_CPUName
+    groupName: general
+  - name: uptimeItem
+    label: Uptime item
+    description: Number:Time item (days).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_System_Uptime
+    groupName: general
+  - name: cpuLoadItem
+    label: CPU load item
+    description: Number (%) — ring.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_CPULoad
+    groupName: compute
+  - name: cpuTempItem
+    label: CPU temperature item
+    description: Number:Temperature (°C); amber above 70, red above 80.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_CPU_Temperature
+    groupName: compute
+  - name: load1Item
+    label: Load average 1 min item
+    description: Number.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Load1_Average
+    groupName: compute
+  - name: load15Item
+    label: Load average 15 min item
+    description: Number.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Load15_Average
+    groupName: compute
+  - name: memUsedPctItem
+    label: Memory used % item
+    description: Number (%) — ring.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Used_
+    groupName: memory
+  - name: memUsedItem
+    label: Memory used item
+    description: Number:DataAmount (bytes).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Used
+    groupName: memory
+  - name: memTotalItem
+    label: Memory total item
+    description: Number:DataAmount (bytes).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Total
+    groupName: memory
+  - name: swapUsedItem
+    label: Swap used item
+    description: Number:DataAmount (bytes).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_SwapUsed
+    groupName: memory
+  - name: swapTotalItem
+    label: Swap total item
+    description: Number:DataAmount (bytes).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_SwapTotal
+    groupName: memory
+  - name: storageUsedPctItem
+    label: Storage used % item
+    description: Number (%) — ring.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_UsedStorage_
+    groupName: storage
+  - name: storageUsedItem
+    label: Storage used item
+    description: Number:DataAmount (bytes).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_UsedStorage
+    groupName: storage
+  - name: storageTotalItem
+    label: Storage total item
+    description: Number:DataAmount (bytes).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Total_Storage
+    groupName: storage
+  - name: rxItem
+    label: Data received item
+    description: Number:DataAmount (bytes since boot).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Data_Received
+    groupName: network
+  - name: txItem
+    label: Data sent item
+    description: Number:DataAmount (bytes since boot).
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Data_Sent
+    groupName: network
+  - name: rebootItem
+    label: Reboot switch item
+    description: Exec switch; ON reboots the server (with confirmation). Empty = no button.
+    type: TEXT
+    required: false
+    context: item
+    default: gSystem_Reboot
+    groupName: controls
+  - name: shutdownItem
+    label: Shutdown switch item
+    description: Exec switch; ON powers the server off (with confirmation). Empty = no button.
+    type: TEXT
+    required: false
+    context: item
+    default: gSystem_Shutdown
+    groupName: controls
+  parameterGroups:
+  - name: general
+    label: General
+  - name: compute
+    label: Compute
+  - name: memory
+    label: Memory
+  - name: storage
+    label: Storage
+  - name: network
+    label: Network
+  - name: controls
+    label: Controls
+component: f7-card
+config:
+  style:
+    margin: '0'
+    border-radius: 18px
+    overflow: hidden
+slots:
+  default:
+  - component: f7-card-content
+    config:
+      style:
+        padding: 14px 12px 12px
+    slots:
+      default:
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            align-items: center
+            justify-content: flex-start
+            gap: 8px
+            margin: '0'
+        slots:
+          default:
+          - component: oh-icon
+            config:
+              icon: iconify:mdi:raspberry-pi
+              style:
+                font-size: 20px
+                color: '#c51a4a'
+          - component: f7-row
+            config:
+              style:
+                display: block
+                flex: '1'
+                min-width: '0'
+                margin: '0'
+            slots:
+              default:
+              - component: Label
+                config:
+                  text: =props.title || 'Raspberry Pi'
+                  style:
+                    display: block
+                    font-size: 14px
+                    font-weight: '600'
+                    line-height: '1.2'
+              - component: Label
+                config:
+                  text: '=(props.modelItem && items[props.modelItem] && items[props.modelItem].state !== ''NULL'' && items[props.modelItem].state !== ''UNDEF'') ? items[props.modelItem].state : '''''
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.7'
+          - component: Label
+            config:
+              text: '=(props.uptimeItem && items[props.uptimeItem] && items[props.uptimeItem].state !== ''NULL'' && items[props.uptimeItem].state !== ''UNDEF'') ? ''Up ''+Number.parseFloat(items[props.uptimeItem].state).toFixed(1)+'' days'' : '''''
+              style:
+                font-size: 12px
+                font-weight: '600'
+                white-space: nowrap
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            gap: 8px
+            margin: 10px 0 0
+            flex-wrap: nowrap
+            align-items: stretch
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-direction: column
+                justify-content: flex-start
+                align-content: flex-start
+                gap: 8px
+                margin: '0'
+                padding: 10px 12px
+                border-radius: 14px
+                border: 1px solid rgba(128,128,128,0.25)
+                flex: 1 1 0
+                min-width: '0'
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: flex-start
+                    gap: 6px
+                    margin: '0'
+                    height: 22px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: iconify:mdi:cpu-64-bit
+                      style:
+                        font-size: 16px
+                        color: '#6366f1'
+                  - component: Label
+                    config:
+                      text: Compute
+                      style:
+                        font-size: 12px
+                        opacity: '0.7'
+                        flex: '1'
+                  - component: Label
+                    config:
+                      text: '=(props.cpuTempItem && items[props.cpuTempItem] && items[props.cpuTempItem].state !== ''NULL'' && items[props.cpuTempItem].state !== ''UNDEF'') ? Math.round(Number.parseFloat(items[props.cpuTempItem].state))+'' °C'' : '''''
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        color: '=Number.parseFloat(items[props.cpuTempItem].state)>80 ? ''#dc3545'' : Number.parseFloat(items[props.cpuTempItem].state)>70 ? ''#d98200'' : ''inherit'''
+              - component: f7-gauge
+                config:
+                  type: circle
+                  size: 92
+                  borderWidth: 9
+                  borderBgColor: rgba(128,128,128,0.2)
+                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.cpuLoadItem].state))/100))
+                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.cpuLoadItem].state))'
+                  valueText: =Math.round(Number.parseFloat(items[props.cpuLoadItem].state))+'%'
+                  valueFontSize: 20
+                  valueFontWeight: 700
+                  valueTextColor: currentColor
+                  labelText: load
+                  labelFontSize: 11
+                  labelTextColor: rgba(128,128,128,0.9)
+                  style:
+                    display: block
+                    margin: 0 auto
+              - component: Label
+                config:
+                  text: '=(props.load1Item && items[props.load1Item] && items[props.load1Item].state !== ''NULL'' && items[props.load1Item].state !== ''UNDEF'') ? ''Load avg ''+Number.parseFloat(items[props.load1Item].state).toFixed(1)+'' · ''+Number.parseFloat(items[props.load15Item].state).toFixed(1)
+                    : '''''
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: center
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-direction: column
+                justify-content: flex-start
+                align-content: flex-start
+                gap: 8px
+                margin: '0'
+                padding: 10px 12px
+                border-radius: 14px
+                border: 1px solid rgba(128,128,128,0.25)
+                flex: 1 1 0
+                min-width: '0'
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: flex-start
+                    gap: 6px
+                    margin: '0'
+                    height: 22px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: iconify:mdi:memory
+                      style:
+                        font-size: 16px
+                        color: '#0ea5e9'
+                  - component: Label
+                    config:
+                      text: Memory
+                      style:
+                        font-size: 12px
+                        opacity: '0.7'
+                        flex: '1'
+              - component: f7-gauge
+                config:
+                  type: circle
+                  size: 92
+                  borderWidth: 9
+                  borderBgColor: rgba(128,128,128,0.2)
+                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.memUsedPctItem].state))/100))
+                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.memUsedPctItem].state))'
+                  valueText: =Math.round(Number.parseFloat(items[props.memUsedPctItem].state))+'%'
+                  valueFontSize: 20
+                  valueFontWeight: 700
+                  valueTextColor: currentColor
+                  labelText: RAM
+                  labelFontSize: 11
+                  labelTextColor: rgba(128,128,128,0.9)
+                  style:
+                    display: block
+                    margin: 0 auto
+              - component: Label
+                config:
+                  text: =(Number.parseFloat(items[props.memUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.memTotalItem].state)/1000000000).toFixed(1)+' GB'
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: center
+              - component: f7-row
+                config:
+                  style:
+                    display: block
+                    margin: '0'
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        position: relative
+                        height: 5px
+                        border-radius: 3px
+                        background: rgba(128,128,128,0.2)
+                        margin: 2px 0 0
+                        overflow: hidden
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            height: 5px
+                            margin: '0'
+                            border-radius: 3px
+                            background: '#64748b'
+                            width: =Math.min(100,Number.parseFloat(items[props.swapUsedItem].state)/Number.parseFloat(items[props.swapTotalItem].state)*100)+'%'
+                  - component: Label
+                    config:
+                      text: ='Swap '+(Number.parseFloat(items[props.swapUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.swapTotalItem].state)/1000000000).toFixed(1)+' GB'
+                      style:
+                        display: block
+                        font-size: 11px
+                        opacity: '0.75'
+                        text-align: center
+                        margin-top: 3px
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            gap: 8px
+            margin: 10px 0 0
+            flex-wrap: nowrap
+            align-items: stretch
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-direction: column
+                justify-content: flex-start
+                align-content: flex-start
+                gap: 8px
+                margin: '0'
+                padding: 10px 12px
+                border-radius: 14px
+                border: 1px solid rgba(128,128,128,0.25)
+                flex: 1 1 0
+                min-width: '0'
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: flex-start
+                    gap: 6px
+                    margin: '0'
+                    height: 22px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: iconify:mdi:micro-sd
+                      style:
+                        font-size: 16px
+                        color: '#14b8a6'
+                  - component: Label
+                    config:
+                      text: Storage
+                      style:
+                        font-size: 12px
+                        opacity: '0.7'
+                        flex: '1'
+              - component: f7-gauge
+                config:
+                  type: circle
+                  size: 92
+                  borderWidth: 9
+                  borderBgColor: rgba(128,128,128,0.2)
+                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.storageUsedPctItem].state))/100))
+                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.storageUsedPctItem].state))'
+                  valueText: =Math.round(Number.parseFloat(items[props.storageUsedPctItem].state))+'%'
+                  valueFontSize: 20
+                  valueFontWeight: 700
+                  valueTextColor: currentColor
+                  labelText: used
+                  labelFontSize: 11
+                  labelTextColor: rgba(128,128,128,0.9)
+                  style:
+                    display: block
+                    margin: 0 auto
+              - component: Label
+                config:
+                  text: =(Number.parseFloat(items[props.storageUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.storageTotalItem].state)/1000000000).toFixed(1)+' GB'
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: center
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-direction: column
+                justify-content: flex-start
+                align-content: flex-start
+                gap: 8px
+                margin: '0'
+                padding: 10px 12px
+                border-radius: 14px
+                border: 1px solid rgba(128,128,128,0.25)
+                flex: 1 1 0
+                min-width: '0'
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: flex-start
+                    gap: 6px
+                    margin: '0'
+                    height: 22px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:arrow_up_arrow_down
+                      style:
+                        font-size: 16px
+                        color: '#0ea5e9'
+                  - component: Label
+                    config:
+                      text: Network
+                      style:
+                        font-size: 12px
+                        opacity: '0.7'
+                        flex: '1'
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    gap: 14px
+                    margin: 6px 0 0
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        justify-content: flex-start
+                        gap: 8px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:arrow_down_circle_fill
+                          style:
+                            font-size: 22px
+                            color: '#0ea5e9'
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            margin: '0'
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: '=(props.rxItem && items[props.rxItem] && items[props.rxItem].state !== ''NULL'' && items[props.rxItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.rxItem].state)/1000000000).toFixed(1)+'' GB'' : ''–'''
+                              style:
+                                display: block
+                                font-size: 20px
+                                font-weight: '700'
+                                line-height: '1.1'
+                          - component: Label
+                            config:
+                              text: received
+                              style:
+                                display: block
+                                font-size: 11px
+                                opacity: '0.75'
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        justify-content: flex-start
+                        gap: 8px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:arrow_up_circle_fill
+                          style:
+                            font-size: 22px
+                            color: '#6366f1'
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            margin: '0'
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: '=(props.txItem && items[props.txItem] && items[props.txItem].state !== ''NULL'' && items[props.txItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.txItem].state)/1000000000).toFixed(1)+'' GB'' : ''–'''
+                              style:
+                                display: block
+                                font-size: 20px
+                                font-weight: '700'
+                                line-height: '1.1'
+                          - component: Label
+                            config:
+                              text: sent
+                              style:
+                                display: block
+                                font-size: 11px
+                                opacity: '0.75'
+              - component: Label
+                config:
+                  text: LAN bridge, since boot
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: center
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            gap: 8px
+            margin: 12px 0 0
+            padding: 12px 0 0
+            border-top: 1px solid rgba(128,128,128,0.2)
+        slots:
+          default:
+          - component: oh-repeater
+            config:
+              for: c
+              sourceType: array
+              in: '=props.rebootItem ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: oh-button
+                config:
+                  text: Reboot
+                  iconF7: arrow_clockwise
+                  iconSize: 18
+                  outline: true
+                  round: true
+                  color: orange
+                  action: command
+                  actionItem: =props.rebootItem
+                  actionCommand: 'ON'
+                  actionConfirmation: Reboot the server now? openHAB and all services restart.
+                  actionFeedback: Reboot requested
+                  style:
+                    flex: '1'
+                    text-transform: none
+                    font-weight: '600'
+          - component: oh-repeater
+            config:
+              for: c
+              sourceType: array
+              in: '=props.shutdownItem ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: oh-button
+                config:
+                  text: Shut down
+                  iconF7: power
+                  iconSize: 18
+                  outline: true
+                  round: true
+                  color: red
+                  action: command
+                  actionItem: =props.shutdownItem
+                  actionCommand: 'ON'
+                  actionConfirmation: Shut the server down? It will NOT come back without physical access.
+                  actionFeedback: Shutdown requested
+                  style:
+                    flex: '1'
+                    text-transform: none
+                    font-weight: '600'

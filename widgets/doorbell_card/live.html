@@ -38,7 +38,7 @@ if (!src) {
   s.textContent = Hls.isSupported() ? 'Connecting…' : 'MSE unavailable';
   v.addEventListener('playing', function() { s.style.display = 'none'; });
 
-  if (Hls.isSupported()) {
+  function startHls() {
     var hls = new Hls({
       startPosition: -1,
       maxLoadingDelay: 2,
@@ -79,7 +79,29 @@ if (!src) {
         location.reload();
       }
     }, 3000);
+  }
 
+  // The binding starts ffmpeg on the first playlist request but leaves the previous run's
+  // playlist + segments on disk (segment numbering restarts at 0). Playing that stale
+  // playlist shows old footage and then jumps. A live playlist is rewritten every ~2 s, so
+  // wait until its content changes before attaching the player.
+  function fetchPlaylist() {
+    return fetch(src, {cache: 'no-store'}).then(function(r) { return r.ok ? r.text() : ''; }, function() { return ''; });
+  }
+  function waitForFresh() {
+    var first = null, tries = 0;
+    (function poll() {
+      fetchPlaylist().then(function(txt) {
+        if (first === null) first = txt;
+        else if (txt && txt !== first) { startHls(); return; }
+        if (++tries > 60) { location.reload(); return; }
+        setTimeout(poll, 500);
+      });
+    })();
+  }
+
+  if (Hls.isSupported()) {
+    waitForFresh();
   } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
     v.src = src; s.style.display = 'none';
   }

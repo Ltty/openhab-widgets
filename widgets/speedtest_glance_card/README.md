@@ -22,9 +22,7 @@ icon), two outlined inner tiles for download and upload (a small › marks them 
 
 The plan pill ("▼ N % below plan") only appears when a speed is below the contracted one: amber from 80 %, red below.
 
-Native components only (`oh-grid-row/col`, `f7-card`, `oh-trend`, `oh-link`) — no HTML file, no script. The larger
-HTML-based [`speedtest_card`](../speedtest_card/) (7-day sparklines, full run button) remains available as an alternative.
-
+Native components only (`oh-grid-row/col`, `f7-card`, `oh-trend`, `oh-link`) — no HTML file, no script. 
 Place it in a full-width column **with padding 0** (`oh-grid-col width 100`, `style: {padding: 0}`) inside a row with
 `margin: 0`; the widget adds the 4 px outer padding itself, so its card lines up with half-width tiles above it.
 
@@ -39,8 +37,7 @@ Place it in a full-width column **with padding 0** (`oh-grid-col width 100`, `st
 | Plan | `planDown`, `planUp` | integer | Contracted speeds (default 150 / 20); the pill appears only below plan: amber from 80 %, red below |
 | Look | `title`, `page` | text, page | Card title (default "Internet"); page opened when a speed tile is tapped |
 
-Quality dots: Browsing / Streaming from download, Gaming from ping, Video call from upload (same thresholds as
-`speedtest_card`); green ≥ 4 dots, amber 2–3, red below.
+Quality dots: Browsing / Streaming from download, Gaming from ping, Video call from upload (common rule-of-thumb thresholds); green ≥ 4 dots, amber 2–3, red below.
 
 ## Changelog
 

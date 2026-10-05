@@ -1,11 +1,13 @@
 # cost_glance_tile — cost tile with live value and trend
 
-![Cost tiles for electricity and gas](screenshots/tiles.png)
+![Cost tiles with live value and trend](screenshots/tiles.png)
 
-Half-width home page tile for a cost that matters for the bill: the cost so far in the billing period, a year-over-year
+![Period cost tiles without live value](screenshots/period-cards.png)
+
+Tile for a cost that matters for the bill (half width on the home page, also used on the gas/electricity detail pages): the cost so far in the billing period, a year-over-year
 badge (green when cheaper), forecast vs. last period's total, the **current consumption** top right (e.g. `341 W`,
 or `0.0 m³/h`) and a 24 h trend line of the live value below. Tap opens a detail page.
-Native components only (`oh-link`, `f7-card`, `oh-trend`); place two in one `oh-grid-row` with `oh-grid-col width 50`.
+Native components only (`oh-link`, `f7-card`, `oh-trend`); place two in one `oh-grid-row` with `oh-grid-col width 50`. Leave `liveItem`/`trendItem` empty for a plain cost card without live value and trend line, and `page` empty for a tile that is not clickable.
 
 ## Props
 | Group | Prop | Item type | Meaning |

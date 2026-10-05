@@ -4,8 +4,6 @@ Custom OpenHAB Main UI widgets for home automation.
 
 ## Widgets
 
-![Home page](overview-home.png)
-
 ### Home page
 
 | Widget | Description | OH Version |
@@ -14,21 +12,14 @@ Custom OpenHAB Main UI widgets for home automation.
 | [home_heating_quick](widgets/home_heating_quick/) | Heating quick-mode sheet — fireplace until morning, vacation 3/5/7/14 days, back to auto (needs a command rule, example in `rules/`) | 5.x |
 | [waste_pickup_card](widgets/waste_pickup_card/) | Group-driven waste collection card (replaces `garbage_list_v1`) with `row` / `chips` / `schedule` parts — sorted by date, relative days, bin colours from item metadata | 5.x |
 | [doorbell_card](widgets/doorbell_card/) | IP camera doorbell card: relative event time, person/car badges, 4-image history with swipe viewer, live HLS popup (`doorbell_live`), optional lock icon and unlock | 5.x |
-| [cost_glance_tile](widgets/cost_glance_tile/) | Half-width cost tile: period cost, YoY badge, forecast vs. last period, live value and a 24 h trend line | 5.x |
-| [speedtest_glance_card](widgets/speedtest_glance_card/) | Speedtest card: download and upload tiles with plan pill and trend, ping/jitter, quality indicators, refresh icon — native components only | 5.x |
-
-### Energy and network
-
-| Widget | Description | OH Version |
-|--------|-------------|------------|
-| [gas_cost_card](widgets/gas_cost_card/) | Full-width period cost card (gas and electricity): cost, YoY badge, forecast, last year | 5.x |
-| [speedtest_card](widgets/speedtest_card/) | Ookla Speedtest dashboard (HTML-based) — speeds with 7-day sparklines, ping/jitter, quality indicators, run-test button | 5.x |
-| [air_quality_card](widgets/air_quality_card/) | European Air Quality Index card — verdict, driving pollutant, 6-band strip, per-pollutant detail | 5.x |
+| [cost_glance_tile](widgets/cost_glance_tile/) | Cost tile for gas and electricity: period cost, YoY badge, forecast vs. last period, optional live value and 24 h trend line | 5.x |
+| [speedtest_glance_card](widgets/speedtest_glance_card/) | Ookla Speedtest card: download and upload tiles with plan pill and trend, ping/jitter, quality indicators, refresh icon — native components only | 5.x |
 
 ### Garden, climate and heating
 
 | Widget | Description | OH Version |
 |--------|-------------|------------|
+| [air_quality_card](widgets/air_quality_card/) | European Air Quality Index card — verdict, driving pollutant, 6-band strip, per-pollutant detail | 5.x |
 | [lawn_mower](widgets/lawn_mower/) | Husqvarna Automower status card with GPS track map, weather guards and manual pause | 5.x |
 | [humidity_room_card](widgets/humidity_room_card/) | Per-room humidity + temperature card with zone bar and optional heating-valve indicator | 5.x |
 | [atag_one_card](widgets/atag_one_card/) | ATAG ONE thermostat control face — current/target temperature, mode selector, vacation/extend/fireplace pickers | 5.x |

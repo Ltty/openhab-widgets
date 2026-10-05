@@ -168,6 +168,7 @@ props:
     label: Network
   - name: controls
     label: Controls
+timestamp: Oct 5, 2026, 3:53:27 PM
 component: f7-card
 config:
   style:
@@ -235,7 +236,7 @@ slots:
             display: flex
             gap: 8px
             margin: 10px 0 0
-            flex-wrap: nowrap
+            flex-wrap: wrap
             align-items: stretch
         slots:
           default:
@@ -251,9 +252,10 @@ slots:
                 padding: 10px 12px
                 border-radius: 14px
                 border: 1px solid rgba(128,128,128,0.25)
-                flex: 1 1 0
+                flex: 1 1 150px
                 min-width: '0'
                 overflow: hidden
+                box-sizing: border-box
             slots:
               default:
               - component: f7-row
@@ -280,13 +282,6 @@ slots:
                         font-size: 12px
                         opacity: '0.7'
                         flex: '1'
-                  - component: Label
-                    config:
-                      text: '=(props.cpuTempItem && items[props.cpuTempItem] && items[props.cpuTempItem].state !== ''NULL'' && items[props.cpuTempItem].state !== ''UNDEF'') ? Math.round(Number.parseFloat(items[props.cpuTempItem].state))+'' °C'' : '''''
-                      style:
-                        font-size: 12px
-                        font-weight: '600'
-                        color: '=Number.parseFloat(items[props.cpuTempItem].state)>80 ? ''#dc3545'' : Number.parseFloat(items[props.cpuTempItem].state)>70 ? ''#d98200'' : ''inherit'''
               - component: f7-gauge
                 config:
                   type: circle
@@ -313,79 +308,13 @@ slots:
                     display: block
                     font-size: 11px
                     opacity: '0.75'
-                    text-align: center
-          - component: f7-row
-            config:
-              style:
-                display: flex
-                flex-direction: column
-                justify-content: flex-start
-                align-content: flex-start
-                gap: 8px
-                margin: '0'
-                padding: 10px 12px
-                border-radius: 14px
-                border: 1px solid rgba(128,128,128,0.25)
-                flex: 1 1 0
-                min-width: '0'
-                overflow: hidden
-            slots:
-              default:
-              - component: f7-row
-                config:
-                  style:
-                    display: flex
-                    align-items: center
-                    justify-content: flex-start
-                    gap: 6px
-                    margin: '0'
-                    height: 22px
-                slots:
-                  default:
-                  - component: oh-icon
-                    config:
-                      icon: iconify:mdi:memory
-                      style:
-                        font-size: 16px
-                        color: '#0ea5e9'
-                  - component: Label
-                    config:
-                      text: Memory
-                      style:
-                        font-size: 12px
-                        opacity: '0.7'
-                        flex: '1'
-              - component: f7-gauge
-                config:
-                  type: circle
-                  size: 92
-                  borderWidth: 9
-                  borderBgColor: rgba(128,128,128,0.2)
-                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.memUsedPctItem].state))/100))
-                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.memUsedPctItem].state))'
-                  valueText: =Math.round(Number.parseFloat(items[props.memUsedPctItem].state))+'%'
-                  valueFontSize: 20
-                  valueFontWeight: 700
-                  valueTextColor: currentColor
-                  labelText: RAM
-                  labelFontSize: 11
-                  labelTextColor: rgba(128,128,128,0.9)
-                  style:
-                    display: block
-                    margin: 0 auto
-              - component: Label
-                config:
-                  text: =(Number.parseFloat(items[props.memUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.memTotalItem].state)/1000000000).toFixed(1)+' GB'
-                  style:
-                    display: block
-                    font-size: 11px
-                    opacity: '0.75'
-                    text-align: center
+                    text-align: left
               - component: f7-row
                 config:
                   style:
                     display: block
                     margin: '0'
+                    width: 100%
                 slots:
                   default:
                   - component: f7-row
@@ -398,6 +327,7 @@ slots:
                         background: rgba(128,128,128,0.2)
                         margin: 2px 0 0
                         overflow: hidden
+                        width: 100%
                     slots:
                       default:
                       - component: f7-row
@@ -407,27 +337,18 @@ slots:
                             height: 5px
                             margin: '0'
                             border-radius: 3px
-                            background: '#64748b'
-                            width: =Math.min(100,Number.parseFloat(items[props.swapUsedItem].state)/Number.parseFloat(items[props.swapTotalItem].state)*100)+'%'
+                            background: '=Number.parseFloat(items[props.cpuTempItem].state)>80 ? ''#dc3545'' : Number.parseFloat(items[props.cpuTempItem].state)>70 ? ''#f59e0b'' : ''#28a745'''
+                            width: =Math.max(0,Math.min(100,Number.parseFloat(items[props.cpuTempItem].state)/85*100))+'%'
                   - component: Label
                     config:
-                      text: ='Swap '+(Number.parseFloat(items[props.swapUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.swapTotalItem].state)/1000000000).toFixed(1)+' GB'
+                      text: '=(props.cpuTempItem && items[props.cpuTempItem] && items[props.cpuTempItem].state !== ''NULL'' && items[props.cpuTempItem].state !== ''UNDEF'') ? ''CPU ''+Math.round(Number.parseFloat(items[props.cpuTempItem].state))+'' °C''
+                        : '''''
                       style:
                         display: block
                         font-size: 11px
                         opacity: '0.75'
-                        text-align: center
+                        text-align: left
                         margin-top: 3px
-      - component: f7-row
-        config:
-          style:
-            display: flex
-            gap: 8px
-            margin: 10px 0 0
-            flex-wrap: nowrap
-            align-items: stretch
-        slots:
-          default:
           - component: f7-row
             config:
               style:
@@ -440,76 +361,10 @@ slots:
                 padding: 10px 12px
                 border-radius: 14px
                 border: 1px solid rgba(128,128,128,0.25)
-                flex: 1 1 0
+                flex: 1 1 150px
                 min-width: '0'
                 overflow: hidden
-            slots:
-              default:
-              - component: f7-row
-                config:
-                  style:
-                    display: flex
-                    align-items: center
-                    justify-content: flex-start
-                    gap: 6px
-                    margin: '0'
-                    height: 22px
-                slots:
-                  default:
-                  - component: oh-icon
-                    config:
-                      icon: iconify:mdi:micro-sd
-                      style:
-                        font-size: 16px
-                        color: '#14b8a6'
-                  - component: Label
-                    config:
-                      text: Storage
-                      style:
-                        font-size: 12px
-                        opacity: '0.7'
-                        flex: '1'
-              - component: f7-gauge
-                config:
-                  type: circle
-                  size: 92
-                  borderWidth: 9
-                  borderBgColor: rgba(128,128,128,0.2)
-                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.storageUsedPctItem].state))/100))
-                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.storageUsedPctItem].state))'
-                  valueText: =Math.round(Number.parseFloat(items[props.storageUsedPctItem].state))+'%'
-                  valueFontSize: 20
-                  valueFontWeight: 700
-                  valueTextColor: currentColor
-                  labelText: used
-                  labelFontSize: 11
-                  labelTextColor: rgba(128,128,128,0.9)
-                  style:
-                    display: block
-                    margin: 0 auto
-              - component: Label
-                config:
-                  text: =(Number.parseFloat(items[props.storageUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.storageTotalItem].state)/1000000000).toFixed(1)+' GB'
-                  style:
-                    display: block
-                    font-size: 11px
-                    opacity: '0.75'
-                    text-align: center
-          - component: f7-row
-            config:
-              style:
-                display: flex
-                flex-direction: column
-                justify-content: flex-start
-                align-content: flex-start
-                gap: 8px
-                margin: '0'
-                padding: 10px 12px
-                border-radius: 14px
-                border: 1px solid rgba(128,128,128,0.25)
-                flex: 1 1 0
-                min-width: '0'
-                overflow: hidden
+                box-sizing: border-box
             slots:
               default:
               - component: f7-row
@@ -628,7 +483,182 @@ slots:
                     display: block
                     font-size: 11px
                     opacity: '0.75'
-                    text-align: center
+                    text-align: left
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-direction: column
+                justify-content: flex-start
+                align-content: flex-start
+                gap: 8px
+                margin: '0'
+                padding: 10px 12px
+                border-radius: 14px
+                border: 1px solid rgba(128,128,128,0.25)
+                flex: 1 1 150px
+                min-width: '0'
+                overflow: hidden
+                box-sizing: border-box
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: flex-start
+                    gap: 6px
+                    margin: '0'
+                    height: 22px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: iconify:mdi:memory
+                      style:
+                        font-size: 16px
+                        color: '#0ea5e9'
+                  - component: Label
+                    config:
+                      text: Memory
+                      style:
+                        font-size: 12px
+                        opacity: '0.7'
+                        flex: '1'
+              - component: f7-gauge
+                config:
+                  type: circle
+                  size: 92
+                  borderWidth: 9
+                  borderBgColor: rgba(128,128,128,0.2)
+                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.memUsedPctItem].state))/100))
+                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.memUsedPctItem].state))'
+                  valueText: =Math.round(Number.parseFloat(items[props.memUsedPctItem].state))+'%'
+                  valueFontSize: 20
+                  valueFontWeight: 700
+                  valueTextColor: currentColor
+                  labelText: RAM
+                  labelFontSize: 11
+                  labelTextColor: rgba(128,128,128,0.9)
+                  style:
+                    display: block
+                    margin: 0 auto
+              - component: Label
+                config:
+                  text: =(Number.parseFloat(items[props.memUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.memTotalItem].state)/1000000000).toFixed(1)+' GB'
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: left
+              - component: f7-row
+                config:
+                  style:
+                    display: block
+                    margin: '0'
+                    width: 100%
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        position: relative
+                        height: 5px
+                        border-radius: 3px
+                        background: rgba(128,128,128,0.2)
+                        margin: 2px 0 0
+                        overflow: hidden
+                        width: 100%
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            height: 5px
+                            margin: '0'
+                            border-radius: 3px
+                            background: '#64748b'
+                            width: =Math.min(100,Number.parseFloat(items[props.swapUsedItem].state)/Number.parseFloat(items[props.swapTotalItem].state)*100)+'%'
+                  - component: Label
+                    config:
+                      text: ='Swap '+(Number.parseFloat(items[props.swapUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.swapTotalItem].state)/1000000000).toFixed(1)+' GB'
+                      style:
+                        display: block
+                        font-size: 11px
+                        opacity: '0.75'
+                        text-align: left
+                        margin-top: 3px
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                flex-direction: column
+                justify-content: flex-start
+                align-content: flex-start
+                gap: 8px
+                margin: '0'
+                padding: 10px 12px
+                border-radius: 14px
+                border: 1px solid rgba(128,128,128,0.25)
+                flex: 1 1 150px
+                min-width: '0'
+                overflow: hidden
+                box-sizing: border-box
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: flex-start
+                    gap: 6px
+                    margin: '0'
+                    height: 22px
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: iconify:mdi:micro-sd
+                      style:
+                        font-size: 16px
+                        color: '#14b8a6'
+                  - component: Label
+                    config:
+                      text: Storage
+                      style:
+                        font-size: 12px
+                        opacity: '0.7'
+                        flex: '1'
+              - component: f7-gauge
+                config:
+                  type: circle
+                  size: 92
+                  borderWidth: 9
+                  borderBgColor: rgba(128,128,128,0.2)
+                  value: =Math.max(0, Math.min(1, (Number.parseFloat(items[props.storageUsedPctItem].state))/100))
+                  borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')(Number.parseFloat(items[props.storageUsedPctItem].state))'
+                  valueText: =Math.round(Number.parseFloat(items[props.storageUsedPctItem].state))+'%'
+                  valueFontSize: 20
+                  valueFontWeight: 700
+                  valueTextColor: currentColor
+                  labelText: used
+                  labelFontSize: 11
+                  labelTextColor: rgba(128,128,128,0.9)
+                  style:
+                    display: block
+                    margin: 0 auto
+              - component: Label
+                config:
+                  text: =(Number.parseFloat(items[props.storageUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.storageTotalItem].state)/1000000000).toFixed(1)+' GB'
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: left
       - component: f7-row
         config:
           style:

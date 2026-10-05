@@ -2,9 +2,10 @@
 
 ![Server status card](screenshots/card.png)
 
-One grouped card for the machine openHAB runs on, organised by layer: **Compute** (CPU load ring, CPU temperature, load average),
-**Memory** (RAM ring, swap bar nested under it), **Storage** (used ring with used/total GB), **Network** (data received/sent since boot),
-and the **controls** Reboot and Shut down. The header shows the hardware model and the uptime. The rings go green → amber above 70 % → red above 85 %.
+One grouped card for the machine openHAB runs on, organised by layer: **Compute** (CPU load ring, load average, temperature bar),
+**Network** (data received/sent since boot), **Memory** (RAM ring, swap bar nested under it), **Storage** (used ring with used/total GB),
+and the **controls** Reboot and Shut down. The layer tiles wrap: two per row on a phone (compute+network, memory+storage), all four in one row on wide screens.
+Every tile has the same structure — header with icon and title, ring or values, primary line, optional bar. The header shows the hardware model and the uptime. The rings go green → amber above 70 % → red above 85 %.
 
 Native components only (`f7-gauge`, `f7-card`, `oh-button`); optional parts (the two buttons) render through repeaters. Reboot and shutdown send `ON` to exec
 switch items and always ask for confirmation first — shutdown needs physical access to start again; leave `rebootItem` / `shutdownItem` empty to hide a button.
@@ -36,6 +37,11 @@ link the data sent/received items to the channel group of your real interface.
 | `shutdownItem` | `gSystem_Shutdown` | Exec switch; ON powers the server off (with confirmation). Empty = no button. |
 
 ## Changelog
+
+### Version 1.1.0
+
+- Layer tiles wrap responsively (2×2 on phones, one row on desktop) instead of two fixed columns; order compute, network, memory, storage
+- CPU temperature moved from the tile header to a bar line under the load, matching the swap bar of the memory tile; consistent info placement across tiles
 
 ### Version 1.0.0
 

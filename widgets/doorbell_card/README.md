@@ -1,6 +1,6 @@
 # doorbell_card — IP Camera Doorbell Card
 
-An OpenHAB Main UI card for IP cameras using the [ipcamera binding](https://www.openhab.org/addons/bindings/ipcamera/). Shows the last detection event (person/car badges), a snapshot, a collapsible live HLS stream, and an optional smart lock unlock button.
+An OpenHAB Main UI card for IP cameras using the [ipcamera binding](https://www.openhab.org/addons/bindings/ipcamera/). Shows the last detection event with its relative time ("3 min ago", bell turns orange while recent) and person/car badges, a snapshot, a **Live view** button that opens the HLS stream in a popup, and an optional smart lock unlock button.
 
 The snapshot section works in two modes — choose based on your setup:
 
@@ -8,12 +8,18 @@ The snapshot section works in two modes — choose based on your setup:
 |------|------|-------------|
 | **Simple** (default) | `snapshotFolder` not set | Shows latest image via the OH `imageItem` state (ipcamera `image` channel) |
 | **4-image history** | `snapshotFolder` set | Shows 4 rotating thumbnails from static JPEG files; requires a snapshot rotation rule |
+| **Latest snapshot, large** | `snapshotFolder` set, `showHistory` off | Shows only the newest static snapshot, full width (tap = full screen) — good for a home page |
+
+### Widget family
+
+Two definitions in one [`widgets.yaml`](widgets.yaml) (`widgets:` map, key = UID): `doorbell_card` (place this one)
+and `doorbell_live` (the live-view popup, also opened by the `home_hero` doorbell chip). Install both.
 
 ---
 
 ## Screenshots
 
-| Card (4-image history mode) | Live view open |
+| Card (4-image history mode) | Live view popup |
 |------|---------------|
 | ![Card](screenshots/card.png) | ![Live](screenshots/live.png) |
 
@@ -69,8 +75,8 @@ Both files must be in the same `/etc/openhab/html/doorbell/` directory. The live
 
 1. Open **Developer Tools → Widgets** in Main UI
 2. Click **+** → **Code** tab
-3. Paste the contents of [`widget.yaml`](widget.yaml)
-4. Click **Save**
+3. Paste the `doorbell_card` entry of [`widgets.yaml`](widgets.yaml) with UID `doorbell_card`, **Save**
+4. Repeat for the `doorbell_live` entry (UID `doorbell_live`)
 
 ### 5. Add to a page
 
@@ -79,6 +85,19 @@ Both files must be in the same `/etc/openhab/html/doorbell/` directory. The live
 3. Set the required props
 
 ---
+
+## What shows when
+
+| Element | Shows | Source |
+|---|---|---|
+| Event text ("Person at the front door") | always — the **last** event, until the next one | `labelItem` (set by your doorbell rule) |
+| "Person" / "Car" badge | only while the detection switch is **ON** (live detection, a few seconds) | `humanItem` / `carItem` |
+| Header time ("today 12:47") and orange bell | time of the last event; bell is orange for `recentMinutes` after it | `timeItem` |
+| Snapshots | one block, depending on config: no `snapshotFolder` = latest image item; `snapshotFolder` = 4-image grid (`showHistory` off = newest only, large) | `imageItem` / static files |
+| Lock icon, Unlock button | only if `lockItem` / `pinItem` is set | props |
+
+All optional parts are rendered through repeaters, not `visible`, so the page editor (which ignores `visible`) shows
+only what is configured — no stacked image variants or permanent badges.
 
 ## Props reference
 
@@ -103,7 +122,9 @@ Both files must be in the same `/etc/openhab/html/doorbell/` directory. The live
 | Prop | Required | Type | Description |
 |------|----------|------|-------------|
 | `cardTitle` | No | Text | Card header label (default: "Front Door") |
-| `snapshotFolder` | No | Text | Subfolder under `/etc/openhab/html/` for 4-image history grid (see below) |
+| `snapshotFolder` | No | Text | Subfolder under `/etc/openhab/html/` with the rotating snapshots (see below) |
+| `showHistory` | No | Boolean | With `snapshotFolder`: on (default) = 4-image grid, off = newest snapshot only, larger |
+| `recentMinutes` | No | Integer | Minutes after an event during which the header bell is orange (default 10) |
 | `lockItem` | No | Item | Switch: ON = locked; shows lock icon in header |
 | `pinItem` | No | Item | Item for PIN unlock popup (`widget:keypad` required) |
 
@@ -182,6 +203,16 @@ if (!fetch()) {
 ---
 
 ## Changelog
+
+### Version 1.2.0
+
+- Live view opens in a popup (new widget `doorbell_live`; full screen and scrollable on phones) instead of an inline accordion — the page no longer jumps
+- Header shows the event time relative ("3 min ago", "today 12:47"); bell turns orange for `recentMinutes` after an event
+- New `showHistory` prop: newest snapshot only, larger, tap for full screen
+- Live view and Unlock are now side-by-side buttons; event text and badges share one line
+- Definitions moved to `widgets.yaml` (family with `doorbell_live`)
+- Snapshot variants, badges, lock icon and Unlock button render through repeaters instead of `visible`, so the page editor no longer shows all variants at once
+- Card corners 18 px (margin 0) to match the other home page cards; thumbnails 8 px; recent-event bell orange instead of red; Unlock button amber instead of red
 
 ### Version 1.1.0
 

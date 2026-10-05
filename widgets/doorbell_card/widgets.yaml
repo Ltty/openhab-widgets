@@ -1,0 +1,333 @@
+widgets:
+  doorbell_card:
+    tags:
+    - security
+    - doorbell
+    - card
+    props:
+      parameters:
+      - context: item
+        description: Image item linked to the ipcamera binding's image channel. Receives the latest snapshot.
+        groupName: source
+        label: Snapshot Image Item
+        name: imageItem
+        required: true
+        type: TEXT
+      - description: Full ipcamera Thing UID (e.g. ipcamera:REOLINK:abc12345). The last segment builds the HLS stream URL /ipcamera/{id}/ipcamera.m3u8.
+        groupName: source
+        label: Camera Thing UID
+        name: cameraThing
+        required: true
+        type: TEXT
+      - context: item
+        description: String item for the last event description (e.g. Person, Car, Motion). Shown below the card header.
+        groupName: events
+        label: Last Event Label Item
+        name: labelItem
+        required: true
+        type: TEXT
+      - context: item
+        description: DateTime item with the last event time (String also works). Shown as relative time ("3 min ago") and used as cache-buster for snapshots.
+        groupName: events
+        label: Last Event Time Item
+        name: timeItem
+        required: true
+        type: TEXT
+      - context: item
+        description: Switch item — ON when a person is detected. Shows an orange "Person" badge.
+        groupName: events
+        label: Person Detected Item
+        name: humanItem
+        required: false
+        type: TEXT
+      - context: item
+        description: Switch item — ON when a car or vehicle is detected. Shows a blue "Car" badge.
+        groupName: events
+        label: Car Detected Item
+        name: carItem
+        required: false
+        type: TEXT
+      - description: Title shown in the card header. Defaults to "Front Door".
+        groupName: appearance
+        label: Card Title
+        name: cardTitle
+        required: false
+        type: TEXT
+      - description: Subfolder under /etc/openhab/html/ with rotating snapshots (snapshot.jpg, snapshot_1..3.jpg, written by a rule — see README). Without it the card shows the image item.
+        groupName: appearance
+        label: Snapshot History Folder
+        name: snapshotFolder
+        required: false
+        type: TEXT
+      - name: showHistory
+        label: Show snapshot history
+        description: 'With a snapshot folder: show the 4 latest snapshots (on) or only the newest one, larger (off).'
+        type: BOOLEAN
+        default: 'true'
+        required: false
+        groupName: appearance
+      - name: recentMinutes
+        label: Recent event window (min)
+        description: Header bell turns orange for this many minutes after an event.
+        type: INTEGER
+        default: '10'
+        required: false
+        groupName: appearance
+      - context: item
+        description: Switch item for lock state — ON = locked. Shows a lock icon in the card header.
+        groupName: appearance
+        label: Lock State Item
+        name: lockItem
+        required: false
+        type: TEXT
+      - context: item
+        description: Item for PIN code entry. Enables the Unlock button popup (requires widget:keypad marketplace widget).
+        groupName: appearance
+        label: PIN Entry Item
+        name: pinItem
+        required: false
+        type: TEXT
+      parameterGroups:
+      - name: source
+        label: Camera Source
+      - name: events
+        label: Event Detection
+      - name: appearance
+        label: Appearance
+    timestamp: 2026-10-05T14:44:10.163+0200
+    component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 18px
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 12px
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                gap: 8px
+                margin: 0 0 6px
+            slots:
+              default:
+              - component: oh-icon
+                config:
+                  icon: f7:bell_fill
+                  style:
+                    font-size: 20px
+                    color: '=(t=>t.isValid() && dayjs().diff(t,''minute'') < (props.recentMinutes || 10))(dayjs((items[props.timeItem]||{}).state)) ? ''#ea580c'' : ''var(--f7-theme-color)'''
+              - component: Label
+                config:
+                  text: =props.cardTitle || 'Front Door'
+                  style:
+                    flex: '1'
+                    font-size: 16px
+                    font-weight: '600'
+              - component: Label
+                config:
+                  text: '=(t=>!t.isValid() ? ((items[props.timeItem] && items[props.timeItem].state !== ''NULL'') ? items[props.timeItem].state : ''–'') : (m=>m<1 ? ''just now'' : m<60 ? m+'' min ago'' : t.isSame(dayjs(),''day'') ? ''today ''+t.format(''HH:mm'')
+                    : t.isSame(dayjs().subtract(1,''day''),''day'') ? ''yesterday ''+t.format(''HH:mm'') : t.format(''ddd D MMM, HH:mm''))(dayjs().diff(t,''minute'')))(dayjs((items[props.timeItem]||{}).state))'
+                  style:
+                    font-size: 12px
+                    opacity: '0.7'
+                    white-space: nowrap
+              - component: oh-repeater
+                config:
+                  for: k
+                  sourceType: array
+                  in: '=props.lockItem ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: '=props.lockItem && items[props.lockItem] && items[props.lockItem].state === ''ON'' ? ''f7:lock_fill'' : ''f7:lock_open_fill'''
+                      style:
+                        font-size: 18px
+                        color: '=props.lockItem && items[props.lockItem] && items[props.lockItem].state === ''ON'' ? ''var(--f7-theme-color)'' : ''green'''
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                flex-wrap: wrap
+                gap: 8px
+                margin: 0 0 10px
+            slots:
+              default:
+              - component: Label
+                config:
+                  text: '=items[props.labelItem] && items[props.labelItem].state !== ''NULL'' ? items[props.labelItem].state : ''–'''
+                  style:
+                    font-size: 14px
+                    font-weight: '500'
+              - component: oh-repeater
+                config:
+                  for: b
+                  sourceType: array
+                  in: '=[(props.humanItem && items[props.humanItem] && items[props.humanItem].state === ''ON'') ? ''Person'' : '''', (props.carItem && items[props.carItem] && items[props.carItem].state === ''ON'') ? ''Car'' : ''''].filter(x=>x)'
+                  fragment: true
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: =loop.b
+                      style:
+                        border-radius: 12px
+                        font-size: 12px
+                        padding: 2px 8px
+                        background: '=loop.b === ''Person'' ? ''rgba(217,119,6,0.18)'' : ''rgba(0,120,255,0.18)'''
+                        color: '=loop.b === ''Person'' ? ''#d97706'' : ''#0078ff'''
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                gap: 4px
+                margin: 0 0 10px
+            slots:
+              default:
+              - component: oh-repeater
+                config:
+                  for: s
+                  sourceType: array
+                  in: '=props.snapshotFolder ? ((props.showHistory === false || props.showHistory === ''false'') ? [0] : [0,1,2,3]) : [-1]'
+                  fragment: true
+                slots:
+                  default:
+                  - component: oh-link
+                    config:
+                      action: photos
+                      actionPhotos: '=props.snapshotFolder ? [0,1,2,3].slice(0, (props.showHistory === false || props.showHistory === ''false'') ? 1 : 4).map(i=>({url: ''/static/''+props.snapshotFolder+''/''+(i === 0 ? ''snapshot'' : ''snapshot_''+i)+''.jpg?t=''+(items[props.timeItem]||{}).state}))
+                        : [{item: props.imageItem}]'
+                      actionPhotoBrowserConfig: '={swiper: {initialSlide: loop.s < 0 ? 0 : loop.s}}'
+                      style:
+                        display: block
+                        flex: 1 1 0
+                        min-width: '0'
+                        aspect-ratio: '=(loop.s < 0 || (props.showHistory === false || props.showHistory === ''false'')) ? ''auto'' : ''1'''
+                    slots:
+                      default:
+                      - component: oh-image
+                        config:
+                          item: '=loop.s < 0 ? props.imageItem : '''''
+                          url: '=loop.s < 0 ? '''' : ''/static/''+props.snapshotFolder+''/''+(loop.s === 0 ? ''snapshot'' : ''snapshot_''+loop.s)+''.jpg?t=''+(items[props.timeItem]||{}).state'
+                          refreshInterval: 30000
+                          style:
+                            display: block
+                            width: 100%
+                            height: '=(loop.s < 0 || (props.showHistory === false || props.showHistory === ''false'')) ? ''auto'' : ''100%'''
+                            max-height: '=(loop.s < 0 || (props.showHistory === false || props.showHistory === ''false'')) ? ''240px'' : ''none'''
+                            object-fit: '=(loop.s < 0 || (props.showHistory === false || props.showHistory === ''false'')) ? ''cover'' : ''contain'''
+                            object-position: center
+                            border-radius: '=(loop.s < 0 || (props.showHistory === false || props.showHistory === ''false'')) ? ''12px'' : ''8px'''
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                gap: 8px
+                margin: '0'
+            slots:
+              default:
+              - component: oh-button
+                config:
+                  text: Live view
+                  iconF7: videocam_fill
+                  iconSize: 18
+                  outline: true
+                  round: true
+                  action: popup
+                  actionModal: widget:doorbell_live
+                  actionModalConfig:
+                    cameraThing: =props.cameraThing
+                  style:
+                    flex: '1'
+                    text-transform: none
+                    font-weight: '600'
+              - component: oh-repeater
+                config:
+                  for: u
+                  sourceType: array
+                  in: '=props.pinItem ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: oh-button
+                    config:
+                      text: Unlock
+                      iconF7: lock_open_fill
+                      iconSize: 18
+                      fill: true
+                      round: true
+                      action: popup
+                      actionModal: widget:keypad
+                      actionModalConfig:
+                        closePopup: true
+                        item: =props.pinItem
+                        mask: '*'
+                      style:
+                        flex: '1'
+                        text-transform: none
+                        font-weight: '600'
+                        background: '#d97706'
+                        color: '#fff'
+  doorbell_live:
+    tags:
+    - security
+    - doorbell
+    props:
+      parameters:
+      - name: cameraThing
+        label: Camera Thing UID
+        description: Full ipcamera Thing UID; the last segment builds /ipcamera/{id}/ipcamera.m3u8. Supplied by doorbell_card / home_hero.
+        type: TEXT
+        required: true
+      parameterGroups: []
+    timestamp: 2026-10-05T13:46:36.339+0200
+    component: f7-block
+    config:
+      label: Live view
+      style: {}
+    slots:
+      default:
+      - component: f7-block
+        config:
+          style:
+            margin: 16px
+            padding: '0'
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                background: '#000'
+                border-radius: 12px
+                display: block
+                height: '0'
+                margin: '0'
+                overflow: hidden
+                padding-top: 100%
+                position: relative
+                width: 100%
+            slots:
+              default:
+              - component: oh-webframe
+                config:
+                  src: ="/static/doorbell/live.html?v=5&stream=/ipcamera/"+props.cameraThing.split(':').pop()+"/ipcamera.m3u8"
+                  style:
+                    border: none
+                    border-radius: 8px
+                    bottom: '0'
+                    height: auto
+                    left: '0'
+                    position: absolute
+                    right: '0'
+                    top: '0'

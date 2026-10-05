@@ -49,7 +49,7 @@ list; each prop's description names the exact `atagone` channel it targets.
 
 ## Changelog
 
-### Version 1.1.0
+### Version 2.1.0
 
 - Restyled to the shared design system: one 18 px card per section with a plain section title above it instead of a single card with uppercase letter-spaced headers; the "Diagnostics" title moved into the dialog's navbar; the read-only note is a small line under the cards. Same rows and props
 

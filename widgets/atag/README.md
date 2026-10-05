@@ -9,8 +9,8 @@ Each widget is independent — place any of them on its own page — and keeps i
 | [`atag_schedule_card`](atag_schedule_card/) | 1.1.0 | Weekly central-heating / hot-water schedule editor (24 h timeline per day) |
 | [`atag_regulation_card`](atag_regulation_card/) | 2.2.0 | Regulation settings: central heating, weather-dependent control, hot water, display |
 | [`atag_diagnostics_card`](atag_diagnostics_card/) | 2.0.0 | Read-only boiler diagnostics (Information → Diagnosis) |
-| [`atag_heating_chart`](atag_heating_chart/) | 1.1.0 | Central heating chart: target vs. room vs. outside temperature, summer eco threshold, burner overlay |
-| [`atag_hotwater_chart`](atag_hotwater_chart/) | 1.1.0 | Domestic hot water chart: target vs. current temperature, burner overlay |
+| [`atag_heating_chart`](atag_heating_chart/) | 1.1.1 | Central heating chart: target vs. room vs. outside temperature, summer eco threshold, burner overlay |
+| [`atag_hotwater_chart`](atag_hotwater_chart/) | 1.1.1 | Domestic hot water chart: target vs. current temperature, burner overlay |
 
 | | | |
 |---|---|---|

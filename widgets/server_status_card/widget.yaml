@@ -123,6 +123,68 @@ props:
     context: item
     default: Systeminfo_Total_Storage
     groupName: storage
+  - name: storageTitle
+    label: SD card title
+    description: Title of the first storage tile.
+    type: TEXT
+    required: false
+    default: SD card
+    groupName: storage
+  - name: ssdPctItem
+    label: SSD used % item
+    description: Number (ratio or %) of the SSD volume — ring.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_SSD_UsedPercent
+    groupName: ssd
+  - name: ssdUsedItem
+    label: SSD used item
+    description: Number:DataAmount.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_SSD_Used
+    groupName: ssd
+  - name: ssdTotalItem
+    label: SSD total item
+    description: Number:DataAmount.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_SSD_Total
+    groupName: ssd
+  - name: ssdTitle
+    label: SSD title
+    description: Title of the second storage tile.
+    type: TEXT
+    required: false
+    default: SSD
+    groupName: ssd
+  - name: cpuFreqItem
+    label: CPU frequency item
+    description: Number:Frequency (Hz); shown next to the temperature.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_CPU_Freq
+    groupName: compute
+  - name: heapPctItem
+    label: Java heap used item
+    description: Number (ratio or %) of the openHAB JVM heap — bar in the memory tile.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_Used_Heap_Percent
+    groupName: memory
+  - name: procUsedItem
+    label: openHAB process memory item
+    description: Number:DataAmount used by the openHAB process.
+    type: TEXT
+    required: false
+    context: item
+    default: Systeminfo_CurrentProcessUsed
+    groupName: memory
   - name: rxItem
     label: Data received item
     description: Number:DataAmount (bytes since boot).
@@ -179,12 +241,14 @@ props:
   - name: memory
     label: Memory
   - name: storage
-    label: Storage
+    label: Storage (SD)
+  - name: ssd
+    label: Storage (SSD)
   - name: network
     label: Network
   - name: controls
     label: Controls
-timestamp: Oct 5, 2026, 4:08:24 PM
+timestamp: Oct 5, 2026, 6:33:00 PM
 component: f7-card
 config:
   style:
@@ -298,6 +362,26 @@ slots:
                         font-size: 12px
                         opacity: '0.7'
                         flex: '1'
+                  - component: oh-link
+                    config:
+                      action: popover
+                      actionModal: widget:info_popover
+                      actionModalConfig:
+                        title: Compute
+                        text: CPU load (ring, 0–100 %), load average over 1 and 15 minutes, CPU temperature as a bar (green below 70 °C, amber above 70, red above 80) and the current clock speed — the Pi lowers it when idle.
+                      style:
+                        display: inline-flex
+                        color: inherit
+                        text-decoration: none
+                        margin: -2px -2px -2px 0
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:info_circle
+                          style:
+                            font-size: 15px
+                            opacity: '0.45'
               - component: f7-row
                 config:
                   style:
@@ -367,8 +451,9 @@ slots:
                             width: =Math.max(0,Math.min(100,Number.parseFloat(items[props.cpuTempItem].state)/85*100))+'%'
                   - component: Label
                     config:
-                      text: '=(props.cpuTempItem && items[props.cpuTempItem] && items[props.cpuTempItem].state !== ''NULL'' && items[props.cpuTempItem].state !== ''UNDEF'') ? ''CPU ''+Math.round(Number.parseFloat(items[props.cpuTempItem].state))+'' °C''
-                        : '''''
+                      text: '=((props.cpuTempItem && items[props.cpuTempItem] && items[props.cpuTempItem].state !== ''NULL'' && items[props.cpuTempItem].state !== ''UNDEF'') ? ''CPU ''+Math.round(Number.parseFloat(items[props.cpuTempItem].state))+'' °C''
+                        : '''')+((props.cpuFreqItem && items[props.cpuFreqItem] && items[props.cpuFreqItem].state !== ''NULL'' && items[props.cpuFreqItem].state !== ''UNDEF'') ? '' · ''+(Number.parseFloat(items[props.cpuFreqItem].state)/1000000000).toFixed(1)+''
+                        GHz'' : '''')'
                       style:
                         display: block
                         width: 100%
@@ -418,6 +503,26 @@ slots:
                         font-size: 12px
                         opacity: '0.7'
                         flex: '1'
+                  - component: oh-link
+                    config:
+                      action: popover
+                      actionModal: widget:info_popover
+                      actionModalConfig:
+                        title: Memory
+                        text: 'RAM used (ring). Bars below: swap — here compressed RAM (zram) plus a small swap file — and the Java heap of openHAB with the memory the openHAB process uses.'
+                      style:
+                        display: inline-flex
+                        color: inherit
+                        text-decoration: none
+                        margin: -2px -2px -2px 0
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:info_circle
+                          style:
+                            font-size: 15px
+                            opacity: '0.45'
               - component: f7-row
                 config:
                   style:
@@ -494,6 +599,55 @@ slots:
                         opacity: '0.75'
                         text-align: center
                         margin-top: 3px
+              - component: oh-repeater
+                config:
+                  for: h
+                  sourceType: array
+                  in: '=props.heapPctItem && items[props.heapPctItem] && items[props.heapPctItem].state !== ''NULL'' && items[props.heapPctItem].state !== ''UNDEF'' ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        margin: '0'
+                        width: 100%
+                    slots:
+                      default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            position: relative
+                            height: 5px
+                            border-radius: 3px
+                            background: rgba(128,128,128,0.2)
+                            margin: 2px 0 0
+                            overflow: hidden
+                            width: 100%
+                        slots:
+                          default:
+                          - component: f7-row
+                            config:
+                              style:
+                                display: block
+                                height: 5px
+                                margin: '0'
+                                border-radius: 3px
+                                background: '#8b5cf6'
+                                width: '=Math.min(100,(v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.heapPctItem].state)))+''%'''
+                      - component: Label
+                        config:
+                          text: '=''Heap ''+Math.round((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.heapPctItem].state)))+'' %''+((props.procUsedItem && items[props.procUsedItem] && items[props.procUsedItem].state !== ''NULL'' && items[props.procUsedItem].state
+                            !== ''UNDEF'') ? '' · ''+(Number.parseFloat(items[props.procUsedItem].state)/1000000000).toFixed(1)+'' GB'' : '''')'
+                          style:
+                            display: block
+                            width: 100%
+                            font-size: 11px
+                            opacity: '0.75'
+                            text-align: center
+                            margin-top: 3px
           - component: f7-row
             config:
               style:
@@ -531,11 +685,31 @@ slots:
                         color: '#14b8a6'
                   - component: Label
                     config:
-                      text: Storage
+                      text: =props.storageTitle || 'SD card'
                       style:
                         font-size: 12px
                         opacity: '0.7'
                         flex: '1'
+                  - component: oh-link
+                    config:
+                      action: popover
+                      actionModal: widget:info_popover
+                      actionModalConfig:
+                        title: SD card
+                        text: Used space of the SD card ('/'), where the operating system and openHAB live.
+                      style:
+                        display: inline-flex
+                        color: inherit
+                        text-decoration: none
+                        margin: -2px -2px -2px 0
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:info_circle
+                          style:
+                            font-size: 15px
+                            opacity: '0.45'
               - component: f7-row
                 config:
                   style:
@@ -603,26 +777,102 @@ slots:
                   default:
                   - component: oh-icon
                     config:
-                      icon: f7:arrow_up_arrow_down
+                      icon: iconify:mdi:harddisk
                       style:
                         font-size: 16px
                         color: '#0ea5e9'
                   - component: Label
                     config:
-                      text: Network
+                      text: =props.ssdTitle || 'SSD'
                       style:
                         font-size: 12px
                         opacity: '0.7'
                         flex: '1'
+                  - component: oh-link
+                    config:
+                      action: popover
+                      actionModal: widget:info_popover
+                      actionModalConfig:
+                        title: SSD
+                        text: Used space of the NVMe SSD (/media/data) that holds InfluxDB and the persistence data.
+                      style:
+                        display: inline-flex
+                        color: inherit
+                        text-decoration: none
+                        margin: -2px -2px -2px 0
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:info_circle
+                          style:
+                            font-size: 15px
+                            opacity: '0.45'
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    justify-content: center
+                    width: 100%
+                    margin: '0'
+                slots:
+                  default:
+                  - component: f7-gauge
+                    config:
+                      type: circle
+                      size: 92
+                      borderWidth: 9
+                      borderBgColor: rgba(128,128,128,0.2)
+                      value: '=Math.max(0, Math.min(1, ((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.ssdPctItem].state)))/100))'
+                      borderColor: '=(v=>v>85 ? ''#dc3545'' : v>70 ? ''#f59e0b'' : ''#28a745'')((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.ssdPctItem].state)))'
+                      valueText: '=Math.round((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.ssdPctItem].state)))+''%'''
+                      valueFontSize: 20
+                      valueFontWeight: 700
+                      valueTextColor: currentColor
+                      labelText: used
+                      labelFontSize: 11
+                      labelTextColor: rgba(128,128,128,0.9)
+                      style:
+                        display: block
+                        margin: 0 auto
+              - component: Label
+                config:
+                  text: =(Number.parseFloat(items[props.ssdUsedItem].state)/1000000000).toFixed(1)+' of '+(Number.parseFloat(items[props.ssdTotalItem].state)/1000000000).toFixed(1)+' GB'
+                  style:
+                    display: block
+                    width: 100%
+                    font-size: 11px
+                    opacity: '0.75'
+                    text-align: center
+      - component: f7-row
+        config:
+          style:
+            display: flex
+            justify-content: center
+            gap: 12px
+            margin: 12px 0 0
+            padding: 12px 0 0
+            border-top: 1px solid rgba(128,128,128,0.2)
+            flex-wrap: wrap
+        slots:
+          default:
+          - component: oh-repeater
+            config:
+              for: a
+              sourceType: array
+              in: '=props.rxItem && items[props.rxItem] && items[props.rxItem].state !== ''NULL'' && items[props.rxItem].state !== ''UNDEF'' ? [1] : []'
+              fragment: true
+            slots:
+              default:
               - component: f7-row
                 config:
                   style:
                     display: flex
                     flex-direction: column
                     align-items: center
-                    gap: 14px
-                    margin: 6px 0 0
-                    width: 100%
+                    margin: '0'
+                    flex: 1 1 auto
+                    min-width: '0'
                 slots:
                   default:
                   - component: f7-row
@@ -630,10 +880,8 @@ slots:
                       style:
                         display: flex
                         align-items: center
-                        justify-content: flex-start
-                        width: 150px
-                        max-width: 100%
-                        gap: 8px
+                        justify-content: center
+                        gap: 6px
                         margin: '0'
                     slots:
                       default:
@@ -641,39 +889,49 @@ slots:
                         config:
                           icon: f7:arrow_down_circle_fill
                           style:
-                            font-size: 22px
+                            font-size: 18px
                             color: '#0ea5e9'
-                      - component: f7-row
+                      - component: Label
                         config:
+                          text: =(Number.parseFloat(items[props.rxItem].state)/1000000000).toFixed(1)+' GB'
                           style:
-                            display: block
-                            margin: '0'
-                        slots:
-                          default:
-                          - component: Label
-                            config:
-                              text: '=(props.rxItem && items[props.rxItem] && items[props.rxItem].state !== ''NULL'' && items[props.rxItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.rxItem].state)/1000000000).toFixed(1)+'' GB'' : ''–'''
-                              style:
-                                display: block
-                                font-size: 20px
-                                font-weight: '700'
-                                line-height: '1.1'
-                          - component: Label
-                            config:
-                              text: received since boot
-                              style:
-                                display: block
-                                font-size: 11px
-                                opacity: '0.75'
+                            font-size: 15px
+                            font-weight: '700'
+                            line-height: '1.2'
+                            white-space: nowrap
+                  - component: Label
+                    config:
+                      text: received
+                      style:
+                        font-size: 11px
+                        opacity: '0.75'
+                        text-align: center
+          - component: oh-repeater
+            config:
+              for: b
+              sourceType: array
+              in: '=props.txItem && items[props.txItem] && items[props.txItem].state !== ''NULL'' && items[props.txItem].state !== ''UNDEF'' ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    margin: '0'
+                    flex: 1 1 auto
+                    min-width: '0'
+                slots:
+                  default:
                   - component: f7-row
                     config:
                       style:
                         display: flex
                         align-items: center
-                        justify-content: flex-start
-                        width: 150px
-                        max-width: 100%
-                        gap: 8px
+                        justify-content: center
+                        gap: 6px
                         margin: '0'
                     slots:
                       default:
@@ -681,46 +939,70 @@ slots:
                         config:
                           icon: f7:arrow_up_circle_fill
                           style:
-                            font-size: 22px
+                            font-size: 18px
                             color: '#6366f1'
-                      - component: f7-row
+                      - component: Label
                         config:
+                          text: =(Number.parseFloat(items[props.txItem].state)/1000000000).toFixed(1)+' GB'
                           style:
-                            display: block
-                            margin: '0'
-                        slots:
-                          default:
-                          - component: Label
-                            config:
-                              text: '=(props.txItem && items[props.txItem] && items[props.txItem].state !== ''NULL'' && items[props.txItem].state !== ''UNDEF'') ? (Number.parseFloat(items[props.txItem].state)/1000000000).toFixed(1)+'' GB'' : ''–'''
-                              style:
-                                display: block
-                                font-size: 20px
-                                font-weight: '700'
-                                line-height: '1.1'
-                          - component: Label
-                            config:
-                              text: sent since boot
-                              style:
-                                display: block
-                                font-size: 11px
-                                opacity: '0.75'
-              - component: oh-repeater
-                config:
-                  for: n
-                  sourceType: array
-                  in: '=((props.netNameItem && items[props.netNameItem] && items[props.netNameItem].state !== ''NULL'') || (props.netIpItem && items[props.netIpItem] && items[props.netIpItem].state !== ''NULL'')) ? [1] : []'
-                  fragment: true
-                slots:
-                  default:
+                            font-size: 15px
+                            font-weight: '700'
+                            line-height: '1.2'
+                            white-space: nowrap
                   - component: Label
                     config:
-                      text: '=((props.netNameItem && items[props.netNameItem] && items[props.netNameItem].state !== ''NULL'' && items[props.netNameItem].state !== ''UNDEF'') ? items[props.netNameItem].state : '''')+(((props.netNameItem && items[props.netNameItem]
-                        && items[props.netNameItem].state !== ''NULL'' && items[props.netNameItem].state !== ''UNDEF'') && (props.netIpItem && items[props.netIpItem] && items[props.netIpItem].state !== ''NULL'' && items[props.netIpItem].state !== ''UNDEF''))
-                        ? '' · '' : '''')+((props.netIpItem && items[props.netIpItem] && items[props.netIpItem].state !== ''NULL'' && items[props.netIpItem].state !== ''UNDEF'') ? items[props.netIpItem].state : '''')'
+                      text: sent
                       style:
-                        display: block
-                        width: 100%
+                        font-size: 11px
+                        opacity: '0.75'
+                        text-align: center
+          - component: oh-repeater
+            config:
+              for: c
+              sourceType: array
+              in: '=(props.netIpItem && items[props.netIpItem] && items[props.netIpItem].state !== ''NULL'' && items[props.netIpItem].state !== ''UNDEF'') ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    flex-direction: column
+                    align-items: center
+                    margin: '0'
+                    flex: 1 1 auto
+                    min-width: '0'
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        justify-content: center
+                        gap: 6px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:arrow_up_arrow_down
+                          style:
+                            font-size: 18px
+                            color: '#64748b'
+                      - component: Label
+                        config:
+                          text: =items[props.netIpItem].state
+                          style:
+                            font-size: 15px
+                            font-weight: '700'
+                            line-height: '1.2'
+                            white-space: nowrap
+                  - component: Label
+                    config:
+                      text: '=(props.netNameItem && items[props.netNameItem] && items[props.netNameItem].state !== ''NULL'' && items[props.netNameItem].state !== ''UNDEF'') ? items[props.netNameItem].state : ''network'''
+                      style:
                         font-size: 11px
                         opacity: '0.75'
                         text-align: center

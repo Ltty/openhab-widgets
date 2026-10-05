@@ -40,6 +40,11 @@ Half-width tile in the shared page design: room icon and name, humidity as a 26 
 
 ## Changelog
 
+### Version 2.1.0
+
+- Humidity value and icon in the normal text colour — status is shown by the pill and the zone bar only
+- Temperature line: thermometer icon with the current temperature, "Set 30°" muted on the right
+
 ### Version 2.0.0 (BREAKING)
 
 - Rebuilt as a half-width tile in the shared page design (18 px card, 26 px value, status pill, slim zone bar, sub line)

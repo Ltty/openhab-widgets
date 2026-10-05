@@ -24,6 +24,12 @@ Item convention: `<forecastPrefix>Hours01..06_Timestamp/_Iconid/_Temperature` an
 
 ## Changelog
 
+### Version 1.1.0
+
+- Soil temperature after min/max (`soilItem`, "10° / 21° / 18° soil")
+- "Updated" time moved to a left-aligned footer line
+- Daily range bars are coloured by absolute temperature (blue below zero → green → yellow → red above 35 °C) instead of the same gradient for every day
+
 ### Version 1.0.0
 
 - Initial release.

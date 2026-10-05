@@ -51,6 +51,10 @@ curve fit.
 
 ## Changelog
 
+### Version 1.1.1
+
+- Header icon neutral and chart background transparent so header and chart match
+
 ### Version 1.1.0
 
 - Chart sits in an 18 px card with a tile header (icon + title); the chart's own title is gone so it no longer collides with the date navigation

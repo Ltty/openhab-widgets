@@ -49,6 +49,10 @@ editor shows exactly the chips that are currently active instead of every varian
 
 ## Changelog
 
+### Version 1.2.0
+
+- The humidity chip and its sheet only show **critical** humidity (above the per-item red threshold, chip in red). Elevated humidity no longer raises a chip — it only needs action when it stays elevated, which the threshold alert rules handle
+
 ### Version 1.1.0
 
 - Doorbell chip: shows the last doorbell event for `doorbellMinutes` after it happened (new Doorbell props); tap opens the `doorbell_live` popup

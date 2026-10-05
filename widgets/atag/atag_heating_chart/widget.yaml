@@ -63,7 +63,7 @@ props:
     label: Items
   - name: appearance
     label: Appearance
-timestamp: Oct 5, 2026, 3:29:06 PM
+timestamp: Oct 5, 2026, 6:34:40 PM
 component: f7-card
 config:
   style:
@@ -94,7 +94,7 @@ slots:
               icon: f7:thermometer
               style:
                 font-size: 16px
-                color: '#f97316'
+                opacity: 0.75
           - component: Label
             config:
               text: =props.title || "Central Heating"
@@ -107,6 +107,7 @@ slots:
           options:
             tooltip:
               trigger: axis
+            backgroundColor: transparent
           period: D
           chartType: ''
         slots:

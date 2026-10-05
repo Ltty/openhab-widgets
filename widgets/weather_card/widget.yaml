@@ -61,6 +61,14 @@ props:
     context: item
     default: LocalSun_Set_Start
     groupName: current
+  - name: soilItem
+    label: Soil temperature item
+    description: Optional soil temperature, shown after min/max.
+    type: TEXT
+    required: false
+    context: item
+    default: Netatmo_Weather_Station_Soil_Temp
+    groupName: current
   - name: updatedItem
     label: Last measurement item
     description: DateTime of the last station measurement.
@@ -81,6 +89,7 @@ props:
     label: Current weather
   - name: forecast
     label: Forecast
+timestamp: Oct 5, 2026, 6:34:13 PM
 component: f7-card
 config:
   style:
@@ -159,7 +168,8 @@ slots:
                     opacity: '0.75'
               - component: Label
                 config:
-                  text: =Math.round(Number.parseFloat(items[props.minItem].state))+'° / '+Math.round(Number.parseFloat(items[props.maxItem].state))+'°'
+                  text: '=Math.round(Number.parseFloat(items[props.minItem].state))+''° / ''+Math.round(Number.parseFloat(items[props.maxItem].state))+''°''+((props.soilItem && items[props.soilItem] && items[props.soilItem].state !== ''NULL'' && items[props.soilItem].state
+                    !== ''UNDEF'') ? '' / ''+Math.round(Number.parseFloat(items[props.soilItem].state))+''° soil'' : '''')'
                   style:
                     font-size: 13px
                     font-weight: '500'
@@ -205,13 +215,6 @@ slots:
                   style:
                     font-size: 13px
                     font-weight: '500'
-          - component: Label
-            config:
-              text: ='Updated '+dayjs(items[props.updatedItem].state).format('HH:mm')
-              style:
-                font-size: 11px
-                opacity: '0.6'
-                align-self: center
       - &id001
         component: f7-row
         config:
@@ -327,7 +330,8 @@ slots:
                         height: 6px
                         margin: '0'
                         border-radius: 3px
-                        background: 'linear-gradient(90deg, #0ea5e9, #f59e0b)'
+                        background: ='linear-gradient(90deg, hsl('+(t=>Math.round(Math.max(0, Math.min(220, 220*(1-(t+10)/45)))))(Number.parseFloat(items[props.forecastPrefix+loop.d.k+'_Mintemperature'].state))+',85%,52%), hsl('+(t=>Math.round(Math.max(0,
+                          Math.min(220, 220*(1-(t+10)/50)))))(Number.parseFloat(items[props.forecastPrefix+loop.d.k+'_Maxtemperature'].state))+',85%,52%))'
                         left: =((Number.parseFloat(items[props.forecastPrefix+loop.d.k+'_Mintemperature'].state))-(['Today','Tomorrow','Day2','Day3','Day4','Day5'].reduce((a,k)=>Math.min(a,Number.parseFloat(items[props.forecastPrefix+k+'_Mintemperature'].state)),99)))/Math.max(1,(['Today','Tomorrow','Day2','Day3','Day4','Day5'].reduce((a,k)=>Math.max(a,Number.parseFloat(items[props.forecastPrefix+k+'_Maxtemperature'].state)),-99))-(['Today','Tomorrow','Day2','Day3','Day4','Day5'].reduce((a,k)=>Math.min(a,Number.parseFloat(items[props.forecastPrefix+k+'_Mintemperature'].state)),99)))*100+'%'
                         width: =((Number.parseFloat(items[props.forecastPrefix+loop.d.k+'_Maxtemperature'].state))-(Number.parseFloat(items[props.forecastPrefix+loop.d.k+'_Mintemperature'].state)))/Math.max(1,(['Today','Tomorrow','Day2','Day3','Day4','Day5'].reduce((a,k)=>Math.max(a,Number.parseFloat(items[props.forecastPrefix+k+'_Maxtemperature'].state)),-99))-(['Today','Tomorrow','Day2','Day3','Day4','Day5'].reduce((a,k)=>Math.min(a,Number.parseFloat(items[props.forecastPrefix+k+'_Mintemperature'].state)),99)))*100+'%'
               - component: Label
@@ -338,3 +342,12 @@ slots:
                     font-weight: '600'
                     width: 30px
                     flex: 0 0 auto
+      - component: Label
+        config:
+          text: ='Updated '+dayjs(items[props.updatedItem].state).format('HH:mm')
+          style:
+            display: block
+            font-size: 11px
+            opacity: '0.6'
+            margin-top: 6px
+            text-align: left

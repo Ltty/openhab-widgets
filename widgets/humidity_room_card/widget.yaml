@@ -77,6 +77,7 @@ props:
     label: Thresholds
   - name: extras
     label: Valve
+timestamp: Oct 5, 2026, 6:34:27 PM
 component: oh-link
 config:
   action: analyzer
@@ -116,7 +117,7 @@ slots:
                   icon: =props.icon || 'f7:house'
                   style:
                     font-size: 16px
-                    color: '=[''#28a745'',''#d98200'',''#dc3545''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
+                    opacity: '0.75'
               - component: Label
                 config:
                   text: '=props.title || (items[props.item] ? items[props.item].label : '''')'
@@ -159,7 +160,6 @@ slots:
                     font-size: 26px
                     font-weight: '700'
                     line-height: '1.1'
-                    color: '=[''#28a745'',''#d98200'',''#dc3545''][(h=>h > (props.red || 70) ? 2 : h > (props.orange || 60) ? 1 : 0)((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state)))]'
               - component: Label
                 config:
                   text: '%'
@@ -208,12 +208,39 @@ slots:
                     background: var(--f7-card-bg-color)
                     box-shadow: 0 0 0 1px rgba(128,128,128,0.6)
                     left: '=(Math.max(0, Math.min(100, (((v=>v<=1 ? v*100 : v)(Number.parseFloat(items[props.item].state))) - (props.min || 40)) / (100 - (props.min || 40)) * 100)))+''%'''
-          - component: Label
+          - component: f7-row
             config:
-              text: '=((props.tempItem && items[props.tempItem] && items[props.tempItem].state !== ''NULL'') ? Number.parseFloat(items[props.tempItem].state).toFixed(1)+'' °C'' : ''–'')+((props.setpointItem && items[props.setpointItem] && items[props.setpointItem].state
-                !== ''NULL'') ? '' · Set ''+Number.parseFloat(items[props.setpointItem].state).toFixed(0)+'' °C'' : '''')'
               style:
-                display: block
-                font-size: 11px
-                opacity: '0.75'
-                margin-top: 8px
+                display: flex
+                align-items: center
+                justify-content: space-between
+                margin: 10px 0 0
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: inline-flex
+                    align-items: center
+                    gap: 4px
+                    margin: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:thermometer
+                      style:
+                        font-size: 14px
+                        opacity: '0.7'
+                  - component: Label
+                    config:
+                      text: '=(props.tempItem && items[props.tempItem] && items[props.tempItem].state !== ''NULL'') ? Number.parseFloat(items[props.tempItem].state).toFixed(1)+''°'' : ''–'''
+                      style:
+                        font-size: 13px
+                        font-weight: '600'
+              - component: Label
+                config:
+                  text: '=(props.setpointItem && items[props.setpointItem] && items[props.setpointItem].state !== ''NULL'') ? ''Set ''+Number.parseFloat(items[props.setpointItem].state).toFixed(0)+''°'' : '''''
+                  style:
+                    font-size: 11px
+                    opacity: '0.65'

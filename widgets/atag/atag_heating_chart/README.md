@@ -57,6 +57,10 @@ data reflects the ATAG device's real reporting resolution, not a cosmetic curve 
 
 ## Changelog
 
+### Version 1.1.1
+
+- Header icon neutral and chart background transparent so header and chart match; two charts sit side by side on wide screens
+
 ### Version 1.1.0
 
 - Chart sits in an 18 px card with a tile header (icon + title); the chart's own title is gone so it no longer collides with the date navigation

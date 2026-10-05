@@ -42,7 +42,7 @@ props:
     label: Items
   - name: appearance
     label: Appearance
-timestamp: Oct 5, 2026, 3:28:38 PM
+timestamp: Oct 5, 2026, 6:34:40 PM
 component: f7-card
 config:
   style:
@@ -73,7 +73,7 @@ slots:
               icon: f7:drop_fill
               style:
                 font-size: 16px
-                color: '#0ea5e9'
+                opacity: 0.75
           - component: Label
             config:
               text: =props.title || "Domestic Hot Water"
@@ -86,6 +86,7 @@ slots:
           options:
             tooltip:
               trigger: axis
+            backgroundColor: transparent
           period: D
           chartType: ''
         slots:

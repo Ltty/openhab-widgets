@@ -171,7 +171,7 @@ widgets:
         label: Behaviour
       - name: doorbell
         label: Doorbell
-    timestamp: 2026-10-05T14:33:10.461+0200
+    timestamp: Oct 5, 2026, 2:33:10 PM
     component: f7-card
     config:
       style:
@@ -474,7 +474,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: 2026-10-05T14:46:56.679+0200
+    timestamp: Oct 5, 2026, 6:35:17 PM
     component: f7-row
     config:
       style:
@@ -700,7 +700,7 @@ widgets:
             config:
               for: c
               sourceType: array
-              in: '=(loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length>0 && loop.h_idx==0) && loop.h_idx === 0 ? [1] : []'
+              in: '=(loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.r).length>0 && loop.h_idx==0) && loop.h_idx === 0 ? [1] : []'
               fragment: true
             slots:
               default:
@@ -725,8 +725,8 @@ widgets:
                         margin: '0'
                         padding: 5px 12px
                         border-radius: 16px
-                        color: '#0891b2'
-                        background: 'color-mix(in srgb, #0891b2 16%, transparent)'
+                        color: '#dc2626'
+                        background: 'color-mix(in srgb, #dc2626 16%, transparent)'
                     slots:
                       default:
                       - component: oh-icon
@@ -734,15 +734,15 @@ widgets:
                           icon: f7:drop_fill
                           style:
                             font-size: 14px
-                            color: '#0891b2'
+                            color: '#dc2626'
                       - component: Label
                         config:
-                          text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.o).length+' humid'
+                          text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.r).length+' humid'
                           style:
                             font-size: 12px
                             font-weight: '600'
                             white-space: nowrap
-                            color: '#0891b2'
+                            color: '#dc2626'
       - component: oh-repeater
         config:
           for: t
@@ -810,7 +810,7 @@ widgets:
         description: 'Array of {i: humidity item, n: room, o: orange threshold, r: red threshold}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
-    timestamp: 2026-10-05T13:21:34.701+0200
+    timestamp: Oct 5, 2026, 6:35:17 PM
     component: f7-block
     config:
       label: Humidity
@@ -837,7 +837,7 @@ widgets:
               for: r
               sourceType: array
               in: =props.rows
-              filter: Number.parseFloat(items[loop.r.i].state) > loop.r.o
+              filter: Number.parseFloat(items[loop.r.i].state) > loop.r.r
             slots:
               default:
               - component: oh-list-item
@@ -857,7 +857,7 @@ widgets:
         description: 'Array of {i: low-battery switch, n: device, l: location}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
-    timestamp: 2026-10-05T13:21:33.104+0200
+    timestamp: Oct 5, 2026, 1:21:33 PM
     component: f7-block
     config:
       label: Low batteries
@@ -904,7 +904,7 @@ widgets:
         description: 'Array of {i: status item, n: label, k: binding, s: state, e: expected-offline}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
-    timestamp: 2026-10-05T13:21:31.555+0200
+    timestamp: Oct 5, 2026, 1:21:31 PM
     component: f7-block
     config:
       label: Offline devices

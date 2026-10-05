@@ -1,0 +1,53 @@
+uid: info_popover
+tags:
+- design
+- card
+props:
+  parameters:
+  - name: title
+    label: Title
+    description: Popover heading.
+    type: TEXT
+    required: false
+    groupName: content
+  - name: text
+    label: Text
+    description: Explanation shown in the popover.
+    type: TEXT
+    required: true
+    groupName: content
+  parameterGroups:
+  - name: content
+    label: Content
+timestamp: Oct 5, 2026, 6:31:18 PM
+component: f7-block
+config:
+  style:
+    margin: '0'
+    padding: 12px 14px
+    max-width: 280px
+slots:
+  default:
+  - component: f7-row
+    config:
+      style:
+        display: block
+        margin: '0'
+    slots:
+      default:
+      - component: Label
+        config:
+          text: =props.title || ''
+          style:
+            display: block
+            font-size: 13px
+            font-weight: '600'
+            margin-bottom: 4px
+      - component: Label
+        config:
+          text: =props.text
+          style:
+            display: block
+            font-size: 12px
+            line-height: '1.4'
+            opacity: '0.85'

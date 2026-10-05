@@ -14,7 +14,7 @@ props:
     groupName: source
   - name: thingsGroup
     label: Thing status group
-    description: Group of Thing status Switch items (OFF = offline); metadata 'offlineExpected' hides expected-offline devices.
+    description: Group of Thing status Switch items (OFF = offline); metadata offlineExpected hides expected-offline devices. When nothing is wrong a single "all devices online" row is shown.
     type: TEXT
     required: false
     context: item
@@ -23,7 +23,7 @@ props:
   parameterGroups:
   - name: source
     label: Sources
-timestamp: Oct 5, 2026, 3:34:20 PM
+timestamp: Oct 5, 2026, 3:57:21 PM
 component: f7-row
 config:
   style:
@@ -191,3 +191,82 @@ slots:
                               title: =loop.r.n
                               subtitle: =loop.r.k
                               iconSize: 22
+  - component: oh-repeater
+    config:
+      for: t
+      groupItem: =props.thingsGroup
+      sourceType: itemsInGroup
+      fragment: true
+      fetchMetadata: offlineExpected
+      map: '({i: loop.t.name, e: !!(loop.t.metadata && loop.t.metadata.offlineExpected)})'
+    slots:
+      default:
+      - component: oh-repeater
+        config:
+          for: c
+          sourceType: array
+          in: '=(loop.t_idx === 0 && loop.t_source.filter(x=>!x.e && items[x.i].state === ''OFF'').length === 0 && Number(items[props.batteryGroup].state) === 0) ? [1] : []'
+          fragment: true
+        slots:
+          default:
+          - component: f7-card
+            config:
+              style:
+                margin: 0 0 8px
+                border-radius: 18px
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-card-content
+                config:
+                  style:
+                    padding: 12px 14px
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        justify-content: flex-start
+                        gap: 10px
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:checkmark_circle_fill
+                          style:
+                            font-size: 22px
+                            color: '#28a745'
+                            flex: 0 0 auto
+                      - component: f7-row
+                        config:
+                          style:
+                            display: block
+                            margin: '0'
+                        slots:
+                          default:
+                          - component: Label
+                            config:
+                              text: All devices online, batteries OK
+                              style:
+                                display: block
+                                font-size: 14px
+                                font-weight: '600'
+                          - component: oh-repeater
+                            config:
+                              for: x
+                              sourceType: array
+                              in: '=loop.t_source.filter(x=>x.e).length > 0 ? [1] : []'
+                              fragment: true
+                            slots:
+                              default:
+                              - component: Label
+                                config:
+                                  text: =loop.t_source.filter(x=>x.e).length+' expected-offline device(s) not counted'
+                                  style:
+                                    display: block
+                                    font-size: 11px
+                                    opacity: '0.75'
+                                    margin-top: 2px

@@ -3,8 +3,8 @@
 ![Server status card](screenshots/card.png)
 
 One grouped card for the machine openHAB runs on, organised by layer: **Compute** (CPU load ring, load average, temperature bar),
-**Network** (data received/sent since boot), **Memory** (RAM ring, swap bar nested under it), **Storage** (used ring with used/total GB),
-and the **controls** Reboot and Shut down. The layer tiles wrap: two per row on a phone (compute+network, memory+storage), all four in one row on wide screens.
+**Memory** (RAM ring, swap bar nested under it), **Storage** (used ring with used/total GB), **Network** (data received/sent since boot),
+and the **controls** Reboot and Shut down. The layer tiles wrap: two per row on a phone (compute+memory, storage+network), all four in one row on wide screens.
 Every tile has the same structure — header with icon and title, ring or values, primary line, optional bar. The header shows the hardware model and the uptime. The rings go green → amber above 70 % → red above 85 %.
 
 Native components only (`f7-gauge`, `f7-card`, `oh-button`); optional parts (the two buttons) render through repeaters. Reboot and shutdown send `ON` to exec
@@ -37,6 +37,11 @@ link the data sent/received items to the channel group of your real interface.
 | `shutdownItem` | `gSystem_Shutdown` | Exec switch; ON powers the server off (with confirmation). Empty = no button. |
 
 ## Changelog
+
+### Version 1.2.0
+
+- Tile order follows the machine: compute, memory, storage, network
+- Rings, value lines and bars are centred in every tile
 
 ### Version 1.1.0
 

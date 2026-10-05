@@ -45,8 +45,8 @@ if (!src) {
       manifestLoadingMaxRetry: 8,
       manifestLoadingRetryDelay: 500,
       manifestLoadingMaxRetryTimeout: 10000,
-      liveSyncDurationCount: 1,
-      liveMaxLatencyDurationCount: 2,
+      liveSyncDurationCount: 2,
+      liveMaxLatencyDurationCount: 4,
       maxBufferLength: 1,
       maxMaxBufferLength: 3,
       enableWorker: false
@@ -81,23 +81,35 @@ if (!src) {
     }, 3000);
   }
 
-  // The binding starts ffmpeg on the first playlist request but leaves the previous run's
-  // playlist + segments on disk (segment numbering restarts at 0). Playing that stale
-  // playlist shows old footage and then jumps. A live playlist is rewritten every ~2 s, so
-  // wait until its content changes before attaching the player.
-  function fetchPlaylist() {
-    return fetch(src, {cache: 'no-store'}).then(function(r) { return r.ok ? r.text() : ''; }, function() { return ''; });
+  // ipcamera binding quirks (5.2.x): its /ipcamera.m3u8 handler always sleeps 4.5 s (isAlive()
+  // is false after the first call for HLS), so a player refreshing it starves; and that path
+  // never extends the keep-alive, so ffmpeg is killed after ~60-90 s. Hence:
+  //  - tell the binding to keep the stream running (StartStream ON = keep-alive -1),
+  //  - read the playlist from the same HLS folder via /static/doorbell/hls (symlink, instant).
+  // It also leaves the previous run's playlist + segments on disk (numbering restarts at 0), so
+  // wait until the playlist content changes (ffmpeg is rewriting it) before attaching the player.
+  var startItem = params.get('startItem') || 'GF_Entryway_Doorbell_StartStream';
+  var staticSrc = params.get('static') || '/static/doorbell/hls/ipcamera.m3u8';
+  try {
+    fetch('/rest/items/' + startItem, {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: 'ON'});
+  } catch(ex) {}
+
+  function fetchPlaylist(url) {
+    return fetch(url, {cache: 'no-store'}).then(function(r) { return r.ok ? r.text() : ''; }, function() { return ''; });
   }
   function waitForFresh() {
-    var first = null, tries = 0;
-    (function poll() {
-      fetchPlaylist().then(function(txt) {
-        if (first === null) first = txt;
-        else if (txt && txt !== first) { startHls(); return; }
-        if (++tries > 60) { location.reload(); return; }
-        setTimeout(poll, 500);
-      });
-    })();
+    fetchPlaylist(staticSrc).then(function(probe) {
+      var url = probe ? staticSrc : src;   // static folder missing -> fall back to the servlet URL
+      var first = probe || null, tries = 0;
+      (function poll() {
+        fetchPlaylist(url).then(function(txt) {
+          if (first === null) first = txt;
+          else if (txt && txt !== first) { src = url; startHls(); return; }
+          if (++tries > 120) { location.reload(); return; }
+          setTimeout(poll, 500);
+        });
+      })();
+    });
   }
 
   if (Hls.isSupported()) {

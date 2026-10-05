@@ -161,12 +161,13 @@ props:
     label: Items
   - name: device
     label: Device
-timestamp: Sep 15, 2026, 3:43:14 PM
-component: oh-list-card
+timestamp: Oct 5, 2026, 8:27:10 PM
+component: f7-block
 config:
-  title: Diagnostics
-  mediaList: true
-  footer: All values are read-only, reported directly by the boiler.
+  label: Diagnostics
+  style:
+    margin: '0'
+    padding: '0'
 slots:
   default:
   - component: Label
@@ -174,144 +175,188 @@ slots:
       text: Status
       style:
         display: block
-        font-size: 11px
+        margin: 18px 20px 6px
+        font-size: 12px
         font-weight: '600'
-        letter-spacing: 1px
-        text-transform: uppercase
-        opacity: '0.55'
-        padding: 14px 16px 2px
-  - component: oh-label-item
+        opacity: '0.7'
+  - component: oh-list
     config:
-      item: =props.flameItem
-      title: Flame
+      mediaList: true
+      inset: true
+      style:
+        margin: 0 16px
+        --f7-list-inset-border-radius: 18px
+    slots:
+      default:
+      - component: oh-label-item
+        config:
+          item: =props.flameItem
+          title: Flame
   - component: Label
     config:
       text: Alerts
       style:
         display: block
-        font-size: 11px
+        margin: 18px 20px 6px
+        font-size: 12px
         font-weight: '600'
-        letter-spacing: 1px
-        text-transform: uppercase
-        opacity: '0.55'
-        padding: 14px 16px 2px
-  - component: oh-label-item
+        opacity: '0.7'
+  - component: oh-list
     config:
-      item: =props.deviceErrorsItem
-      title: Device Errors
-  - component: oh-label-item
-    config:
-      item: =props.boilerErrorsItem
-      title: Boiler Errors
+      mediaList: true
+      inset: true
+      style:
+        margin: 0 16px
+        --f7-list-inset-border-radius: 18px
+    slots:
+      default:
+      - component: oh-label-item
+        config:
+          item: =props.deviceErrorsItem
+          title: Device Errors
+      - component: oh-label-item
+        config:
+          item: =props.boilerErrorsItem
+          title: Boiler Errors
   - component: Label
     config:
       text: Central Heating
       style:
         display: block
-        font-size: 11px
+        margin: 18px 20px 6px
+        font-size: 12px
         font-weight: '600'
-        letter-spacing: 1px
-        text-transform: uppercase
-        opacity: '0.55'
-        padding: 14px 16px 2px
-  - component: oh-label-item
+        opacity: '0.7'
+  - component: oh-list
     config:
-      item: =props.waterPressureItem
-      title: CH Water Pressure
-  - component: oh-label-item
-    config:
-      item: =props.modulationLevelItem
-      title: Modulation Level
-  - component: oh-label-item
-    config:
-      item: =props.boilerTempItem
-      title: Boiler Flow Temp
-  - component: oh-label-item
-    config:
-      item: =props.boilerReturnTempItem
-      title: Boiler Return Temp
-  - component: oh-label-item
-    config:
-      item: =props.deltaTempItem
-      title: Delta Temperature
-  - component: oh-label-item
-    config:
-      item: =props.timeToTargetItem
-      title: Time to Target
-  - component: oh-label-item
-    config:
-      item: =props.averageOutsideTempItem
-      title: Average Outside Temp
-  - component: oh-label-item
-    config:
-      item: =props.weatherStatusItem
-      title: Weather Status
+      mediaList: true
+      inset: true
+      style:
+        margin: 0 16px
+        --f7-list-inset-border-radius: 18px
+    slots:
+      default:
+      - component: oh-label-item
+        config:
+          item: =props.waterPressureItem
+          title: CH Water Pressure
+      - component: oh-label-item
+        config:
+          item: =props.modulationLevelItem
+          title: Modulation Level
+      - component: oh-label-item
+        config:
+          item: =props.boilerTempItem
+          title: Boiler Flow Temp
+      - component: oh-label-item
+        config:
+          item: =props.boilerReturnTempItem
+          title: Boiler Return Temp
+      - component: oh-label-item
+        config:
+          item: =props.deltaTempItem
+          title: Delta Temperature
+      - component: oh-label-item
+        config:
+          item: =props.timeToTargetItem
+          title: Time to Target
+      - component: oh-label-item
+        config:
+          item: =props.averageOutsideTempItem
+          title: Average Outside Temp
+      - component: oh-label-item
+        config:
+          item: =props.weatherStatusItem
+          title: Weather Status
   - component: Label
     config:
       text: Hot Water
       style:
         display: block
-        font-size: 11px
+        margin: 18px 20px 6px
+        font-size: 12px
         font-weight: '600'
-        letter-spacing: 1px
-        text-transform: uppercase
-        opacity: '0.55'
-        padding: 14px 16px 2px
-  - component: oh-label-item
+        opacity: '0.7'
+  - component: oh-list
     config:
-      title: DHW Setpoint
-      item: =props.dhwSetpointItem
-  - component: oh-label-item
-    config:
-      title: DHW Water Temperature
-      item: =props.dhwWaterTempItem
+      mediaList: true
+      inset: true
+      style:
+        margin: 0 16px
+        --f7-list-inset-border-radius: 18px
+    slots:
+      default:
+      - component: oh-label-item
+        config:
+          title: DHW Setpoint
+          item: =props.dhwSetpointItem
+      - component: oh-label-item
+        config:
+          title: DHW Water Temperature
+          item: =props.dhwWaterTempItem
   - component: Label
     config:
       text: Device
       style:
         display: block
-        font-size: 11px
+        margin: 18px 20px 6px
+        font-size: 12px
         font-weight: '600'
-        letter-spacing: 1px
-        text-transform: uppercase
-        opacity: '0.55'
-        padding: 14px 16px 2px
-  - component: oh-label-item
+        opacity: '0.7'
+  - component: oh-list
     config:
-      visible: =!!props.serialNumber
-      title: Serial Number
-      after: =props.serialNumber
-  - component: oh-label-item
+      mediaList: true
+      inset: true
+      style:
+        margin: 0 16px
+        --f7-list-inset-border-radius: 18px
+    slots:
+      default:
+      - component: oh-label-item
+        config:
+          visible: =!!props.serialNumber
+          title: Serial Number
+          after: =props.serialNumber
+      - component: oh-label-item
+        config:
+          visible: =!!props.deviceId
+          title: Device ID
+          after: =props.deviceId
+      - component: oh-label-item
+        config:
+          visible: =!!props.firmwareVersion
+          title: Firmware Version
+          after: =props.firmwareVersion
+      - component: oh-label-item
+        config:
+          item: =props.burningHoursItem
+          title: Burning Hours
+      - component: oh-label-item
+        config:
+          item: =props.pcbTempItem
+          title: PCB Temperature
+      - component: oh-label-item
+        config:
+          item: =props.voltageItem
+          title: Voltage
+      - component: oh-label-item
+        config:
+          item: =props.wifiSignalItem
+          title: WiFi Signal
+      - component: oh-label-item
+        config:
+          item: =props.resetsItem
+          title: Resets
+      - component: oh-label-item
+        config:
+          item: =props.reportTimeItem
+          title: Last Report
+  - component: Label
     config:
-      visible: =!!props.deviceId
-      title: Device ID
-      after: =props.deviceId
-  - component: oh-label-item
-    config:
-      visible: =!!props.firmwareVersion
-      title: Firmware Version
-      after: =props.firmwareVersion
-  - component: oh-label-item
-    config:
-      item: =props.burningHoursItem
-      title: Burning Hours
-  - component: oh-label-item
-    config:
-      item: =props.pcbTempItem
-      title: PCB Temperature
-  - component: oh-label-item
-    config:
-      item: =props.voltageItem
-      title: Voltage
-  - component: oh-label-item
-    config:
-      item: =props.wifiSignalItem
-      title: WiFi Signal
-  - component: oh-label-item
-    config:
-      item: =props.resetsItem
-      title: Resets
-  - component: oh-label-item
-    config:
-      item: =props.reportTimeItem
-      title: Last Report
+      text: All values are read-only, reported directly by the boiler.
+      style:
+        display: block
+        margin: 12px 20px 24px
+        font-size: 11px
+        opacity: '0.75'
+        line-height: '1.4'

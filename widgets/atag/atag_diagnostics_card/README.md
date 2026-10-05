@@ -1,7 +1,7 @@
 # atag_diagnostics_card — ATAG ONE Boiler Diagnostics
 
 Read-only boiler diagnostics, matching the ATAG ONE app's Information → Diagnosis screen, as a
-single accordion card.
+single list in the shared design style.
 
 ---
 
@@ -11,9 +11,7 @@ single accordion card.
 
 ## What it shows
 
-A single flat list (no accordion — this card only ever appears inside a popup, and collapsing a
-single section inside something already one tap deep just adds a redundant click), grouped under
-plain section headers: **Status** (flame), **Alerts** (device/boiler errors), **Central Heating**
+One rounded card (18 px radius) per section with a 12 px bold section title above it, like the Regulation dialog (no accordion — this card only ever appears inside a popup): **Status** (flame), **Alerts** (device/boiler errors), **Central Heating**
 (water pressure, modulation level, boiler flow/return temperature, delta temperature, time to
 target, average outside temperature, weather status), **Hot Water** (DHW setpoint, DHW water
 temperature), **Device** (serial number, device ID, firmware version, burning hours, PCB
@@ -50,6 +48,10 @@ list; each prop's description names the exact `atagone` channel it targets.
 ---
 
 ## Changelog
+
+### Version 1.1.0
+
+- Restyled to the shared design system: one 18 px card per section with a plain section title above it instead of a single card with uppercase letter-spaced headers; the "Diagnostics" title moved into the dialog's navbar; the read-only note is a small line under the cards. Same rows and props
 
 ### Version 2.0.0 (BREAKING)
 

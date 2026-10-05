@@ -1,0 +1,102 @@
+uid: weather_warnings_card
+tags:
+- weather
+- card
+- outdoor
+props:
+  parameters:
+  - name: group
+    label: Warnings group
+    description: Group of the weather-warning event items (…_Alerts_Event); sibling items …_Alerts_Description and …_Alerts_Expires are found by name.
+    type: TEXT
+    required: false
+    context: item
+    default: gWeatherWarnings
+    groupName: source
+  parameterGroups:
+  - name: source
+    label: Source
+component: f7-row
+config:
+  style:
+    display: contents
+slots:
+  default:
+  - component: oh-repeater
+    config:
+      for: w
+      groupItem: =props.group
+      sourceType: itemsInGroup
+      fragment: true
+      filter: (s=>!['UNDEF','-','undefined','NULL',''].includes(s))(items[loop.w.name].state)
+    slots:
+      default:
+      - component: f7-card
+        config:
+          style:
+            margin: 0 0 8px
+            border-radius: 18px
+            background: 'color-mix(in srgb, #f59e0b 14%, var(--f7-card-bg-color))'
+        slots:
+          default:
+          - component: f7-card-content
+            config:
+              style:
+                padding: 12px 14px
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: flex-start
+                    justify-content: flex-start
+                    gap: 10px
+                    margin: '0'
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: f7:exclamationmark_triangle_fill
+                      style:
+                        font-size: 20px
+                        color: '#d97706'
+                        flex: 0 0 auto
+                  - component: f7-row
+                    config:
+                      style:
+                        display: block
+                        flex: 1 1 auto
+                        min-width: '0'
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: Label
+                        config:
+                          text: =items[loop.w.name].state
+                          style:
+                            display: block
+                            font-size: 14px
+                            font-weight: '600'
+                            line-height: '1.25'
+                      - component: Label
+                        config:
+                          text: '=(items[loop.w.name.replace(''_Event'',''_Expires'')] && items[loop.w.name.replace(''_Event'',''_Expires'')].state && items[loop.w.name.replace(''_Event'',''_Expires'')].state !== ''UNDEF'' && items[loop.w.name.replace(''_Event'',''_Expires'')].state
+                            !== ''undefined'') ? ''Until ''+dayjs(items[loop.w.name.replace(''_Event'',''_Expires'')].state).format(''ddd HH:mm'') : '''''
+                          style:
+                            display: block
+                            font-size: 12px
+                            opacity: '0.8'
+                            margin-top: 2px
+                      - component: Label
+                        config:
+                          text: '=(items[loop.w.name.replace(''_Event'',''_Description'')] && items[loop.w.name.replace(''_Event'',''_Description'')].state !== ''UNDEF'' && items[loop.w.name.replace(''_Event'',''_Description'')].state !== ''undefined'')
+                            ? items[loop.w.name.replace(''_Event'',''_Description'')].state : '''''
+                          style:
+                            display: -webkit-box
+                            -webkit-line-clamp: '3'
+                            -webkit-box-orient: vertical
+                            overflow: hidden
+                            font-size: 11px
+                            opacity: '0.75'
+                            margin-top: 4px

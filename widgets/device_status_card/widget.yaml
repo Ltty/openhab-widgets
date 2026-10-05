@@ -1,0 +1,193 @@
+uid: device_status_card
+tags:
+- system
+- card
+props:
+  parameters:
+  - name: batteryGroup
+    label: Low battery group
+    description: Group of low-battery Switch items (ON = low); metadata 'display' {device, location} gives the names.
+    type: TEXT
+    required: false
+    context: item
+    default: gBatteryWarnings
+    groupName: source
+  - name: thingsGroup
+    label: Thing status group
+    description: Group of Thing status Switch items (OFF = offline); metadata 'offlineExpected' hides expected-offline devices.
+    type: TEXT
+    required: false
+    context: item
+    default: gThingWarnings
+    groupName: source
+  parameterGroups:
+  - name: source
+    label: Sources
+timestamp: Oct 5, 2026, 3:34:20 PM
+component: f7-row
+config:
+  style:
+    display: contents
+slots:
+  default:
+  - component: oh-repeater
+    config:
+      for: b
+      groupItem: =props.batteryGroup
+      sourceType: itemsInGroup
+      fragment: true
+      fetchMetadata: display
+      map: '({i: loop.b.name, n: (loop.b.metadata && loop.b.metadata.display) ? loop.b.metadata.display.config.device : loop.b.label, l: (loop.b.metadata && loop.b.metadata.display) ? loop.b.metadata.display.config.location : ''''})'
+    slots:
+      default:
+      - component: oh-repeater
+        config:
+          for: c
+          sourceType: array
+          in: '=(loop.b_idx === 0 && loop.b_source.filter(x=>items[x.i].state === ''ON'').length > 0) ? [loop.b_source] : []'
+          fragment: true
+        slots:
+          default:
+          - component: f7-card
+            config:
+              style:
+                margin: 0 0 8px
+                border-radius: 18px
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-card-content
+                config:
+                  style:
+                    padding: 12px 0 0
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        justify-content: flex-start
+                        gap: 6px
+                        margin: '0'
+                        padding: 0 14px 4px
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:battery_25
+                          style:
+                            font-size: 16px
+                            color: '#d97706'
+                      - component: Label
+                        config:
+                          text: Low batteries
+                          style:
+                            font-size: 12px
+                            opacity: '0.7'
+                  - component: oh-list
+                    config:
+                      inset: false
+                      strong: false
+                      mediaList: true
+                      style:
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-repeater
+                        config:
+                          for: r
+                          sourceType: array
+                          in: =loop.c
+                          fragment: true
+                          filter: items[loop.r.i].state === 'ON'
+                        slots:
+                          default:
+                          - component: oh-list-item
+                            config:
+                              icon: f7:battery_25
+                              iconColor: orange
+                              title: =loop.r.n
+                              subtitle: =loop.r.l
+                              after: Low
+                              iconSize: 22
+  - component: oh-repeater
+    config:
+      for: t
+      groupItem: =props.thingsGroup
+      sourceType: itemsInGroup
+      fragment: true
+      fetchMetadata: offlineExpected
+      map: '({i: loop.t.name, n: loop.t.label, k: ((loop.t.tags||[]).slice(1)[0]||'''').split('':'')[0], e: !!(loop.t.metadata && loop.t.metadata.offlineExpected)})'
+    slots:
+      default:
+      - component: oh-repeater
+        config:
+          for: c
+          sourceType: array
+          in: '=(loop.t_idx === 0 && loop.t_source.filter(x=>!x.e && items[x.i].state === ''OFF'').length > 0) ? [loop.t_source] : []'
+          fragment: true
+        slots:
+          default:
+          - component: f7-card
+            config:
+              style:
+                margin: 0 0 8px
+                border-radius: 18px
+                overflow: hidden
+            slots:
+              default:
+              - component: f7-card-content
+                config:
+                  style:
+                    padding: 12px 0 0
+                slots:
+                  default:
+                  - component: f7-row
+                    config:
+                      style:
+                        display: flex
+                        align-items: center
+                        justify-content: flex-start
+                        gap: 6px
+                        margin: '0'
+                        padding: 0 14px 4px
+                    slots:
+                      default:
+                      - component: oh-icon
+                        config:
+                          icon: f7:wifi_slash
+                          style:
+                            font-size: 16px
+                            color: '#6b7280'
+                      - component: Label
+                        config:
+                          text: Offline devices
+                          style:
+                            font-size: 12px
+                            opacity: '0.7'
+                  - component: oh-list
+                    config:
+                      inset: false
+                      strong: false
+                      mediaList: true
+                      style:
+                        margin: '0'
+                    slots:
+                      default:
+                      - component: oh-repeater
+                        config:
+                          for: r
+                          sourceType: array
+                          in: =loop.c
+                          fragment: true
+                          filter: '!loop.r.e && items[loop.r.i].state === ''OFF'''
+                        slots:
+                          default:
+                          - component: oh-list-item
+                            config:
+                              icon: f7:wifi_slash
+                              iconColor: gray
+                              title: =loop.r.n
+                              subtitle: =loop.r.k
+                              iconSize: 22

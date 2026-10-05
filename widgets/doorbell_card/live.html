@@ -85,7 +85,8 @@ if (!src) {
   // is false after the first call for HLS), so a player refreshing it starves; and that path
   // never extends the keep-alive, so ffmpeg is killed after ~60-90 s. Hence:
   //  - tell the binding to keep the stream running (StartStream ON = keep-alive -1),
-  //  - read the playlist from the same HLS folder via /static/doorbell/hls (symlink, instant).
+  //  - read the playlist as a static file (/static/doorbell/hls/, Thing config ffmpegOutput=
+  //    /etc/openhab/html/doorbell/hls/ makes ffmpeg write there) — instant.
   // It also leaves the previous run's playlist + segments on disk (numbering restarts at 0), so
   // wait until the playlist content changes (ffmpeg is rewriting it) before attaching the player.
   var startItem = params.get('startItem') || 'GF_Entryway_Doorbell_StartStream';

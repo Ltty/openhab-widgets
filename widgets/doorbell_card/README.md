@@ -69,7 +69,32 @@ The live view uses [hls.js](https://github.com/video-dev/hls.js/) to play the ip
 2. Place it at `/etc/openhab/html/doorbell/hls.min.js`
 3. Copy `live.html` to `/etc/openhab/html/doorbell/live.html`
 
-Both files must be in the same `/etc/openhab/html/doorbell/` directory. The live view is loaded via `oh-webframe` and polls the ipcamera HLS stream at `/ipcamera/{thingUID}/ipcamera.m3u8`.
+Both files must be in the same `/etc/openhab/html/doorbell/` directory. The live view is loaded via `oh-webframe`.
+
+#### Let ffmpeg write the HLS files into the static folder (required for smooth playback)
+
+The ipcamera binding serves its playlist (`/ipcamera/{id}/ipcamera.m3u8`) with a fixed 4.5 s delay per request, which is longer than a video segment (~2 s) — the player stalls. `live.html` therefore reads the playlist as a plain static file instead. Point the binding's output folder there, in the camera Thing configuration:
+
+| Thing parameter | Value |
+|---|---|
+| `ffmpegOutput` | `/etc/openhab/html/doorbell/hls/` (trailing slash required; the binding creates the folder) |
+| `ffmpegInputOptions` | `-rtsp_transport tcp -timeout 5000000` (recommended: ends a hung ffmpeg when the camera goes silent; the option *replaces* the binding's default `-rtsp_transport tcp`, so keep it) |
+
+`live.html` then plays `/static/doorbell/hls/ipcamera.m3u8`. If that file does not exist it falls back to the binding's own URL (works, but stutters). It also switches the `StartStream` item (default `GF_Entryway_Doorbell_StartStream`, override with the `startItem` URL parameter) **ON** when opened and **OFF** when closed or hidden, so ffmpeg only runs while someone watches.
+
+#### Optional: keep the live-view files off the SD card
+
+The doorbell writes media files frequently (snapshots on every event, HLS segments while the live view is open). To spare the SD card, make the folder a symlink to an SSD/HDD:
+
+```bash
+sudo mkdir -p /media/data/doorbell
+sudo mv /etc/openhab/html/doorbell/* /media/data/doorbell/ 2>/dev/null
+sudo rmdir /etc/openhab/html/doorbell
+sudo ln -s /media/data/doorbell /etc/openhab/html/doorbell
+sudo chown -h openhab:openhab /media/data/doorbell /etc/openhab/html/doorbell
+```
+
+Everything above (`hls.min.js`, `live.html`, snapshots, `hls/`) keeps working unchanged. Note that `openhab-cli backup` does not preserve symlinks — after a restore `/etc/openhab/html/doorbell` is a plain folder on the SD card again; recreate the symlink to move it back.
 
 ### 4. Install the widget
 
@@ -196,7 +221,7 @@ if (!fetch()) {
 
 - **Snapshot (simple mode)**: shown via the `imageItem` OH Image item state, refreshed every 30 s. Updated automatically when the ipcamera binding captures a new image via the `image` channel.
 - **Snapshot (history mode)**: files served directly from `/etc/openhab/html/{snapshotFolder}/`. The `timeItem` state is appended as a cache-buster (`?t=...`) so browsers reload on new events.
-- **Live view**: the `cameraThing` prop builds the URL `/ipcamera/{id}/ipcamera.m3u8` using the last segment of the Thing UID. The ipcamera thing must be ONLINE. The live HLS stream includes a stall watchdog (nudges after 8 s, reloads after 20 s).
+- **Live view**: the `cameraThing` prop builds the URL `/ipcamera/{id}/ipcamera.m3u8` using the last segment of the Thing UID. The ipcamera thing must be ONLINE. `live.html` waits for a fresh playlist before playing (the binding leaves the previous run's files on disk) and has a stall watchdog (nudges after 8 s, reloads after 20 s).
 - **Unlock button**: only appears when `pinItem` is set. Requires the [`widget:keypad`](https://community.openhab.org/t/keypad-widget/122765) marketplace widget.
 - **hls.js version**: tested with hls.js 1.5.x.
 

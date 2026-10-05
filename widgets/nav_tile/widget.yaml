@@ -1,0 +1,205 @@
+uid: nav_tile
+tags:
+- home
+- card
+- design
+props:
+  parameters:
+  - name: title
+    label: Title
+    description: Row title.
+    type: TEXT
+    required: true
+    groupName: content
+  - name: subtitle
+    label: Subtitle
+    description: Optional second line (12 px, 70 % opacity).
+    type: TEXT
+    required: false
+    groupName: content
+  - name: icon
+    label: Icon
+    description: f7 icon name.
+    type: TEXT
+    required: false
+    default: chevron_right_circle
+    groupName: content
+  - name: color
+    label: Colour
+    description: CSS colour of the icon badge.
+    type: TEXT
+    required: false
+    default: '#0ea5e9'
+    groupName: content
+  - name: action
+    label: Action
+    description: navigate (default), popup, sheet, popover or url.
+    type: TEXT
+    required: false
+    default: navigate
+    groupName: action
+  - name: page
+    label: Page
+    description: Target page for navigate (page:<uid>).
+    type: TEXT
+    required: false
+    context: page
+    groupName: action
+  - name: modal
+    label: Modal
+    description: Target of popup/sheet/popover (widget:<uid> or page:<uid>).
+    type: TEXT
+    required: false
+    groupName: action
+  - name: modalConfig
+    label: Modal config
+    description: Props handed to the popup/sheet widget (object).
+    type: TEXT
+    required: false
+    groupName: action
+  - name: url
+    label: URL
+    description: Target of the url action.
+    type: TEXT
+    required: false
+    groupName: action
+  - name: photoUrl
+    label: Photo URL
+    description: Image URL shown in the photo viewer (action photos) — e.g. a radar loop.
+    type: TEXT
+    required: false
+    groupName: action
+  - name: item
+    label: Command item
+    description: Item that receives the command (action command).
+    type: TEXT
+    required: false
+    context: item
+    groupName: action
+  - name: command
+    label: Command
+    description: Command sent to the item, e.g. ON.
+    type: TEXT
+    required: false
+    groupName: action
+  - name: confirmation
+    label: Confirmation text
+    description: Ask for confirmation with this text before sending the command.
+    type: TEXT
+    required: false
+    groupName: action
+  - name: feedback
+    label: Feedback toast
+    description: Text shown after the command was sent.
+    type: TEXT
+    required: false
+    groupName: action
+  parameterGroups:
+  - name: content
+    label: Content
+  - name: action
+    label: Tap action
+timestamp: Oct 5, 2026, 3:32:51 PM
+component: oh-link
+config:
+  action: '=props.photoUrl ? ''photos'' : (props.item ? ''command'' : (props.action || ''navigate''))'
+  actionPage: =props.page
+  actionModal: =props.modal || props.page
+  actionModalConfig: =props.modalConfig
+  actionUrl: =props.url
+  actionPageTransition: f7-cover-v
+  style:
+    color: inherit
+    display: block
+    text-decoration: none
+  actionPhotos: '=props.photoUrl ? [props.photoUrl] : undefined'
+  actionItem: =props.item
+  actionCommand: =props.command
+  actionConfirmation: =props.confirmation
+  actionFeedback: =props.feedback
+slots:
+  default:
+  - component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 18px
+        min-width: '0'
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 12px 14px
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                gap: 12px
+                margin: '0'
+                flex-wrap: nowrap
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    align-items: center
+                    justify-content: center
+                    width: 36px
+                    height: 36px
+                    border-radius: 50%
+                    flex: 0 0 auto
+                    margin: '0'
+                    background: ="color-mix(in srgb, "+(props.color || '#0ea5e9')+" 16%, transparent)"
+                slots:
+                  default:
+                  - component: oh-icon
+                    config:
+                      icon: ='f7:'+(props.icon || 'chevron_right_circle')
+                      style:
+                        font-size: 18px
+                        color: =props.color || '#0ea5e9'
+              - component: f7-row
+                config:
+                  style:
+                    display: block
+                    flex: 1 1 0
+                    min-width: '0'
+                    margin: '0'
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: =props.title
+                      style:
+                        display: block
+                        font-size: 14px
+                        font-weight: '600'
+                        line-height: '1.2'
+                  - component: oh-repeater
+                    config:
+                      for: s
+                      sourceType: array
+                      in: '=props.subtitle ? [1] : []'
+                      fragment: true
+                    slots:
+                      default:
+                      - component: Label
+                        config:
+                          text: =props.subtitle
+                          style:
+                            display: block
+                            font-size: 12px
+                            opacity: '0.7'
+                            margin-top: 2px
+              - component: oh-icon
+                config:
+                  icon: f7:chevron_right
+                  style:
+                    font-size: 13px
+                    opacity: '0.4'

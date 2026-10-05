@@ -1,0 +1,258 @@
+uid: stat_tile
+tags:
+- home
+- card
+- design
+props:
+  parameters:
+  - name: title
+    label: Title
+    description: Tile title (12 px, 70 % opacity).
+    type: TEXT
+    required: true
+    groupName: content
+  - name: icon
+    label: Icon
+    description: f7 icon name (e.g. thermometer) or a full icon id such as iconify:mdi:cpu-64-bit.
+    type: TEXT
+    required: false
+    default: circle_fill
+    groupName: content
+  - name: color
+    label: Icon / trend colour
+    description: CSS colour of the icon and the trend line.
+    type: TEXT
+    required: false
+    default: '#0ea5e9'
+    groupName: content
+  - name: value
+    label: Value
+    description: Big value (26 px bold). Usually an expression on the page, e.g. =Number.parseFloat(items['X'].state).toFixed(1).
+    type: TEXT
+    required: false
+    groupName: content
+  - name: unit
+    label: Unit
+    description: Small unit text next to the value.
+    type: TEXT
+    required: false
+    groupName: content
+  - name: valueColor
+    label: Value colour
+    description: Optional CSS colour of the value (e.g. a status colour).
+    type: TEXT
+    required: false
+    groupName: content
+  - name: right
+    label: Header right text
+    description: Optional short text at the top right (12 px semibold).
+    type: TEXT
+    required: false
+    groupName: content
+  - name: pill
+    label: Status pill
+    description: Optional pill text under the value (12 px).
+    type: TEXT
+    required: false
+    groupName: content
+  - name: pillColor
+    label: Pill colour
+    description: green, amber, red, blue or gray.
+    type: TEXT
+    required: false
+    default: gray
+    groupName: content
+  - name: sub
+    label: Sub line
+    description: Optional line under the pill (11 px, 75 % opacity).
+    type: TEXT
+    required: false
+    groupName: content
+  - name: trendItem
+    label: Trend item
+    description: Numeric item for the 24 h trend line (default persistence). Empty = no trend.
+    type: TEXT
+    required: false
+    context: item
+    groupName: content
+  - name: analyzerItems
+    label: Analyzer items
+    description: Comma-separated items; tapping opens the analyzer chart for them.
+    type: TEXT
+    required: false
+    groupName: action
+  - name: page
+    label: Target page
+    description: Page opened on tap (page:<uid>) when no analyzer items are set.
+    type: TEXT
+    required: false
+    context: page
+    groupName: action
+  - name: height
+    label: Height (px)
+    description: Optional fixed height to line tiles up in a row.
+    type: INTEGER
+    required: false
+    groupName: content
+  parameterGroups:
+  - name: content
+    label: Content
+  - name: action
+    label: Tap action
+timestamp: Oct 5, 2026, 3:33:50 PM
+component: oh-link
+config:
+  action: '=props.analyzerItems ? ''analyzer'' : (props.page ? ''navigate'' : '''')'
+  actionAnalyzerItems: =props.analyzerItems
+  actionPage: =props.page
+  actionModal: =props.page
+  actionPageTransition: f7-cover-v
+  style:
+    color: inherit
+    display: block
+    text-decoration: none
+slots:
+  default:
+  - component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 18px
+        min-width: '0'
+        height: '=props.height ? props.height+''px'' : ''auto'''
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 14px 14px 10px
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                gap: 6px
+                margin: '0'
+            slots:
+              default:
+              - component: oh-icon
+                config:
+                  icon: '=(i=>i.indexOf('':'') > 0 ? i : ''f7:''+i)(props.icon || ''circle_fill'')'
+                  style:
+                    font-size: 16px
+                    color: =props.color || '#0ea5e9'
+              - component: Label
+                config:
+                  text: =props.title
+                  style:
+                    font-size: 12px
+                    opacity: '0.7'
+                    flex: '1'
+              - component: oh-repeater
+                config:
+                  for: r
+                  sourceType: array
+                  in: '=props.right ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: =props.right
+                      style:
+                        font-size: 12px
+                        font-weight: '600'
+                        white-space: nowrap
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: baseline
+                justify-content: flex-start
+                gap: 6px
+                margin: 6px 0 0
+            slots:
+              default:
+              - component: Label
+                config:
+                  text: '=props.value === undefined || props.value === '''' ? ''–'' : props.value'
+                  style:
+                    font-size: 26px
+                    font-weight: '700'
+                    line-height: '1.1'
+                    color: =props.valueColor || 'inherit'
+              - component: oh-repeater
+                config:
+                  for: u
+                  sourceType: array
+                  in: '=props.unit ? [1] : []'
+                  fragment: true
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: =props.unit
+                      style:
+                        font-size: 12px
+                        opacity: '0.75'
+          - component: oh-repeater
+            config:
+              for: p
+              sourceType: array
+              in: '=props.pill ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: f7-row
+                config:
+                  style:
+                    display: flex
+                    justify-content: flex-start
+                    margin: 4px 0 0
+                slots:
+                  default:
+                  - component: Label
+                    config:
+                      text: =props.pill
+                      style:
+                        border-radius: 12px
+                        font-size: 12px
+                        font-weight: '500'
+                        padding: 1px 8px
+                        background: =({green:['rgba(40,167,69,0.15)','#28a745'],amber:['rgba(255,159,10,0.18)','#d98200'],red:['rgba(220,53,69,0.15)','#dc3545'],blue:['rgba(14,165,233,0.15)','#0284c7'],gray:['rgba(128,128,128,0.15)','#6b7280']})[props.pillColor
+                          || 'gray'][0]
+                        color: =({green:['rgba(40,167,69,0.15)','#28a745'],amber:['rgba(255,159,10,0.18)','#d98200'],red:['rgba(220,53,69,0.15)','#dc3545'],blue:['rgba(14,165,233,0.15)','#0284c7'],gray:['rgba(128,128,128,0.15)','#6b7280']})[props.pillColor
+                          || 'gray'][1]
+          - component: oh-repeater
+            config:
+              for: s
+              sourceType: array
+              in: '=props.sub ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: Label
+                config:
+                  text: =props.sub
+                  style:
+                    display: block
+                    font-size: 11px
+                    opacity: '0.75'
+                    margin-top: 4px
+          - component: oh-repeater
+            config:
+              for: t
+              sourceType: array
+              in: '=props.trendItem ? [1] : []'
+              fragment: true
+            slots:
+              default:
+              - component: oh-trend
+                config:
+                  trendItem: =props.trendItem
+                  trendGradient: =[props.color || '#0ea5e9', props.color || '#0ea5e9']
+                  trendStrokeWidth: '2'
+                  trendSampling: '30'

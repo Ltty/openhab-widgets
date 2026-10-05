@@ -1,0 +1,224 @@
+uid: cost_glance_tile
+tags:
+- home
+- energy
+- card
+props:
+  parameters:
+  - name: title
+    label: Title
+    description: Tile title, e.g. Electricity.
+    type: TEXT
+    required: true
+    groupName: look
+  - name: icon
+    label: Icon
+    description: f7 icon name, e.g. bolt_fill.
+    type: TEXT
+    required: false
+    default: bolt_fill
+    groupName: look
+  - name: color
+    label: Colour
+    description: CSS colour for icon and trend line.
+    type: TEXT
+    required: false
+    default: '#eab308'
+    groupName: look
+  - name: page
+    label: Target page
+    description: Page opened when the tile is tapped (e.g. page:page_abc).
+    type: TEXT
+    required: false
+    context: page
+    groupName: look
+  - name: costItem
+    label: Cost item
+    description: Number:Currency item with the period cost so far (e.g. billing period).
+    type: TEXT
+    required: true
+    context: item
+    groupName: data
+  - name: yoyItem
+    label: Year-over-year item
+    description: Number item, % vs. the same period last year; green when negative. Empty = no badge.
+    type: TEXT
+    required: false
+    context: item
+    groupName: data
+  - name: predictedItem
+    label: Forecast item
+    description: Predicted cost at the end of the period. Empty = hidden.
+    type: TEXT
+    required: false
+    context: item
+    groupName: data
+  - name: prevTotalItem
+    label: Previous period total item
+    description: Total of the previous period. Empty = hidden.
+    type: TEXT
+    required: false
+    context: item
+    groupName: data
+  - name: liveItem
+    label: Live value item
+    description: Current consumption (e.g. power in W, burner %); shown top right.
+    type: TEXT
+    required: false
+    context: item
+    groupName: live
+  - name: activeItem
+    label: Active switch item
+    description: Optional Switch; while OFF the live value reads the idle text (e.g. burner flame).
+    type: TEXT
+    required: false
+    context: item
+    groupName: live
+  - name: idleText
+    label: Idle text
+    description: Shown instead of the live value while the active switch is OFF.
+    type: TEXT
+    required: false
+    default: idle
+    groupName: live
+  - name: liveScale
+    label: Live value factor
+    description: Multiplier applied to the live value (e.g. 60 to turn m³ per minute into m³/h).
+    type: DECIMAL
+    required: false
+    default: '1'
+    groupName: live
+  - name: liveUnit
+    label: Live value unit
+    description: Unit text shown after the live value; empty = unit of the item state.
+    type: TEXT
+    required: false
+    groupName: live
+  - name: trendSampling
+    label: Trend sampling
+    description: Use every Nth persisted point for the trend line (default 30; lower for spiky items).
+    type: INTEGER
+    required: false
+    default: '30'
+    groupName: live
+  - name: trendItem
+    label: Trend item
+    description: 'Item for the 24 h trend line in the background (default: live value item). Needs persistence.'
+    type: TEXT
+    required: false
+    context: item
+    groupName: live
+  parameterGroups:
+  - name: look
+    label: Look
+  - name: data
+    label: Cost data
+  - name: live
+    label: Live value
+timestamp: 2026-10-05T14:06:32.114+0200
+component: oh-link
+config:
+  action: '=props.page ? ''navigate'' : '''''
+  actionPage: =props.page
+  actionModal: =props.page
+  actionPageTransition: f7-cover-v
+  style:
+    color: inherit
+    display: block
+    text-decoration: none
+slots:
+  default:
+  - component: f7-card
+    config:
+      style:
+        margin: '0'
+        border-radius: 18px
+        min-width: '0'
+    slots:
+      default:
+      - component: f7-card-content
+        config:
+          style:
+            padding: 14px 14px 10px
+        slots:
+          default:
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                align-items: center
+                justify-content: flex-start
+                gap: 6px
+                margin: '0'
+            slots:
+              default:
+              - component: oh-icon
+                config:
+                  icon: ='f7:'+(props.icon || 'bolt_fill')
+                  style:
+                    font-size: 16px
+                    color: =props.color || '#eab308'
+              - component: Label
+                config:
+                  text: =props.title
+                  style:
+                    font-size: 12px
+                    opacity: '0.7'
+                    flex: '1'
+              - component: Label
+                config:
+                  text: '=(props.liveItem && items[props.liveItem] && items[props.liveItem].state !== ''NULL'' && items[props.liveItem].state !== ''UNDEF'') ? (props.activeItem && items[props.activeItem] && items[props.activeItem].state === ''OFF'' ? (props.idleText
+                    || ''idle'') : (x=>(v=>(v<10 ? v.toFixed(1) : Math.round(v)))(Number.parseFloat(x)*(props.liveScale || 1))+'' ''+(props.liveUnit || (x+'''').split('' '')[1] || ''''))(items[props.liveItem].state)) : '''''
+                  style:
+                    font-size: 12px
+                    font-weight: '600'
+                    white-space: nowrap
+          - component: Label
+            config:
+              text: '=(props.costItem && items[props.costItem] && items[props.costItem].state !== ''NULL'' && items[props.costItem].state !== ''UNDEF'') ? ''€''+Math.round(Number.parseFloat(items[props.costItem].state)) : ''–'''
+              style:
+                display: block
+                font-size: 26px
+                font-weight: '700'
+                line-height: '1.1'
+                margin-top: 6px
+          - component: f7-row
+            config:
+              style:
+                display: flex
+                justify-content: flex-start
+                margin: 4px 0 0
+              visible: =props.yoyItem && items[props.yoyItem] && items[props.yoyItem].state !== 'NULL' && items[props.yoyItem].state !== 'UNDEF'
+            slots:
+              default:
+              - component: Label
+                config:
+                  text: '=(Number.parseFloat(items[props.yoyItem].state)<0 ? ''▼ '' : ''▲ +'')+Math.abs(Number.parseFloat(items[props.yoyItem].state)).toFixed(0)+'' % YoY'''
+                  style:
+                    border-radius: 12px
+                    font-size: 12px
+                    font-weight: '500'
+                    padding: 1px 8px
+                    background: '=Number.parseFloat(items[props.yoyItem].state)<0 ? ''rgba(40,167,69,0.15)'' : ''rgba(220,53,69,0.15)'''
+                    color: '=Number.parseFloat(items[props.yoyItem].state)<0 ? ''#28a745'' : ''#dc3545'''
+          - component: Label
+            config:
+              text: '=(props.predictedItem && items[props.predictedItem] && items[props.predictedItem].state !== ''NULL'' && items[props.predictedItem].state !== ''UNDEF'' ? ''Fcst €''+Math.round(Number.parseFloat(items[props.predictedItem].state)) : '''')+((props.predictedItem
+                && items[props.predictedItem] && items[props.predictedItem].state !== ''NULL'' && items[props.predictedItem].state !== ''UNDEF'' && props.prevTotalItem && items[props.prevTotalItem] && items[props.prevTotalItem].state !== ''NULL'' && items[props.prevTotalItem].state
+                !== ''UNDEF'') ? '' · '' : '''')+(props.prevTotalItem && items[props.prevTotalItem] && items[props.prevTotalItem].state !== ''NULL'' && items[props.prevTotalItem].state !== ''UNDEF'' ? ''Last €''+Math.round(Number.parseFloat(items[props.prevTotalItem].state))
+                : '''')'
+              style:
+                display: block
+                font-size: 11px
+                opacity: '0.75'
+                margin-top: 4px
+                white-space: nowrap
+              visible: =props.predictedItem && items[props.predictedItem] && items[props.predictedItem].state !== 'NULL' && items[props.predictedItem].state !== 'UNDEF' || props.prevTotalItem && items[props.prevTotalItem] && items[props.prevTotalItem].state
+                !== 'NULL' && items[props.prevTotalItem].state !== 'UNDEF'
+          - component: oh-trend
+            config:
+              trendItem: =props.trendItem || props.liveItem
+              trendGradient: =[props.color || '#eab308', props.color || '#eab308']
+              trendStrokeWidth: '2'
+              trendSampling: =props.trendSampling || 30
+              visible: =!!(props.trendItem || props.liveItem)

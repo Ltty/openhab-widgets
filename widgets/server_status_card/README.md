@@ -3,14 +3,14 @@
 ![Server status card](screenshots/card.png)
 
 One grouped card for the machine openHAB runs on, organised by layer: **Compute** (CPU load ring, load average, temperature bar),
-**Memory** (RAM ring, swap bar nested under it), **Storage** (used ring with used/total GB), **Network** (live rates, totals since boot, interface and IP),
+**Memory** (RAM ring, swap bar nested under it), **Storage** (used ring with used/total GB), **Network** (totals since boot, interface and IP),
 and the **controls** Reboot and Shut down. The layer tiles wrap: two per row on a phone (compute+memory, storage+network), all four in one row on wide screens.
 Every tile has the same structure — header with icon and title, ring or values, primary line, optional bar. The header shows the hardware model and the uptime. The rings go green → amber above 70 % → red above 85 %.
 
 Native components only (`f7-gauge`, `f7-card`, `oh-button`); optional parts (the two buttons) render through repeaters. Reboot and shutdown send `ON` to exec
 switch items and always ask for confirmation first — shutdown needs physical access to start again; leave `rebootItem` / `shutdownItem` empty to hide a button.
 
-Items come from the openHAB `systeminfo` binding. The two rate items are not binding channels: the binding's network counters refresh only hourly, so a small rule reads `/proc/net/dev` once a minute and writes the Mbit/s of your interface to the two rate items (example in [`rules/network-rate.js`](rules/network-rate.js)). Note that the binding's default `network` channel group may map to an idle bridge (e.g. a container bridge);
+Everything comes straight from the openHAB `systeminfo` binding — no helper rules. What the binding does not provide is not shown (e.g. live throughput: its network channels refresh only about hourly, so the totals can be up to an hour old). Note that the binding's default `network` channel group may map to an idle bridge (e.g. a container bridge);
 link the data sent/received items to the channel group of your real interface.
 
 ## Props
@@ -32,8 +32,6 @@ link the data sent/received items to the channel group of your real interface.
 | `storageUsedItem` | `Systeminfo_UsedStorage` | Number:DataAmount (bytes). |
 | `storageTotalItem` | `Systeminfo_Total_Storage` | Number:DataAmount (bytes). |
 | `rxItem` | `Systeminfo_Data_Received` | Number:DataAmount (bytes since boot). |
-| `rxRateItem` | `Systeminfo_Data_Rate_Down` | Number:DataTransferRate (Mbit/s), also drawn as 24 h trend. Produced by a rule from the counters. |
-| `txRateItem` | `Systeminfo_Data_Rate_Up` | Number:DataTransferRate (Mbit/s). |
 | `netNameItem` | `Systeminfo_Net_Name` | String item with the interface name (e.g. br0). |
 | `netIpItem` | `Systeminfo_Net_IP` | String item with the IP address. |
 | `txItem` | `Systeminfo_Data_Sent` | Number:DataAmount (bytes since boot). |
@@ -41,6 +39,11 @@ link the data sent/received items to the channel group of your real interface.
 | `shutdownItem` | `gSystem_Shutdown` | Exec switch; ON powers the server off (with confirmation). Empty = no button. |
 
 ## Changelog
+
+### Version 1.3.1
+
+- Network tile: live rates and the trend line removed again — the widget uses binding data only. It shows the totals since boot plus interface name and IP address (both optional, hidden when the items are not set)
+- Props `rxRateItem` / `txRateItem` removed; the example rate rule is gone
 
 ### Version 1.3.0
 

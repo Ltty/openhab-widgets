@@ -22,14 +22,19 @@ Item convention: `<forecastPrefix>Hours01..06_Timestamp/_Iconid/_Temperature` an
 | `soilItem` | `Netatmo_Weather_Station_Soil_Temp` | Optional soil temperature, shown after min/max. |
 | `blindsOpenItem` | `LocalSun_CivilDawn_Start` | Optional DateTime item the morning blind routine is triggered from (e.g. civil dawn start). Empty = no blinds line. |
 | `blindsOpenOffset` | `20` | Minutes the routine adds to that item's time (the offset in the rule's DateTime trigger). |
+| `blindsOpenClamp` | `06:15` | If the open time item equals this time (the astro channel's 'earliest' limit clamps it), the offset is not added — matches the rule, which opens at the limit without delay. Empty = always add. |
 | `blindsCloseItem` | `LocalSun_CivilDusk_End` | Optional DateTime item the evening blind routine is triggered from (e.g. civil dusk end). |
 | `blindsCloseOffset` | `12` | Minutes the routine adds to that item's time. |
 | `updatedItem` | `Netatmo_Weather_Station_Measures_Timestamp` | DateTime of the last station measurement. |
 | `forecastPrefix` | `OpenWeatherMap_Forecast_API_Forecasts_Forecast` | Prefix of the OpenWeatherMap forecast items: <prefix>Hours01..06_Timestamp/_Iconid/_Temperature and <prefix>Today/Tomorrow/Day2..Day5_Iconid/_Mintemperature/_Maxtemperature. |
 
-The blinds line shows when the automation opens and closes the blinds: the time of the item the routine is triggered from plus the offset configured in the rule's DateTime trigger. Keep the two offset props equal to the rule offsets; leave `blindsOpenItem` empty to hide the line.
+The blinds line shows when the automation opens and closes the blinds: the time of the item the routine is triggered from plus the offset configured in the rule's DateTime trigger. Keep the offset props equal to the rule offsets; `blindsOpenClamp` mirrors the astro channel's `earliest` limit, which the rule respects by opening without delay when the item sits exactly on it; leave `blindsOpenItem` empty to hide the line.
 
 ## Changelog
+
+### Version 1.2.1
+
+- Blinds line: when the open-time item equals the clamp time (`blindsOpenClamp`, default 06:15 = the astro channel's `earliest`), the offset is not added, matching the morning rule
 
 ### Version 1.2.0
 

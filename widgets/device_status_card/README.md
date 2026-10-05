@@ -2,7 +2,7 @@
 
 ![low batteries and offline devices](screenshots/card.png)
 
-Two list cards for the System Info page that only appear when there is something to report (otherwise one all-clear row): **Low batteries** (members of the battery group that are `ON`, named from the `display` metadata `{device, location}`) and **Offline devices** (Thing status switches that are `OFF`; devices with `offlineExpected` metadata are hidden). Group data is fetched once per page load.
+Two list cards for the System Info page that only appear when there is something to report: **Low batteries** (members of the battery group that are `ON`, named from the `display` metadata `{device, location}`) and **Offline devices** (Thing status switches that are `OFF`; devices with `offlineExpected` metadata are hidden). Group data is fetched once per page load.
 
 ## Props
 | Prop | Required | Default | Description |
@@ -11,6 +11,10 @@ Two list cards for the System Info page that only appear when there is something
 | `thingsGroup` | No | `gThingWarnings` | Group of Thing status Switch items (OFF = offline); metadata 'offlineExpected' hides expected-offline devices. |
 
 ## Changelog
+
+### Version 1.1.1
+
+- The all-clear row of 1.1.0 is removed again: with nothing to report the cards stay invisible
 
 ### Version 1.1.0
 

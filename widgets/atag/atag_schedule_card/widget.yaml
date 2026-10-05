@@ -1,38 +1,38 @@
 uid: atag_schedule_card
 tags:
-  - atag
-  - schedule
-  - card
+- atag
+- schedule
+- card
 props:
   parameters:
-    - context: thing
-      description: The atagone:thermostat Thing UID — used to resolve and call its per-period schedule Thing Actions.
-      groupName: thing
-      label: ATAG Thing
-      name: thingUID
-      required: true
-      type: TEXT
-    - context: item
-      description: CH weekly schedule as JSON — heating#schedule. Reads UNDEF (editor shows a "waiting for binding update" state) if the binding predates this channel.
-      groupName: items
-      label: CH Schedule JSON Item
-      name: chScheduleItem
-      required: true
-      type: TEXT
-    - context: item
-      description: DHW weekly schedule as JSON — hotwater#schedule. Same pending-channel note as above.
-      groupName: items
-      label: DHW Schedule JSON Item
-      name: dhwScheduleItem
-      required: true
-      type: TEXT
+  - context: thing
+    description: The atagone:thermostat Thing UID — used to resolve and call its per-period schedule Thing Actions.
+    groupName: thing
+    label: ATAG Thing
+    name: thingUID
+    required: true
+    type: TEXT
+  - context: item
+    description: CH weekly schedule as JSON — heating#schedule. Reads UNDEF (editor shows a "waiting for binding update" state) if the binding predates this channel.
+    groupName: items
+    label: CH Schedule JSON Item
+    name: chScheduleItem
+    required: true
+    type: TEXT
+  - context: item
+    description: DHW weekly schedule as JSON — hotwater#schedule. Same pending-channel note as above.
+    groupName: items
+    label: DHW Schedule JSON Item
+    name: dhwScheduleItem
+    required: true
+    type: TEXT
   parameterGroups:
-    - name: thing
-      label: Thing
-    - name: items
-      label: Items
-timestamp: Sep 15, 2026, 6:43:51 PM
+  - name: thing
+    label: Thing
+  - name: items
+    label: Items
+timestamp: Oct 5, 2026, 8:18:16 PM
 component: oh-webframe
 config:
-  src: "='/static/atag/schedule.html?v=3' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem"
+  src: ='/static/atag/schedule.html?v=6' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem
   height: 520

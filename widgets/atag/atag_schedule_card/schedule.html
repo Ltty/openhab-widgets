@@ -3,108 +3,115 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATAG Schedule</title>
 <style>
+  /* Design-system tokens (docs/openhab/design-system.md). Colours of the page, cards and text and the
+     font are read from the Main UI the frame is embedded in (see the theme script below). */
   :root {
-    --blue: #2f8fe0;
-    --red: #e0472f;
-    --bg: #0a0a0c;
-    --bar-bg: #17171a;
-    --fg: #f2f2f2;
-    --fg-dim: #8a8a8e;
-    --fg-dimmer: #5a5a5e;
+    --bg: #f2f3f7;
+    --card: #ffffff;
+    --fg: #000000;
+    --fg-dim: rgba(128,128,128,0.95);
+    --line: rgba(128,128,128,0.22);
+    --track: rgba(128,128,128,0.14);
+    --hot: #ea580c;
+    --cool: #0ea5e9;
+    --danger: #dc2626;
+    --font: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--fg);
-    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    overflow: hidden; -webkit-font-smoothing: antialiased;
+    font-family: var(--font); overflow: hidden; -webkit-font-smoothing: antialiased;
   }
   #app { display: flex; flex-direction: column; height: 100vh; }
 
-  #tabs { display: flex; flex: 0 0 auto; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  #tabs .tab {
-    flex: 1; text-align: center; padding: 12px 4px; font-size: 12px; letter-spacing: 1px;
-    text-transform: uppercase; color: var(--fg-dim); cursor: pointer; border-bottom: 2px solid transparent;
+  #tabs {
+    display: flex; flex: 0 0 auto; margin: 12px 16px 4px; padding: 3px; gap: 3px;
+    background: var(--track); border-radius: 12px;
   }
-  #tabs .tab.active { color: var(--fg); border-bottom-color: var(--blue); }
+  #tabs .tab {
+    flex: 1; text-align: center; padding: 7px 4px; font-size: 12px; font-weight: 500;
+    color: var(--fg-dim); cursor: pointer; border-radius: 10px;
+  }
+  #tabs .tab.active { color: var(--fg); background: var(--card); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
 
   #wait {
     display: none; flex-direction: column; align-items: center; justify-content: center;
     flex: 1; padding: 24px; text-align: center; gap: 10px;
   }
   #wait.show { display: flex; }
-  #wait .title { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim); }
-  #wait .body { font-size: 12px; color: var(--fg-dim); line-height: 1.6; max-width: 300px; }
+  #wait .title { font-size: 14px; font-weight: 600; }
+  #wait .body { font-size: 12px; color: var(--fg-dim); line-height: 1.5; max-width: 300px; }
 
-  #ruler { display: none; flex: 0 0 auto; padding: 8px 10px 0; }
+  #ruler { display: none; flex: 0 0 auto; padding: 8px 30px 0; }
   #ruler.show { display: flex; justify-content: space-between; }
-  #ruler span { font-size: 9px; letter-spacing: 0.5px; color: var(--fg-dimmer); }
+  #ruler span { font-size: 11px; color: var(--fg-dim); }
 
-  #grid { flex: 1; overflow-y: auto; padding: 8px 10px; }
-  .day-row { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .day-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim); margin-bottom: 6px; }
+  #grid { flex: 1; overflow-y: auto; padding: 6px 16px 12px; }
+  .day-row { background: var(--card); border-radius: 18px; padding: 12px 14px 10px; margin: 0 0 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  .day-label { font-size: 12px; font-weight: 600; opacity: 0.7; margin-bottom: 8px; }
   .pill-track {
-    position: relative; height: 30px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden;
-    background-image: linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px);
+    position: relative; height: 30px; background: var(--track); border-radius: 8px; overflow: hidden;
+    background-image: linear-gradient(to right, var(--line) 1px, transparent 1px);
     background-size: calc(100% / 24) 100%;
   }
   .pill {
-    position: absolute; top: 3px; bottom: 3px; border-radius: 5px; display: flex; align-items: center;
-    justify-content: center; font-size: 10px; font-weight: 600; color: #fff; cursor: pointer;
+    position: absolute; top: 3px; bottom: 3px; border-radius: 6px; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer;
     min-width: 3px; padding: 0 4px; overflow: hidden; white-space: nowrap;
   }
-  .pill.comfort { background: var(--red); }
-  .pill.setback { background: var(--blue); }
-  .pill.virtual { opacity: 0.5; }
-  .time-ticks { position: relative; height: 13px; margin-top: 3px; }
+  .pill.comfort { background: var(--hot); }
+  .pill.setback { background: var(--cool); }
+  .pill.virtual { opacity: 0.45; }
+  .time-ticks { position: relative; height: 14px; margin-top: 3px; }
   .time-tick {
     position: absolute; top: 3px; transform: translateX(-50%);
-    font-size: 9px; color: var(--fg-dimmer); white-space: nowrap;
+    font-size: 10px; color: var(--fg-dim); white-space: nowrap;
   }
+  .time-tick.first { transform: none; }
+  .time-tick.first::before { left: 0; transform: none; }
   .time-tick::before {
     content: ''; position: absolute; left: 50%; top: -3px; width: 1px; height: 3px;
-    background: var(--fg-dimmer); transform: translateX(-50%);
+    background: var(--fg-dim); transform: translateX(-50%);
   }
-  .add-btn {
-    margin-top: 6px; font-size: 11px; color: var(--blue); cursor: pointer; text-align: right;
-  }
+  .add-btn { margin-top: 8px; font-size: 12px; font-weight: 500; color: var(--cool); cursor: pointer; text-align: right; }
 
   #bar {
-    flex: 0 0 auto; background: var(--bar-bg); display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.06); gap: 10px;
+    flex: 0 0 auto; background: var(--card); display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); gap: 10px;
   }
   #save-status { font-size: 11px; color: var(--fg-dim); flex: 1; }
   .btn {
-    padding: 9px 20px; border-radius: 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
-    cursor: pointer; border: 1px solid var(--fg-dimmer); background: transparent; color: var(--fg);
+    padding: 8px 18px; border-radius: 12px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--fg);
   }
-  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn.primary { background: var(--cool); border-color: var(--cool); color: #fff; }
   .btn[disabled] { opacity: 0.35; pointer-events: none; }
 
   /* period edit overlay */
   .overlay {
-    position: absolute; inset: 0; background: rgba(0,0,0,0.94); display: none;
+    position: absolute; inset: 0; background: var(--bg); display: none;
     flex-direction: column; z-index: 10;
   }
   .overlay.open { display: flex; }
   .overlay-header {
     display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: var(--card); border-bottom: 1px solid var(--line);
   }
-  .overlay-title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim); }
+  .overlay-title { font-size: 14px; font-weight: 600; }
   .overlay-close { font-size: 20px; color: var(--fg-dim); cursor: pointer; padding: 4px 8px; }
-  .overlay-body { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; }
-  .field-row { display: flex; flex-direction: column; gap: 8px; align-items: center; }
-  .field-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim); }
+  .overlay-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .field-row { display: flex; flex-direction: column; gap: 8px; align-items: center; background: var(--card); border-radius: 18px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  .field-label { font-size: 12px; font-weight: 600; opacity: 0.7; }
   .field-value-row { display: flex; align-items: center; gap: 16px; }
   .fbtn {
-    width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--fg-dimmer);
+    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line);
     background: transparent; color: var(--fg); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0;
   }
-  .fbtn:active { background: rgba(255,255,255,0.08); }
-  .field-value { font-size: 24px; font-weight: 300; min-width: 90px; text-align: center; }
-  .fbtn { display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; }
-  .overlay-actions { display: flex; gap: 10px; justify-content: center; padding: 12px 16px 20px; }
-  .overlay-actions .btn.danger { border-color: var(--red); color: var(--red); }
+  .fbtn:active { background: var(--track); }
+  .field-value { font-size: 26px; font-weight: 700; min-width: 90px; text-align: center; }
+  .overlay-actions { display: flex; gap: 10px; justify-content: center; padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); background: var(--card); border-top: 1px solid var(--line); }
+  .overlay-actions .btn.danger { border-color: var(--danger); color: var(--danger); }
 </style>
 </head>
 <body>
@@ -131,7 +138,7 @@
 
   <div id="bar">
     <div id="save-status"></div>
-    <div class="btn" id="btn-revert" disabled>Revert</div>
+    <div class="btn" id="btn-revert" disabled>Cancel</div>
     <div class="btn primary" id="btn-save" disabled>Save</div>
   </div>
 
@@ -174,6 +181,48 @@
   </div>
 </div>
 
+<script>
+// Follow the Main UI the frame sits in: theme colours + font are read from the parent document
+// (same origin), and the frame stretches to the bottom of the dialog so the button bar sits at its
+// very bottom. Falls back to the defaults above when embedded elsewhere.
+(function () {
+  function apply() {
+    try {
+      var pd = window.parent.document.documentElement;
+      var cs = window.parent.getComputedStyle(pd);
+      var dark = pd.classList.contains('dark') || pd.classList.contains('theme-dark') || window.parent.document.body.classList.contains('theme-dark');
+      var root = document.documentElement.style;
+      function v(name) { return (cs.getPropertyValue(name) || '').trim(); }
+      var bg = v('--f7-page-bg-color'), card = v('--f7-card-bg-color'), fg = v('--f7-text-color');
+      root.setProperty('--bg', bg || (dark ? '#000000' : '#f2f3f7'));
+      root.setProperty('--card', card || (dark ? '#1c1c1d' : '#ffffff'));
+      root.setProperty('--fg', fg || (dark ? '#ffffff' : '#000000'));
+      var ff = v('--f7-font-family'); if (ff) root.setProperty('--font', ff);
+    } catch (e) {}
+  }
+  function fit() {
+    try {
+      var f = window.frameElement; if (!f) return;
+      f.style.display = 'block'; f.style.verticalAlign = 'top'; // no inline baseline gap under the frame
+      var pdoc = window.parent.document;
+      var host = f.closest('.popup, .sheet-modal, .popover, .page-content') || null;
+      var popup = f.closest('.popup, .sheet-modal') || null;
+      var bottom = popup ? popup.getBoundingClientRect().bottom : window.parent.innerHeight;
+      var h = Math.max(320, Math.floor(bottom - f.getBoundingClientRect().top));
+      f.style.height = h + 'px'; f.setAttribute('height', h);
+      // if the dialog's own scroller still overflows (wrapper padding), shrink by the overflow
+      var sc = f.closest('.page-content') || host;
+      if (sc && sc.scrollHeight > sc.clientHeight + 1) {
+        h = Math.max(320, h - (sc.scrollHeight - sc.clientHeight));
+        f.style.height = h + 'px'; f.setAttribute('height', h);
+      }
+    } catch (e) {}
+  }
+  apply(); fit();
+  try { window.parent.addEventListener('resize', fit); } catch (e) {}
+  setTimeout(fit, 300); setTimeout(fit, 900); setTimeout(fit, 2000);
+})();
+</script>
 <script>
 (function () {
   var P = new URLSearchParams(location.search);
@@ -300,7 +349,7 @@
       ticks.className = 'time-ticks';
       segs.forEach(function (seg) {
         var tick = document.createElement('span');
-        tick.className = 'time-tick';
+        tick.className = 'time-tick' + (seg.start === 0 ? ' first' : '');
         tick.style.left = ((seg.start / 1440) * 100) + '%';
         tick.textContent = fmtMin(seg.start);
         ticks.appendChild(tick);

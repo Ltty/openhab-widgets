@@ -89,6 +89,12 @@ sent.
 
 ## Changelog
 
+### Version 2.3.0
+
+- Restyled to the shared design system: section cards (18 px radius), the page, card and text colours and the font are read from the Main UI the frame sits in, so light and dark follow the app; Revert is now **Cancel**
+- The frame stretches to the bottom of the dialog (popup on desktop, full screen on phones), so the Cancel / Save bar sits at the very bottom and only the list scrolls
+- Staged edits with Save / Cancel, the 400 ms write spacing and the confirm-and-retry stay: a native rebuild (immediate writes per control) was tried and rejected, because the ATAG drops requests and a half-sent set of changes is worse than a clear Save step
+
 ### Version 2.2.0
 
 - Save now confirms every changed field against the device instead of trusting the write's own

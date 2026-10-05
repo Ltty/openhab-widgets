@@ -3,89 +3,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATAG Regulation</title>
 <style>
+  /* Design-system tokens (docs/openhab/design-system.md). Colours of the page, cards and text and the
+     font are read from the Main UI the frame is embedded in (see the theme script below). */
   :root {
-    --blue: #2f8fe0;
-    --red: #e0472f;
-    --bg: #0a0a0c;
-    --bar-bg: #17171a;
-    --fg: #f2f2f2;
-    --fg-dim: #8a8a8e;
-    --fg-dimmer: #5a5a5e;
+    --bg: #f2f3f7;
+    --card: #ffffff;
+    --fg: #000000;
+    --fg-dim: rgba(128,128,128,0.95);
+    --line: rgba(128,128,128,0.22);
+    --track: rgba(128,128,128,0.14);
+    --cool: #0ea5e9;
+    --amber: #d97706;
+    --font: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--fg);
-    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--font); -webkit-font-smoothing: antialiased; overflow: hidden;
   }
   #app { display: flex; flex-direction: column; height: 100vh; }
-  #scroll { flex: 1; overflow-y: auto; }
+  #scroll { flex: 1; overflow-y: auto; padding-bottom: 12px; }
 
-  .section-title {
-    font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--fg-dim);
-    padding: 16px 16px 6px;
-  }
+  .section-title { font-size: 12px; font-weight: 600; opacity: 0.7; padding: 18px 20px 6px; }
   .section-title:first-child { padding-top: 12px; }
+  .section-body { background: var(--card); border-radius: 18px; margin: 0 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
   .row.hidden { display: none; }
 
-  .row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .row .label { font-size: 13px; flex: 1; min-width: 0; }
-  .row .sub { font-size: 10px; color: var(--fg-dim); margin-top: 2px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; }
+  .row + .row { border-top: 1px solid var(--line); }
+  .row .label { font-size: 14px; font-weight: 500; flex: 1; min-width: 0; }
+  .row .sub { font-size: 11px; opacity: 0.75; margin-top: 2px; }
   .row .control { flex: 0 0 auto; display: flex; align-items: center; gap: 8px; }
 
   /* number stepper */
   .stepper { display: flex; align-items: center; gap: 10px; }
   .stepper button {
-    width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--fg-dimmer);
+    width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line);
     background: transparent; color: var(--fg); font-size: 15px; cursor: pointer; padding: 0;
     line-height: 1; display: flex; align-items: center; justify-content: center;
   }
-  .stepper button:active { background: rgba(255,255,255,0.08); }
-  .stepper .val { font-size: 13px; min-width: 56px; text-align: center; font-variant-numeric: tabular-nums; }
-  .stepper.dirty .val { color: #f0b429; }
+  .stepper button:active { background: var(--track); }
+  .stepper .val { font-size: 14px; font-weight: 600; min-width: 58px; text-align: center; font-variant-numeric: tabular-nums; }
+  .stepper.dirty .val { color: var(--amber); }
 
   /* select */
   select.field {
-    background: var(--bar-bg); color: var(--fg); border: 1px solid var(--fg-dimmer);
-    border-radius: 6px; font-size: 13px; padding: 6px 8px; max-width: 150px;
+    background: var(--track); color: var(--fg); border: 1px solid transparent;
+    border-radius: 10px; font-size: 13px; padding: 6px 8px; max-width: 160px; font-family: inherit;
   }
-  select.field.dirty { border-color: #f0b429; color: #f0b429; }
+  select.field.dirty { border-color: var(--amber); color: var(--amber); }
 
   /* text input */
   input.field {
-    background: var(--bar-bg); color: var(--fg); border: 1px solid var(--fg-dimmer);
-    border-radius: 6px; font-size: 13px; padding: 6px 8px; width: 80px; text-align: center;
+    background: var(--track); color: var(--fg); border: 1px solid transparent;
+    border-radius: 10px; font-size: 13px; padding: 6px 8px; width: 80px; text-align: center; font-family: inherit;
   }
-  input.field.dirty { border-color: #f0b429; color: #f0b429; }
+  input.field.dirty { border-color: var(--amber); color: var(--amber); }
 
   /* toggle switch */
   .switch { position: relative; width: 42px; height: 24px; flex: 0 0 auto; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .switch .track {
-    position: absolute; inset: 0; background: var(--fg-dimmer); border-radius: 12px;
-    cursor: pointer; transition: background .15s;
-  }
-  .switch .track::before {
-    content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
-    background: #fff; border-radius: 50%; transition: transform .15s;
-  }
-  .switch input:checked + .track { background: var(--blue); }
+  .switch .track { position: absolute; inset: 0; background: rgba(128,128,128,0.45); border-radius: 12px; cursor: pointer; transition: background .15s; }
+  .switch .track::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform .15s; }
+  .switch input:checked + .track { background: var(--cool); }
   .switch input:checked + .track::before { transform: translateX(18px); }
 
   #bar {
-    flex: 0 0 auto; background: var(--bar-bg); display: flex; align-items: center;
-    justify-content: space-between; padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.06);
-    gap: 10px;
+    flex: 0 0 auto; background: var(--card); display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); gap: 10px;
   }
   #save-status { font-size: 11px; color: var(--fg-dim); flex: 1; }
-  .btn {
-    padding: 9px 20px; border-radius: 20px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
-    cursor: pointer; border: 1px solid var(--fg-dimmer); background: transparent; color: var(--fg);
-  }
-  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn { padding: 8px 18px; border-radius: 12px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--fg); }
+  .btn.primary { background: var(--cool); border-color: var(--cool); color: #fff; }
   .btn[disabled] { opacity: 0.35; pointer-events: none; }
 </style>
 </head>
@@ -94,11 +83,53 @@
   <div id="scroll"></div>
   <div id="bar">
     <div id="save-status"></div>
-    <div class="btn" id="btn-revert" disabled>Revert</div>
+    <div class="btn" id="btn-revert" disabled>Cancel</div>
     <div class="btn primary" id="btn-save" disabled>Save</div>
   </div>
 </div>
 
+<script>
+// Follow the Main UI the frame sits in: theme colours + font are read from the parent document
+// (same origin), and the frame stretches to the bottom of the dialog so the button bar sits at its
+// very bottom. Falls back to the defaults above when embedded elsewhere.
+(function () {
+  function apply() {
+    try {
+      var pd = window.parent.document.documentElement;
+      var cs = window.parent.getComputedStyle(pd);
+      var dark = pd.classList.contains('dark') || pd.classList.contains('theme-dark') || window.parent.document.body.classList.contains('theme-dark');
+      var root = document.documentElement.style;
+      function v(name) { return (cs.getPropertyValue(name) || '').trim(); }
+      var bg = v('--f7-page-bg-color'), card = v('--f7-card-bg-color'), fg = v('--f7-text-color');
+      root.setProperty('--bg', bg || (dark ? '#000000' : '#f2f3f7'));
+      root.setProperty('--card', card || (dark ? '#1c1c1d' : '#ffffff'));
+      root.setProperty('--fg', fg || (dark ? '#ffffff' : '#000000'));
+      var ff = v('--f7-font-family'); if (ff) root.setProperty('--font', ff);
+    } catch (e) {}
+  }
+  function fit() {
+    try {
+      var f = window.frameElement; if (!f) return;
+      f.style.display = 'block'; f.style.verticalAlign = 'top'; // no inline baseline gap under the frame
+      var pdoc = window.parent.document;
+      var host = f.closest('.popup, .sheet-modal, .popover, .page-content') || null;
+      var popup = f.closest('.popup, .sheet-modal') || null;
+      var bottom = popup ? popup.getBoundingClientRect().bottom : window.parent.innerHeight;
+      var h = Math.max(320, Math.floor(bottom - f.getBoundingClientRect().top));
+      f.style.height = h + 'px'; f.setAttribute('height', h);
+      // if the dialog's own scroller still overflows (wrapper padding), shrink by the overflow
+      var sc = f.closest('.page-content') || host;
+      if (sc && sc.scrollHeight > sc.clientHeight + 1) {
+        h = Math.max(320, h - (sc.scrollHeight - sc.clientHeight));
+        f.style.height = h + 'px'; f.setAttribute('height', h);
+      }
+    } catch (e) {}
+  }
+  apply(); fit();
+  try { window.parent.addEventListener('resize', fit); } catch (e) {}
+  setTimeout(fit, 300); setTimeout(fit, 900); setTimeout(fit, 2000);
+})();
+</script>
 <script>
 (function () {
   var P = new URLSearchParams(location.search);

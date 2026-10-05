@@ -1,166 +1,172 @@
 uid: atag_regulation_card
 tags:
-  - atag
-  - settings
-  - card
+- atag
+- settings
+- card
 props:
   parameters:
-    - context: item
-      description: gSceneHVAC or equivalent — the house-level heating-season scene switch. Shown as the first row in General. Optional; omit to hide the row entirely.
-      groupName: general
-      label: Season Item
-      name: seasonItem
-      required: false
-      type: TEXT
-    - context: item
-      description: device brightness channel (0.1–1.0 fraction).
-      groupName: general
-      label: Display Brightness Item
-      name: displayBrightnessItem
-      required: false
-      type: TEXT
-    - context: item
-      description: device time zone channel.
-      groupName: general
-      label: Time Zone Item
-      name: timeZoneItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#control-mode (thermostat / weather-dependent). Gates whether the weather-dependent-only rows below are interactive.
-      groupName: ch
-      label: Control Mode Item
-      name: controlModeItem
-      required: true
-      type: TEXT
-    - context: item
-      description: heating#schedule-base-temperature — fallback setpoint for any time not covered by the schedule.
-      groupName: ch
-      label: Schedule Base Temp Item
-      name: scheduleBaseTempItem
-      required: false
-      type: TEXT
-    - context: item
-      description: control#vacation-temperature — setback temperature used while vacation mode is active.
-      groupName: ch
-      label: Vacation Temperature Item
-      name: vacationTempItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#heating-type.
-      groupName: ch
-      label: Heating Type Item
-      name: heatingTypeItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#insulation.
-      groupName: ch
-      label: Insulation Item
-      name: insulationItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#building-size.
-      groupName: ch
-      label: Building Size Item
-      name: buildingSizeItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#wdr-temperature-influence.
-      groupName: ch
-      label: Room Influence Item
-      name: roomInfluenceItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#climate-zone — design outside temperature for the weather curve.
-      groupName: ch
-      label: Climate Zone Item
-      name: climateZoneItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#max-preheat.
-      groupName: ch
-      label: Max Preheat Item
-      name: maxPreheatItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#summer-eco-mode.
-      groupName: ch
-      label: Summer Eco Mode Item
-      name: summerEcoModeItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#summer-eco-temperature.
-      groupName: ch
-      label: Summer Eco Temperature Item
-      name: summerEcoTempItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#frost-protection.
-      groupName: ch
-      label: Frost Protection Item
-      name: frostProtectionItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#frost-protection-temperature-room.
-      groupName: ch
-      label: Frost Protection Room Item
-      name: frostProtectionRoomItem
-      required: false
-      type: TEXT
-    - context: item
-      description: heating#frost-protection-temperature-outside.
-      groupName: ch
-      label: Frost Protection Outside Item
-      name: frostProtectionOutsideItem
-      required: false
-      type: TEXT
-    - context: item
-      description: hotwater#schedule-base-temperature — the writable DHW setpoint (NOT hotwater#target-temperature, which is derived/broken).
-      groupName: hw
-      label: DHW Base Temperature Item
-      name: dhwScheduleBaseTempItem
-      required: false
-      type: TEXT
-    - context: item
-      description: hotwater#legionella-protection.
-      groupName: hw
-      label: Legionella Protection Item
-      name: legionellaProtectionItem
-      required: false
-      type: TEXT
-    - context: item
-      description: hotwater#legionella-protection-day.
-      groupName: hw
-      label: Legionella Day Item
-      name: legionellaProtectionDayItem
-      required: false
-      type: TEXT
-    - context: item
-      description: hotwater#legionella-protection-time — String, HH:mm.
-      groupName: hw
-      label: Legionella Time Item
-      name: legionellaProtectionTimeItem
-      required: false
-      type: TEXT
+  - context: item
+    description: gSceneHVAC or equivalent — the house-level heating-season scene switch. Shown as the first row in General. Optional; omit to hide the row entirely.
+    groupName: general
+    label: Season Item
+    name: seasonItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device brightness channel (0.1–1.0 fraction).
+    groupName: general
+    label: Display Brightness Item
+    name: displayBrightnessItem
+    required: false
+    type: TEXT
+  - context: item
+    description: device time zone channel.
+    groupName: general
+    label: Time Zone Item
+    name: timeZoneItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#control-mode (thermostat / weather-dependent). Gates whether the weather-dependent-only rows below are interactive.
+    groupName: ch
+    label: Control Mode Item
+    name: controlModeItem
+    required: true
+    type: TEXT
+  - context: item
+    description: heating#schedule-base-temperature — fallback setpoint for any time not covered by the schedule.
+    groupName: ch
+    label: Schedule Base Temp Item
+    name: scheduleBaseTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: control#vacation-temperature — setback temperature used while vacation mode is active.
+    groupName: ch
+    label: Vacation Temperature Item
+    name: vacationTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#heating-type.
+    groupName: ch
+    label: Heating Type Item
+    name: heatingTypeItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#insulation.
+    groupName: ch
+    label: Insulation Item
+    name: insulationItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#building-size.
+    groupName: ch
+    label: Building Size Item
+    name: buildingSizeItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#wdr-temperature-influence.
+    groupName: ch
+    label: Room Influence Item
+    name: roomInfluenceItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#climate-zone — design outside temperature for the weather curve.
+    groupName: ch
+    label: Climate Zone Item
+    name: climateZoneItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#max-preheat.
+    groupName: ch
+    label: Max Preheat Item
+    name: maxPreheatItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#summer-eco-mode.
+    groupName: ch
+    label: Summer Eco Mode Item
+    name: summerEcoModeItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#summer-eco-temperature.
+    groupName: ch
+    label: Summer Eco Temperature Item
+    name: summerEcoTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#frost-protection.
+    groupName: ch
+    label: Frost Protection Item
+    name: frostProtectionItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#frost-protection-temperature-room.
+    groupName: ch
+    label: Frost Protection Room Item
+    name: frostProtectionRoomItem
+    required: false
+    type: TEXT
+  - context: item
+    description: heating#frost-protection-temperature-outside.
+    groupName: ch
+    label: Frost Protection Outside Item
+    name: frostProtectionOutsideItem
+    required: false
+    type: TEXT
+  - context: item
+    description: hotwater#schedule-base-temperature — the writable DHW setpoint (NOT hotwater#target-temperature, which is derived/broken).
+    groupName: hw
+    label: DHW Base Temperature Item
+    name: dhwScheduleBaseTempItem
+    required: false
+    type: TEXT
+  - context: item
+    description: hotwater#legionella-protection.
+    groupName: hw
+    label: Legionella Protection Item
+    name: legionellaProtectionItem
+    required: false
+    type: TEXT
+  - context: item
+    description: hotwater#legionella-protection-day.
+    groupName: hw
+    label: Legionella Day Item
+    name: legionellaProtectionDayItem
+    required: false
+    type: TEXT
+  - context: item
+    description: hotwater#legionella-protection-time — String, HH:mm.
+    groupName: hw
+    label: Legionella Time Item
+    name: legionellaProtectionTimeItem
+    required: false
+    type: TEXT
   parameterGroups:
-    - name: general
-      label: General
-    - name: ch
-      label: Central Heating
-    - name: hw
-      label: Hot Water
-timestamp: Sep 24, 2026, 11:47:07 AM
+  - name: general
+    label: General
+  - name: ch
+    label: Central Heating
+  - name: hw
+    label: Hot Water
+timestamp: Oct 5, 2026, 8:18:16 PM
 component: oh-webframe
 config:
-  src: "='/static/atag/regulation.html?v=7' + (props.seasonItem ? '&season=' + props.seasonItem : '') + (props.controlModeItem ? '&controlmode=' + props.controlModeItem : '') + (props.scheduleBaseTempItem ? '&schedulebase=' + props.scheduleBaseTempItem : '') + (props.vacationTempItem ? '&vactemp=' + props.vacationTempItem : '') + (props.heatingTypeItem ? '&heatingtype=' + props.heatingTypeItem : '') + (props.insulationItem ? '&insulation=' + props.insulationItem : '') + (props.buildingSizeItem ? '&buildingsize=' + props.buildingSizeItem : '') + (props.roomInfluenceItem ? '&roominfluence=' + props.roomInfluenceItem : '') + (props.climateZoneItem ? '&climatezone=' + props.climateZoneItem : '') + (props.maxPreheatItem ? '&maxpreheat=' + props.maxPreheatItem : '') + (props.summerEcoModeItem ? '&ecomode=' + props.summerEcoModeItem : '') + (props.summerEcoTempItem ? '&ecotemp=' + props.summerEcoTempItem : '') + (props.frostProtectionItem ? '&frost=' + props.frostProtectionItem : '') + (props.frostProtectionRoomItem ? '&frostroom=' + props.frostProtectionRoomItem : '') + (props.frostProtectionOutsideItem ? '&frostoutside=' + props.frostProtectionOutsideItem : '') + (props.dhwScheduleBaseTempItem ? '&dhwbase=' + props.dhwScheduleBaseTempItem : '') + (props.legionellaProtectionItem ? '&legionella=' + props.legionellaProtectionItem : '') + (props.legionellaProtectionDayItem ? '&legionelladay=' + props.legionellaProtectionDayItem : '') + (props.legionellaProtectionTimeItem ? '&legionellatime=' + props.legionellaProtectionTimeItem : '') + (props.displayBrightnessItem ? '&brightness=' + props.displayBrightnessItem : '') + (props.timeZoneItem ? '&timezone=' + props.timeZoneItem : '')"
+  src: '=''/static/atag/regulation.html?v=10'' + (props.seasonItem ? ''&season='' + props.seasonItem : '''') + (props.controlModeItem ? ''&controlmode='' + props.controlModeItem : '''') + (props.scheduleBaseTempItem ? ''&schedulebase='' + props.scheduleBaseTempItem
+    : '''') + (props.vacationTempItem ? ''&vactemp='' + props.vacationTempItem : '''') + (props.heatingTypeItem ? ''&heatingtype='' + props.heatingTypeItem : '''') + (props.insulationItem ? ''&insulation='' + props.insulationItem : '''') + (props.buildingSizeItem
+    ? ''&buildingsize='' + props.buildingSizeItem : '''') + (props.roomInfluenceItem ? ''&roominfluence='' + props.roomInfluenceItem : '''') + (props.climateZoneItem ? ''&climatezone='' + props.climateZoneItem : '''') + (props.maxPreheatItem ? ''&maxpreheat=''
+    + props.maxPreheatItem : '''') + (props.summerEcoModeItem ? ''&ecomode='' + props.summerEcoModeItem : '''') + (props.summerEcoTempItem ? ''&ecotemp='' + props.summerEcoTempItem : '''') + (props.frostProtectionItem ? ''&frost='' + props.frostProtectionItem
+    : '''') + (props.frostProtectionRoomItem ? ''&frostroom='' + props.frostProtectionRoomItem : '''') + (props.frostProtectionOutsideItem ? ''&frostoutside='' + props.frostProtectionOutsideItem : '''') + (props.dhwScheduleBaseTempItem ? ''&dhwbase=''
+    + props.dhwScheduleBaseTempItem : '''') + (props.legionellaProtectionItem ? ''&legionella='' + props.legionellaProtectionItem : '''') + (props.legionellaProtectionDayItem ? ''&legionelladay='' + props.legionellaProtectionDayItem : '''') + (props.legionellaProtectionTimeItem
+    ? ''&legionellatime='' + props.legionellaProtectionTimeItem : '''') + (props.displayBrightnessItem ? ''&brightness='' + props.displayBrightnessItem : '''') + (props.timeZoneItem ? ''&timezone='' + props.timeZoneItem : '''')'
   height: 560

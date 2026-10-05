@@ -26,7 +26,7 @@ screen — a 24 h timeline per day with editable temperature periods.
 - "+ Add period" per day (max 6, matching the ATAG ONE controller's own limit)
 - Save writes only the changed periods via the binding's per-period Thing Actions, sequentially
   with a pause between writes (the device firmware requires ≥ 2 s between requests)
-- Revert discards unsaved local edits
+- Cancel discards unsaved local edits
 
 ## Requirements — read this first
 
@@ -94,6 +94,11 @@ two schedule-JSON item props.
 ---
 
 ## Changelog
+
+### Version 1.2.0
+
+- Restyled to the shared design system: one 18 px card per weekday, segmented Central Heating / Hot Water switch, theme colours and font read from the Main UI (light and dark follow the app), orange / blue pills; Revert is now **Cancel**
+- The frame stretches to the bottom of the dialog, so the Cancel / Save bar sits at the very bottom and only the day list scrolls; the first time label no longer sticks out of the card
 
 ### Version 1.1.0
 

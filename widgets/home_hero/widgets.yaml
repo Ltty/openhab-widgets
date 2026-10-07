@@ -474,7 +474,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 7, 2026, 11:44:35 AM
+    timestamp: Oct 7, 2026, 11:51:44 AM
     component: f7-row
     config:
       style:
@@ -564,13 +564,13 @@ widgets:
                   default:
                   - component: oh-icon
                     config:
-                      icon: f7:bell_fill
+                      icon: '=({''Someone rang the doorbell'':''f7:bell_fill'',''Person at the front door'':''f7:person_fill'',''Car in the driveway'':''f7:car_fill''})[(items[props.doorbellLabelItem]||{}).state] || ''f7:dot_radiowaves_left_right'''
                       style:
                         font-size: 14px
                         color: '#ea580c'
                   - component: Label
                     config:
-                      text: '=((items[props.doorbellLabelItem]||{}).state || ''Doorbell'')+'' · ''+(m=>m<1 ? ''now'' : m+'' min'')(dayjs().diff(dayjs((items[props.doorbellTimeItem]||{}).state),''minute''))'
+                      text: '=(m=>m<1 ? ''just now'' : m+'' min ago'')(dayjs().diff(dayjs((items[props.doorbellTimeItem]||{}).state),''minute''))'
                       style:
                         font-size: 12px
                         font-weight: '600'

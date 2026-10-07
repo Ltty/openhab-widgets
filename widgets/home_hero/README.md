@@ -49,6 +49,10 @@ editor shows exactly the chips that are currently active instead of every varian
 
 ## Changelog
 
+### Version 1.3.0
+
+- Shorter chips: the icon says what it is, so smoke, batteries, humidity and offline chips show only the icon and a count (`🔋 2`); the doorbell chip is `Label · now / N min` (the event label is the information, "ago" dropped). The weather warning and waste chips keep their text because the text is the content. Tap targets and sheets are unchanged
+
 ### Version 1.2.0
 
 - The humidity chip and its sheet only show **critical** humidity (above the per-item red threshold, chip in red). Elevated humidity no longer raises a chip — it only needs action when it stays elevated, which the threshold alert rules handle

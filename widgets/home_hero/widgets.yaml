@@ -474,7 +474,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 5, 2026, 6:35:17 PM
+    timestamp: Oct 7, 2026, 11:44:35 AM
     component: f7-row
     config:
       style:
@@ -523,7 +523,7 @@ widgets:
                         color: '#dc2626'
                   - component: Label
                     config:
-                      text: ='Smoke alarm · '+Number(items[props.smokeGroup].state)
+                      text: =Number(items[props.smokeGroup].state)
                       style:
                         font-size: 12px
                         font-weight: '600'
@@ -570,7 +570,7 @@ widgets:
                         color: '#ea580c'
                   - component: Label
                     config:
-                      text: '=((items[props.doorbellLabelItem]||{}).state || ''Doorbell'')+'' · ''+(m=>m<1 ? ''just now'' : m+'' min ago'')(dayjs().diff(dayjs((items[props.doorbellTimeItem]||{}).state),''minute''))'
+                      text: '=((items[props.doorbellLabelItem]||{}).state || ''Doorbell'')+'' · ''+(m=>m<1 ? ''now'' : m+'' min'')(dayjs().diff(dayjs((items[props.doorbellTimeItem]||{}).state),''minute''))'
                       style:
                         font-size: 12px
                         font-weight: '600'
@@ -679,7 +679,7 @@ widgets:
                             color: '#d97706'
                       - component: Label
                         config:
-                          text: =Number(items[props.batteryGroup].state)+' low battery'
+                          text: =Number(items[props.batteryGroup].state)
                           style:
                             font-size: 12px
                             font-weight: '600'
@@ -737,7 +737,7 @@ widgets:
                             color: '#dc2626'
                       - component: Label
                         config:
-                          text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.r).length+' humid'
+                          text: =loop.h_source.filter(x=>Number.parseFloat(items[x.i].state)>x.r).length
                           style:
                             font-size: 12px
                             font-weight: '600'
@@ -794,7 +794,7 @@ widgets:
                             color: '#6b7280'
                       - component: Label
                         config:
-                          text: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)+'' offline'''
+                          text: '=(Number(items[props.thingsGroup].state) - loop.t_source.filter(x=>x.e ? items[x.i].state===''OFF'' : false).length)'
                           style:
                             font-size: 12px
                             font-weight: '600'

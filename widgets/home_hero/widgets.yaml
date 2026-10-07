@@ -474,7 +474,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 7, 2026, 11:51:44 AM
+    timestamp: Oct 7, 2026, 12:01:39 PM
     component: f7-row
     config:
       style:
@@ -749,8 +749,8 @@ widgets:
           groupItem: =props.thingsGroup
           sourceType: itemsInGroup
           fragment: true
-          map: '({i: loop.t.name, n: loop.t.label, k: ((loop.t.tags||[]).slice(1)[0]||'''').split('':'')[0], s: loop.t.state, e: !!(loop.t.metadata && loop.t.metadata.offlineExpected)})'
-          fetchMetadata: offlineExpected
+          map: '({i: loop.t.name, n: loop.t.label, k: (loop.t.metadata && loop.t.metadata.display) ? loop.t.metadata.display.config.location : ((loop.t.tags||[]).slice(1)[0]||'''').split('':'')[0], s: loop.t.state, e: !!(loop.t.metadata && loop.t.metadata.offlineExpected)})'
+          fetchMetadata: offlineExpected,display
         slots:
           default:
           - component: oh-repeater
@@ -901,10 +901,10 @@ widgets:
       parameters:
       - name: rows
         label: Rows
-        description: 'Array of {i: status item, n: label, k: binding, s: state, e: expected-offline}; supplied by home_hero_alerts.'
+        description: 'Array of {i: status item, n: label, k: room (binding name when the Thing has none), s: state, e: expected-offline}; supplied by home_hero_alerts.'
         type: TEXT
       parameterGroups: []
-    timestamp: Oct 5, 2026, 1:21:31 PM
+    timestamp: Oct 7, 2026, 12:01:39 PM
     component: f7-block
     config:
       label: Offline devices

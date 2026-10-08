@@ -49,6 +49,10 @@ editor shows exactly the chips that are currently active instead of every varian
 
 ## Changelog
 
+### Version 1.4.1
+
+- Alerts: humidity rows take the room name from the point's `display` metadata (`config.location`), falling back to the item label — humidity point labels are now plain `Humidity` (no room repeated), so the old `label.replace(' Humidity','')` would have shown `Humidity` for every room
+
 ### Version 1.4.0
 
 - Offline sheet: each row's subtitle is the room of the Thing (`Hobby Room`) instead of the binding name, so identical devices (seven "Homematic Temperature Sensor") can be told apart. The room comes from `display` metadata (`config.location`) on the `Thing_*` status items, written from the Thing's location by the openHAB rule *Update Things Items*; things without a room (accounts, bridges, a few Hue items) still show the binding name. `home_offline_devices` row `k` is now the room

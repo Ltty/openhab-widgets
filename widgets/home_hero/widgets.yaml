@@ -474,7 +474,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 7, 2026, 12:01:39 PM
+    timestamp: Oct 8, 2026, 12:43:20 PM
     component: f7-row
     config:
       style:
@@ -691,9 +691,9 @@ widgets:
           groupItem: =props.humidityGroup
           sourceType: itemsInGroup
           fragment: true
-          map: '({i: loop.h.name, n: loop.h.label.replace('' Humidity'',''''), o: (loop.h.metadata && loop.h.metadata.thresholds) ? Number.parseFloat(loop.h.metadata.thresholds.config.orange) : 65, r: (loop.h.metadata && loop.h.metadata.thresholds) ? Number.parseFloat(loop.h.metadata.thresholds.config.red)
+          map: '({i: loop.h.name, n: (loop.h.metadata && loop.h.metadata.display) ? loop.h.metadata.display.config.location : loop.h.label.replace('' Humidity'',''''), o: (loop.h.metadata && loop.h.metadata.thresholds) ? Number.parseFloat(loop.h.metadata.thresholds.config.orange) : 65, r: (loop.h.metadata && loop.h.metadata.thresholds) ? Number.parseFloat(loop.h.metadata.thresholds.config.red)
             : 70})'
-          fetchMetadata: thresholds
+          fetchMetadata: thresholds,display
         slots:
           default:
           - component: oh-repeater

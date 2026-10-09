@@ -13,18 +13,24 @@ props:
       groupName: content
     - name: icon
       label: Icon
-      description: f7 icon name or full icon id.
+      description: f7 icon name (or a full icon id).
       type: TEXT
       required: false
       groupName: content
-      default: square_grid_2x2
-    - name: color
-      label: Icon colour
-      description: CSS colour of the icon.
+      default: circle
+    - name: accent
+      label: Accent
+      description: "light, opening, lock or alarm: tints the icon amber/red while activeItem is active. Empty = neutral."
       type: TEXT
       required: false
       groupName: content
-      default: "#0ea5e9"
+    - name: activeItem
+      label: Active item
+      description: Item whose state drives the accent (ON/OPEN, light level > 0, Nuki 3–7).
+      type: TEXT
+      required: false
+      groupName: content
+      context: item
     - name: hero
       label: Hero item
       description: Item shown as the big value.
@@ -32,30 +38,54 @@ props:
       required: false
       groupName: content
       context: item
+    - name: heroLabel
+      label: Hero caption
+      description: Caption under the value (the point label).
+      type: TEXT
+      required: false
+      groupName: content
+    - name: heroKind
+      label: Hero kind
+      description: shutter = show the position as Open / n % / Closed.
+      type: TEXT
+      required: false
+      groupName: content
     - name: secondary1
       label: Secondary item 1
-      description: First detail row.
+      description: First mini stat.
       type: TEXT
       required: false
       groupName: content
       context: item
+    - name: secondary1Label
+      label: Secondary label 1
+      description: Caption of the first mini stat.
+      type: TEXT
+      required: false
+      groupName: content
     - name: secondary2
       label: Secondary item 2
-      description: Second detail row.
+      description: Second mini stat.
       type: TEXT
       required: false
       groupName: content
       context: item
+    - name: secondary2Label
+      label: Secondary label 2
+      description: Caption of the second mini stat.
+      type: TEXT
+      required: false
+      groupName: content
     - name: health
-      label: Health item
-      description: Item shown top right (battery, signal, last update).
+      label: Battery item
+      description: LowBattery switch or battery level; a chip shows only when low.
       type: TEXT
       required: false
       groupName: content
       context: item
     - name: control
       label: Control type
-      description: switch, dimmer or shutter. Empty = no control.
+      description: switch (header toggle), dimmer (slider) or shutter (up/stop/down). Empty = none.
       type: TEXT
       required: false
       groupName: content
@@ -68,13 +98,13 @@ props:
       context: item
     - name: sub
       label: Sub line
-      description: Fallback text such as "8 channels".
+      description: Small line at the bottom, e.g. "8 channels".
       type: TEXT
       required: false
       groupName: content
     - name: analyzerItems
-      label: Analyzer items
-      description: Comma-separated items; tapping opens the analyzer.
+      label: Trend / analyzer item
+      description: "Numeric item: 24 h trend under the value, tap opens the analyzer."
       type: TEXT
       required: false
       groupName: content
@@ -93,9 +123,105 @@ slots:
     - component: f7-card-content
       config:
         style:
-          padding: 14px 14px 10px
+          padding: 16px
       slots:
         default:
+          - component: div
+            config:
+              style:
+                display: flex
+                align-items: center
+                gap: 10px
+            slots:
+              default:
+                - component: div
+                  config:
+                    style:
+                      display: flex
+                      align-items: center
+                      width: 28px
+                      height: 28px
+                      border-radius: 50%
+                      justify-content: center
+                      flex-shrink: "0"
+                      background: "=(c => c === '#8e8e93' ? 'rgba(142,142,147,0.14)' : (c === '#dc3545' ? 'rgba(220,53,69,0.15)' : 'rgba(217,119,6,0.16)'))((((props.activeItem && items[props.activeItem] && ['NULL','UNDEF','-'].indexOf(items[props.activeItem].state) < 0) && (s => s === 'ON' || s === 'OPEN' || (props.accent === 'lock' && Number(s) >= 3 && Number(s) <= 7) || (props.accent === 'light' && Number.parseFloat(s) > 0) || (props.accent === 'alarm' && /ALARM/.test(s) && !/TEST|IDLE/.test(s)))('' + items[props.activeItem].state)) ? (props.accent === 'alarm' ? '#dc3545' : '#d97706') : '#8e8e93'))"
+                  slots:
+                    default:
+                      - component: oh-icon
+                        config:
+                          icon: "=(i => i.indexOf(':') > 0 ? i : 'f7:' + i)(props.icon || 'circle')"
+                          width: 16
+                          height: 16
+                          style:
+                            font-size: 16px
+                            width: 16px
+                            height: 16px
+                            color: "=(((props.activeItem && items[props.activeItem] && ['NULL','UNDEF','-'].indexOf(items[props.activeItem].state) < 0) && (s => s === 'ON' || s === 'OPEN' || (props.accent === 'lock' && Number(s) >= 3 && Number(s) <= 7) || (props.accent === 'light' && Number.parseFloat(s) > 0) || (props.accent === 'alarm' && /ALARM/.test(s) && !/TEST|IDLE/.test(s)))('' + items[props.activeItem].state)) ? (props.accent === 'alarm' ? '#dc3545' : '#d97706') : '#8e8e93')"
+                - component: Label
+                  config:
+                    text: =props.title
+                    style:
+                      font-size: 13px
+                      font-weight: "600"
+                      flex: "1"
+                      min-width: "0"
+                      overflow: hidden
+                      text-overflow: ellipsis
+                      white-space: nowrap
+                - component: oh-repeater
+                  config:
+                    for: tg
+                    sourceType: array
+                    in: "=props.control === 'switch' && props.controlItem ? [1] : []"
+                    fragment: true
+                  slots:
+                    default:
+                      - component: oh-toggle
+                        config:
+                          item: =props.controlItem
+                - component: oh-repeater
+                  config:
+                    for: hh
+                    sourceType: array
+                    in: "=props.control !== 'switch' ? [1] : []"
+                    fragment: true
+                  slots:
+                    default:
+                      - &a1
+                        component: oh-repeater
+                        config:
+                          for: hb
+                          sourceType: array
+                          in: "=((props.health && items[props.health] && ['NULL','UNDEF','-'].indexOf(items[props.health].state) < 0) && (items[props.health].state === 'ON' || (Number.parseFloat(items[props.health].state) <= 20 && !Number.isNaN(Number.parseFloat(items[props.health].state))))) ? [1] : []"
+                          fragment: true
+                        slots:
+                          default:
+                            - component: div
+                              config:
+                                style:
+                                  display: flex
+                                  align-items: center
+                                  gap: 4px
+                                  border-radius: 12px
+                                  padding: 1px 8px
+                                  background: rgba(220,53,69,0.12)
+                              slots:
+                                default:
+                                  - component: oh-icon
+                                    config:
+                                      icon: f7:battery_25
+                                      width: 14
+                                      height: 14
+                                      style:
+                                        font-size: 14px
+                                        color: "#dc3545"
+                                  - component: Label
+                                    config:
+                                      text: "=(items[props.health].state === 'ON' ? 'Low battery' : 'Battery ' + Math.round(Number.parseFloat(items[props.health].state)) + ' %')"
+                                      style:
+                                        font-size: 12px
+                                        font-weight: "500"
+                                        color: "#dc3545"
           - component: oh-link
             config:
               action: "=props.analyzerItems ? 'analyzer' : ''"
@@ -104,83 +230,65 @@ slots:
                 color: inherit
                 display: block
                 text-decoration: none
+                margin-top: 12px
             slots:
               default:
-                - component: f7-row
+                - component: div
                   config:
                     style:
                       display: flex
-                      align-items: center
-                      gap: 6px
-                      margin: "0"
-                      justify-content: flex-start
+                      align-items: baseline
+                      gap: 4px
+                      min-width: "0"
                   slots:
                     default:
-                      - component: oh-icon
-                        config:
-                          icon: "=(i=>i.indexOf(':') > 0 ? i : 'f7:'+i)(props.icon || 'square_grid_2x2')"
-                          width: 18
-                          height: 18
-                          size: 18
-                          style:
-                            font-size: 16px
-                            width: 18px
-                            height: 18px
-                            color: =props.color || '#0ea5e9'
                       - component: Label
                         config:
-                          text: =props.title
+                          text: "=((t => (m => m ? m[1] : t)(t.match(/^(-?[0-9][0-9.,]*)\\s+(\\S.*)$/)))((s => s === '' ? '–' : (props.heroKind === 'shutter' ? (n => n === 0 ? 'Open' : n >= 100 ? 'Closed' : Math.round(n) + ' %')(Number.parseFloat(s)) : ((s => s === 'ON' ? 'On' : s === 'OFF' ? 'Off' : s === 'OPEN' ? 'Open' : s === 'CLOSED' ? 'Closed' : /^[A-Z][A-Z0-9_]{2,}$/.test(s) ? s.charAt(0) + s.slice(1).toLowerCase().split('_').join(' ') : s)(s))))(((props.hero && items[props.hero] && ['NULL','UNDEF','-'].indexOf(items[props.hero].state) < 0) ? ('' + (items[props.hero].displayState || items[props.hero].state)) : ''))))"
                           style:
-                            font-size: 12px
-                            opacity: "0.7"
-                            flex: "1"
+                            font-size: "=(s => s === '' ? '–' : (props.heroKind === 'shutter' ? (n => n === 0 ? 'Open' : n >= 100 ? 'Closed' : Math.round(n) + ' %')(Number.parseFloat(s)) : ((s => s === 'ON' ? 'On' : s === 'OFF' ? 'Off' : s === 'OPEN' ? 'Open' : s === 'CLOSED' ? 'Closed' : /^[A-Z][A-Z0-9_]{2,}$/.test(s) ? s.charAt(0) + s.slice(1).toLowerCase().split('_').join(' ') : s)(s))))(((props.hero && items[props.hero] && ['NULL','UNDEF','-'].indexOf(items[props.hero].state) < 0) ? ('' + (items[props.hero].displayState || items[props.hero].state)) : '')).length > 12 ? '18px' : '26px'"
+                            font-weight: "700"
+                            line-height: "1.15"
+                            font-variant-numeric: tabular-nums
+                            overflow: hidden
+                            text-overflow: ellipsis
+                            white-space: nowrap
+                            max-width: 100%
                       - component: oh-repeater
                         config:
-                          for: r
+                          for: u
                           sourceType: array
-                          in: "=(props.health ? (props.health&&items[props.health]&&['NULL','UNDEF'].indexOf(items[props.health].state)<0)?items[props.health].displayState:'–' : '') ? [1] : []"
+                          in: "=((t => (m => m ? m[2] : '')(t.match(/^(-?[0-9][0-9.,]*)\\s+(\\S.*)$/)))((s => s === '' ? '–' : (props.heroKind === 'shutter' ? (n => n === 0 ? 'Open' : n >= 100 ? 'Closed' : Math.round(n) + ' %')(Number.parseFloat(s)) : ((s => s === 'ON' ? 'On' : s === 'OFF' ? 'Off' : s === 'OPEN' ? 'Open' : s === 'CLOSED' ? 'Closed' : /^[A-Z][A-Z0-9_]{2,}$/.test(s) ? s.charAt(0) + s.slice(1).toLowerCase().split('_').join(' ') : s)(s))))(((props.hero && items[props.hero] && ['NULL','UNDEF','-'].indexOf(items[props.hero].state) < 0) ? ('' + (items[props.hero].displayState || items[props.hero].state)) : '')))) ? [1] : []"
                           fragment: true
                         slots:
                           default:
                             - component: Label
                               config:
-                                text: "=(props.health ? (props.health&&items[props.health]&&['NULL','UNDEF'].indexOf(items[props.health].state)<0)?items[props.health].displayState:'–' : '')"
+                                text: "=((t => (m => m ? m[2] : '')(t.match(/^(-?[0-9][0-9.,]*)\\s+(\\S.*)$/)))((s => s === '' ? '–' : (props.heroKind === 'shutter' ? (n => n === 0 ? 'Open' : n >= 100 ? 'Closed' : Math.round(n) + ' %')(Number.parseFloat(s)) : ((s => s === 'ON' ? 'On' : s === 'OFF' ? 'Off' : s === 'OPEN' ? 'Open' : s === 'CLOSED' ? 'Closed' : /^[A-Z][A-Z0-9_]{2,}$/.test(s) ? s.charAt(0) + s.slice(1).toLowerCase().split('_').join(' ') : s)(s))))(((props.hero && items[props.hero] && ['NULL','UNDEF','-'].indexOf(items[props.hero].state) < 0) ? ('' + (items[props.hero].displayState || items[props.hero].state)) : ''))))"
                                 style:
                                   font-size: 12px
-                                  font-weight: "600"
-                                  white-space: nowrap
-                - component: f7-row
+                                  opacity: "0.75"
+                - component: div
                   config:
                     style:
                       display: flex
                       align-items: center
-                      margin: 6px 0 0
-                      gap: 6px
-                      justify-content: flex-start
+                      gap: 8px
+                      margin-top: 2px
                   slots:
                     default:
                       - component: Label
                         config:
-                          text: =((props.hero&&items[props.hero]&&['NULL','UNDEF'].indexOf(items[props.hero].state)<0)?items[props.hero].displayState:'–')
+                          text: =props.heroLabel || ''
                           style:
-                            font-size: 26px
-                            font-weight: "700"
-                            line-height: "1.1"
-                - component: oh-repeater
-                  config:
-                    for: n
-                    sourceType: array
-                    in: "=props.hero && !(props.hero&&items[props.hero]&&['NULL','UNDEF'].indexOf(items[props.hero].state)<0) ? [1] : []"
-                    fragment: true
-                  slots:
-                    default:
-                      - component: f7-row
+                            font-size: 11px
+                            opacity: "0.6"
+                      - component: oh-repeater
                         config:
-                          style:
-                            display: flex
-                            align-items: center
-                            margin: 4px 0 0
-                            justify-content: flex-start
+                          for: nd
+                          sourceType: array
+                          in: "=props.hero && !(props.hero && items[props.hero] && ['NULL','UNDEF','-'].indexOf(items[props.hero].state) < 0) ? [1] : []"
+                          fragment: true
                         slots:
                           default:
                             - component: Label
@@ -189,73 +297,100 @@ slots:
                                 style:
                                   border-radius: 12px
                                   font-size: 12px
+                                  font-weight: "500"
                                   padding: 1px 8px
                                   background: rgba(128,128,128,0.15)
                                   color: "#6b7280"
-                - component: oh-repeater
-                  config:
-                    for: s2
-                    sourceType: array
-                    in: =[props.secondary1, props.secondary2].filter(x=>x&&items[x])
-                    fragment: true
-                  slots:
-                    default:
-                      - component: f7-row
+                                  white-space: nowrap
+                      - component: oh-repeater
                         config:
-                          style:
-                            display: flex
-                            align-items: center
-                            margin: 3px 0 0
-                            gap: 6px
+                          for: hc
+                          sourceType: array
+                          in: "=props.control === 'switch' ? [1] : []"
+                          fragment: true
                         slots:
                           default:
-                            - component: Label
-                              config:
-                                text: =items[loop.s2].label
-                                style:
-                                  font-size: 12px
-                                  opacity: "0.7"
-                                  flex: "1"
-                            - component: Label
-                              config:
-                                text: =((loop.s2&&items[loop.s2]&&['NULL','UNDEF'].indexOf(items[loop.s2].state)<0)?items[loop.s2].displayState:'–')
-                                style:
-                                  font-size: 13px
-                                  font-weight: "500"
+                            - *a1
                 - component: oh-repeater
                   config:
-                    for: s
+                    for: tr
                     sourceType: array
-                    in: "=props.sub ? [1] : []"
+                    in: "=props.analyzerItems ? [1] : []"
                     fragment: true
                   slots:
                     default:
-                      - component: Label
+                      - component: oh-trend
                         config:
-                          text: =props.sub
+                          trendItem: =props.analyzerItems
+                          trendGradient:
+                            - "#0ea5e9"
+                            - "#0ea5e9"
+                          trendStrokeWidth: "2"
+                          trendSampling: "30"
                           style:
-                            display: block
-                            font-size: 11px
-                            opacity: "0.75"
-                            margin-top: 4px
+                            margin-top: 6px
           - component: oh-repeater
             config:
-              for: c_switch
+              for: sc
               sourceType: array
-              in: "=props.control === 'switch' && props.controlItem && items[props.controlItem] ? [1] : []"
+              in: "=[props.secondary1, props.secondary2].filter(x => x && items[x]).length ? [1] : []"
               fragment: true
             slots:
               default:
-                - component: oh-toggle
+                - component: div
                   config:
-                    item: =props.controlItem
                     style:
-                      margin-top: 6px
+                      display: flex
+                      align-items: stretch
+                      gap: 12px
+                      margin-top: 12px
+                      padding-top: 10px
+                      border-top: 1px solid rgba(128,128,128,0.15)
+                  slots:
+                    default:
+                      - component: oh-repeater
+                        config:
+                          for: s2
+                          sourceType: array
+                          in: =[[props.secondary1, props.secondary1Label], [props.secondary2, props.secondary2Label]].filter(x => x[0] && items[x[0]])
+                          fragment: true
+                        slots:
+                          default:
+                            - component: div
+                              config:
+                                style:
+                                  flex: "1"
+                                  min-width: "0"
+                                  padding-left: "=loop.s2_idx > 0 ? '12px' : '0'"
+                                  border-left: "=loop.s2_idx > 0 ? '1px solid rgba(128,128,128,0.15)' : 'none'"
+                              slots:
+                                default:
+                                  - component: Label
+                                    config:
+                                      text: =loop.s2[1] || ''
+                                      style:
+                                        display: block
+                                        font-size: 11px
+                                        opacity: "0.6"
+                                        white-space: nowrap
+                                        overflow: hidden
+                                        text-overflow: ellipsis
+                                  - component: Label
+                                    config:
+                                      text: "=(t => t === '' ? '–' : t)(((s => s === 'ON' ? 'On' : s === 'OFF' ? 'Off' : s === 'OPEN' ? 'Open' : s === 'CLOSED' ? 'Closed' : /^[A-Z][A-Z0-9_]{2,}$/.test(s) ? s.charAt(0) + s.slice(1).toLowerCase().split('_').join(' ') : s)(((loop.s2[0] && items[loop.s2[0]] && ['NULL','UNDEF','-'].indexOf(items[loop.s2[0]].state) < 0) ? ('' + (items[loop.s2[0]].displayState || items[loop.s2[0]].state)) : ''))))"
+                                      style:
+                                        display: block
+                                        font-size: 15px
+                                        font-weight: "600"
+                                        font-variant-numeric: tabular-nums
+                                        white-space: nowrap
+                                        overflow: hidden
+                                        text-overflow: ellipsis
           - component: oh-repeater
             config:
-              for: c_dimmer
+              for: cd
               sourceType: array
-              in: "=props.control === 'dimmer' && props.controlItem && items[props.controlItem] ? [1] : []"
+              in: "=props.control === 'dimmer' && props.controlItem ? [1] : []"
               fragment: true
             slots:
               default:
@@ -265,52 +400,95 @@ slots:
                     min: 0
                     max: 100
                     step: 1
+                    label: true
                     style:
-                      margin-top: 6px
+                      margin-top: 14px
           - component: oh-repeater
             config:
-              for: c_shutter
+              for: cs
               sourceType: array
-              in: "=props.control === 'shutter' && props.controlItem && items[props.controlItem] ? [1] : []"
+              in: "=props.control === 'shutter' && props.controlItem ? [1] : []"
               fragment: true
             slots:
               default:
-                - component: f7-row
+                - component: div
+                  config:
+                    style:
+                      margin-top: 12px
+                      height: 4px
+                      border-radius: 2px
+                      background: rgba(128,128,128,0.15)
+                      overflow: hidden
+                  slots:
+                    default:
+                      - component: div
+                        config:
+                          style:
+                            height: 100%
+                            border-radius: 2px
+                            background: "#0ea5e9"
+                            width: "=((props.controlItem && items[props.controlItem] && ['NULL','UNDEF','-'].indexOf(items[props.controlItem].state) < 0) ? Math.min(100, Math.max(0, Number.parseFloat(items[props.controlItem].state))) : 0) + '%'"
+                - component: div
                   config:
                     style:
                       display: flex
                       align-items: center
-                      gap: 6px
-                      margin: 8px 0 0
+                      gap: 8px
+                      margin-top: 10px
                   slots:
                     default:
                       - component: oh-button
                         config:
-                          text: ▲
+                          iconF7: chevron_up
+                          iconSize: 18
                           action: command
                           actionItem: =props.controlItem
                           actionCommand: UP
-                          small: true
-                          outline: true
                           style:
                             flex: "1"
+                            height: 36px
+                            border-radius: 10px
+                            background: rgba(128,128,128,0.12)
+                            color: inherit
                       - component: oh-button
                         config:
-                          text: ■
+                          iconF7: stop_fill
+                          iconSize: 18
                           action: command
                           actionItem: =props.controlItem
                           actionCommand: STOP
-                          small: true
-                          outline: true
                           style:
                             flex: "1"
+                            height: 36px
+                            border-radius: 10px
+                            background: rgba(128,128,128,0.12)
+                            color: inherit
                       - component: oh-button
                         config:
-                          text: ▼
+                          iconF7: chevron_down
+                          iconSize: 18
                           action: command
                           actionItem: =props.controlItem
                           actionCommand: DOWN
-                          small: true
-                          outline: true
                           style:
                             flex: "1"
+                            height: 36px
+                            border-radius: 10px
+                            background: rgba(128,128,128,0.12)
+                            color: inherit
+          - component: oh-repeater
+            config:
+              for: s
+              sourceType: array
+              in: "=props.sub ? [1] : []"
+              fragment: true
+            slots:
+              default:
+                - component: Label
+                  config:
+                    text: =props.sub
+                    style:
+                      display: block
+                      font-size: 11px
+                      opacity: "0.6"
+                      margin-top: 10px

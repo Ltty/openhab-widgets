@@ -24,6 +24,10 @@ child's hero. Tapping the header opens the analyzer for `analyzerItems`.
 
 ## Changelog
 
+### Version 1.0.1
+
+- Fix: header icon was oversized for `oh:` image icons (fixed 18 px size).
+
 ### Version 1.0.0
 
 - Initial release.

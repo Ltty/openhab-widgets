@@ -26,6 +26,10 @@ comma-separated; arrays and objects are dropped by openHAB's metadata config).
 
 ## Changelog
 
+### Version 1.0.1
+
+- Fix: header icon was oversized for `oh:` image icons (fixed 18 px size).
+
 ### Version 1.0.0
 
 - Initial release.

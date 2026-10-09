@@ -1,0 +1,311 @@
+uid: model_equipment_card
+tags:
+  - model
+  - card
+  - design
+props:
+  parameters:
+    - name: title
+      label: Title
+      description: Equipment name.
+      type: TEXT
+      required: true
+      groupName: content
+    - name: icon
+      label: Icon
+      description: f7 icon name or full icon id.
+      type: TEXT
+      required: false
+      groupName: content
+      default: square_grid_2x2
+    - name: color
+      label: Icon colour
+      description: CSS colour of the icon.
+      type: TEXT
+      required: false
+      groupName: content
+      default: "#0ea5e9"
+    - name: hero
+      label: Hero item
+      description: Item shown as the big value.
+      type: TEXT
+      required: false
+      groupName: content
+      context: item
+    - name: secondary1
+      label: Secondary item 1
+      description: First detail row.
+      type: TEXT
+      required: false
+      groupName: content
+      context: item
+    - name: secondary2
+      label: Secondary item 2
+      description: Second detail row.
+      type: TEXT
+      required: false
+      groupName: content
+      context: item
+    - name: health
+      label: Health item
+      description: Item shown top right (battery, signal, last update).
+      type: TEXT
+      required: false
+      groupName: content
+      context: item
+    - name: control
+      label: Control type
+      description: switch, dimmer or shutter. Empty = no control.
+      type: TEXT
+      required: false
+      groupName: content
+    - name: controlItem
+      label: Control item
+      description: Item the control sends to.
+      type: TEXT
+      required: false
+      groupName: content
+      context: item
+    - name: sub
+      label: Sub line
+      description: Fallback text such as "8 channels".
+      type: TEXT
+      required: false
+      groupName: content
+    - name: analyzerItems
+      label: Analyzer items
+      description: Comma-separated items; tapping opens the analyzer.
+      type: TEXT
+      required: false
+      groupName: content
+  parameterGroups:
+    - name: content
+      label: Content
+component: f7-card
+config:
+  style:
+    margin: "0"
+    border-radius: 18px
+    min-width: "0"
+    overflow: hidden
+slots:
+  default:
+    - component: f7-card-content
+      config:
+        style:
+          padding: 14px 14px 10px
+      slots:
+        default:
+          - component: oh-link
+            config:
+              action: "=props.analyzerItems ? 'analyzer' : ''"
+              actionAnalyzerItems: =props.analyzerItems
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+            slots:
+              default:
+                - component: f7-row
+                  config:
+                    style:
+                      display: flex
+                      align-items: center
+                      gap: 6px
+                      margin: "0"
+                      justify-content: flex-start
+                  slots:
+                    default:
+                      - component: oh-icon
+                        config:
+                          icon: "=(i=>i.indexOf(':') > 0 ? i : 'f7:'+i)(props.icon || 'square_grid_2x2')"
+                          style:
+                            font-size: 16px
+                            color: =props.color || '#0ea5e9'
+                      - component: Label
+                        config:
+                          text: =props.title
+                          style:
+                            font-size: 12px
+                            opacity: "0.7"
+                            flex: "1"
+                      - component: oh-repeater
+                        config:
+                          for: r
+                          sourceType: array
+                          in: "=(props.health ? (props.health&&items[props.health]&&['NULL','UNDEF'].indexOf(items[props.health].state)<0)?items[props.health].displayState:'–' : '') ? [1] : []"
+                          fragment: true
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "=(props.health ? (props.health&&items[props.health]&&['NULL','UNDEF'].indexOf(items[props.health].state)<0)?items[props.health].displayState:'–' : '')"
+                                style:
+                                  font-size: 12px
+                                  font-weight: "600"
+                                  white-space: nowrap
+                - component: f7-row
+                  config:
+                    style:
+                      display: flex
+                      align-items: center
+                      margin: 6px 0 0
+                      gap: 6px
+                      justify-content: flex-start
+                  slots:
+                    default:
+                      - component: Label
+                        config:
+                          text: =((props.hero&&items[props.hero]&&['NULL','UNDEF'].indexOf(items[props.hero].state)<0)?items[props.hero].displayState:'–')
+                          style:
+                            font-size: 26px
+                            font-weight: "700"
+                            line-height: "1.1"
+                - component: oh-repeater
+                  config:
+                    for: n
+                    sourceType: array
+                    in: "=props.hero && !(props.hero&&items[props.hero]&&['NULL','UNDEF'].indexOf(items[props.hero].state)<0) ? [1] : []"
+                    fragment: true
+                  slots:
+                    default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: center
+                            margin: 4px 0 0
+                            justify-content: flex-start
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: no data
+                                style:
+                                  border-radius: 12px
+                                  font-size: 12px
+                                  padding: 1px 8px
+                                  background: rgba(128,128,128,0.15)
+                                  color: "#6b7280"
+                - component: oh-repeater
+                  config:
+                    for: s2
+                    sourceType: array
+                    in: =[props.secondary1, props.secondary2].filter(x=>x&&items[x])
+                    fragment: true
+                  slots:
+                    default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: center
+                            margin: 3px 0 0
+                            gap: 6px
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: =items[loop.s2].label
+                                style:
+                                  font-size: 12px
+                                  opacity: "0.7"
+                                  flex: "1"
+                            - component: Label
+                              config:
+                                text: =((loop.s2&&items[loop.s2]&&['NULL','UNDEF'].indexOf(items[loop.s2].state)<0)?items[loop.s2].displayState:'–')
+                                style:
+                                  font-size: 13px
+                                  font-weight: "500"
+                - component: oh-repeater
+                  config:
+                    for: s
+                    sourceType: array
+                    in: "=props.sub ? [1] : []"
+                    fragment: true
+                  slots:
+                    default:
+                      - component: Label
+                        config:
+                          text: =props.sub
+                          style:
+                            display: block
+                            font-size: 11px
+                            opacity: "0.75"
+                            margin-top: 4px
+          - component: oh-repeater
+            config:
+              for: c_switch
+              sourceType: array
+              in: "=props.control === 'switch' && props.controlItem && items[props.controlItem] ? [1] : []"
+              fragment: true
+            slots:
+              default:
+                - component: oh-toggle
+                  config:
+                    item: =props.controlItem
+                    style:
+                      margin-top: 6px
+          - component: oh-repeater
+            config:
+              for: c_dimmer
+              sourceType: array
+              in: "=props.control === 'dimmer' && props.controlItem && items[props.controlItem] ? [1] : []"
+              fragment: true
+            slots:
+              default:
+                - component: oh-slider
+                  config:
+                    item: =props.controlItem
+                    min: 0
+                    max: 100
+                    step: 1
+                    style:
+                      margin-top: 6px
+          - component: oh-repeater
+            config:
+              for: c_shutter
+              sourceType: array
+              in: "=props.control === 'shutter' && props.controlItem && items[props.controlItem] ? [1] : []"
+              fragment: true
+            slots:
+              default:
+                - component: f7-row
+                  config:
+                    style:
+                      display: flex
+                      align-items: center
+                      gap: 6px
+                      margin: 8px 0 0
+                  slots:
+                    default:
+                      - component: oh-button
+                        config:
+                          text: ▲
+                          action: command
+                          actionItem: =props.controlItem
+                          actionCommand: UP
+                          small: true
+                          outline: true
+                          style:
+                            flex: "1"
+                      - component: oh-button
+                        config:
+                          text: ■
+                          action: command
+                          actionItem: =props.controlItem
+                          actionCommand: STOP
+                          small: true
+                          outline: true
+                          style:
+                            flex: "1"
+                      - component: oh-button
+                        config:
+                          text: ▼
+                          action: command
+                          actionItem: =props.controlItem
+                          actionCommand: DOWN
+                          small: true
+                          outline: true
+                          style:
+                            flex: "1"

@@ -1,0 +1,253 @@
+uid: model_location_card
+tags:
+  - model
+  - card
+  - design
+props:
+  parameters:
+    - name: title
+      label: Title
+      description: Location name.
+      type: TEXT
+      required: true
+      groupName: content
+    - name: icon
+      label: Icon
+      description: f7 icon name or full icon id.
+      type: TEXT
+      required: false
+      groupName: content
+      default: square_grid_2x2
+    - name: color
+      label: Icon colour
+      description: CSS colour of the icon.
+      type: TEXT
+      required: false
+      groupName: content
+      default: "#0ea5e9"
+    - name: tempItems
+      label: Temperature items
+      description: Comma-separated; averaged.
+      type: TEXT
+      required: false
+      groupName: content
+    - name: humItems
+      label: Humidity items
+      description: Comma-separated; averaged.
+      type: TEXT
+      required: false
+      groupName: content
+    - name: setpointItems
+      label: Setpoint items
+      description: Comma-separated; averaged, shown as (xx°).
+      type: TEXT
+      required: false
+      groupName: content
+    - name: fallbackItems
+      label: Fallback items
+      description: Comma-separated items listed when the room has no climate points.
+      type: TEXT
+      required: false
+      groupName: content
+    - name: children
+      label: Children
+      description: "Floor-level nodes: item|title|tempItems|humItems;… (tap opens the group)."
+      type: TEXT
+      required: false
+      groupName: content
+    - name: sub
+      label: Sub line
+      description: Text under the card, e.g. "5 devices".
+      type: TEXT
+      required: false
+      groupName: content
+    - name: analyzerItems
+      label: Analyzer items
+      description: Comma-separated items; tapping opens the analyzer.
+      type: TEXT
+      required: false
+      groupName: content
+  parameterGroups:
+    - name: content
+      label: Content
+component: f7-card
+config:
+  style:
+    margin: "0"
+    border-radius: 18px
+    min-width: "0"
+    overflow: hidden
+slots:
+  default:
+    - component: f7-card-content
+      config:
+        style:
+          padding: 14px 14px 10px
+      slots:
+        default:
+          - component: oh-link
+            config:
+              action: "=props.analyzerItems ? 'analyzer' : ''"
+              actionAnalyzerItems: =props.analyzerItems
+              style:
+                color: inherit
+                display: block
+                text-decoration: none
+            slots:
+              default:
+                - component: f7-row
+                  config:
+                    style:
+                      display: flex
+                      align-items: center
+                      gap: 6px
+                      margin: "0"
+                      justify-content: flex-start
+                  slots:
+                    default:
+                      - component: oh-icon
+                        config:
+                          icon: "=(i=>i.indexOf(':') > 0 ? i : 'f7:'+i)(props.icon || 'square_grid_2x2')"
+                          style:
+                            font-size: 16px
+                            color: =props.color || '#0ea5e9'
+                      - component: Label
+                        config:
+                          text: =props.title
+                          style:
+                            font-size: 12px
+                            opacity: "0.7"
+                            flex: "1"
+                      - component: oh-repeater
+                        config:
+                          for: r
+                          sourceType: array
+                          in: "=(props.setpointItems && ((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.setpointItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) ? '(' + ((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.setpointItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) + '°)' : '') ? [1] : []"
+                          fragment: true
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "=(props.setpointItems && ((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.setpointItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) ? '(' + ((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.setpointItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) + '°)' : '')"
+                                style:
+                                  font-size: 12px
+                                  font-weight: "600"
+                                  white-space: nowrap
+                - component: oh-repeater
+                  config:
+                    for: cl
+                    sourceType: array
+                    in: "=(props.tempItems || props.humItems) ? [1] : []"
+                    fragment: true
+                  slots:
+                    default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: baseline
+                            margin: 6px 0 0
+                            gap: 10px
+                            justify-content: flex-start
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: "=((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.tempItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) ? ((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.tempItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) + ' °C' : ''"
+                                style:
+                                  font-size: 26px
+                                  font-weight: "700"
+                                  line-height: "1.1"
+                            - component: Label
+                              config:
+                                text: "=((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.humItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) ? ((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((props.humItems||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))) + ' %' : ''"
+                                style:
+                                  font-size: 16px
+                                  font-weight: "600"
+                                  opacity: "0.8"
+                - component: oh-repeater
+                  config:
+                    for: f
+                    sourceType: array
+                    in: =(props.fallbackItems||'').split(',').filter(x=>x&&items[x])
+                    fragment: true
+                  slots:
+                    default:
+                      - component: f7-row
+                        config:
+                          style:
+                            display: flex
+                            align-items: center
+                            margin: 3px 0 0
+                            gap: 6px
+                        slots:
+                          default:
+                            - component: Label
+                              config:
+                                text: =items[loop.f].label
+                                style:
+                                  font-size: 12px
+                                  opacity: "0.7"
+                                  flex: "1"
+                            - component: Label
+                              config:
+                                text: =((loop.f&&items[loop.f]&&['NULL','UNDEF'].indexOf(items[loop.f].state)<0)?items[loop.f].displayState:'–')
+                                style:
+                                  font-size: 13px
+                                  font-weight: "500"
+                - component: oh-repeater
+                  config:
+                    for: ch
+                    sourceType: array
+                    in: =(props.children||'').split(';').filter(x=>x).map(x=>x.split('|'))
+                    fragment: true
+                  slots:
+                    default:
+                      - component: oh-link
+                        config:
+                          action: group
+                          actionGroupPopupItem: =loop.ch[0]
+                          style:
+                            color: inherit
+                            display: block
+                            text-decoration: none
+                        slots:
+                          default:
+                            - component: f7-row
+                              config:
+                                style:
+                                  display: flex
+                                  align-items: center
+                                  margin: 3px 0 0
+                                  gap: 6px
+                              slots:
+                                default:
+                                  - component: Label
+                                    config:
+                                      text: =loop.ch[1]
+                                      style:
+                                        font-size: 12px
+                                        opacity: "0.7"
+                                        flex: "1"
+                                  - component: Label
+                                    config:
+                                      text: =(t=>h=>(t?t+' °C':'')+(t&&h?' · ':'')+(h?h+' %':'') || '–')(((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((loop.ch[2]||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))))(((v=>v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'')((loop.ch[3]||'').split(',').filter(x=>x&&items[x]).map(x=>Number.parseFloat(items[x].state)).filter(n=>!Number.isNaN(n)))))
+                                      style:
+                                        font-size: 13px
+                                        font-weight: "500"
+                - component: oh-repeater
+                  config:
+                    for: s
+                    sourceType: array
+                    in: "=props.sub ? [1] : []"
+                    fragment: true
+                  slots:
+                    default:
+                      - component: Label
+                        config:
+                          text: =props.sub
+                          style:
+                            display: block
+                            font-size: 11px
+                            opacity: "0.75"
+                            margin-top: 4px

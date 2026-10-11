@@ -3,7 +3,9 @@
 ![Heating sheet](screenshots/sheet.png)
 
 Bottom sheet for the one-tap heating modes: **Fireplace** until the next morning (07:00), **Vacation** for
-3 / 5 / 7 / 14 days, and **Back to Auto** (only shown while a timed mode runs). A status line shows the current mode.
+3 / 5 / 7 / 14 days, and **Back to Auto** (only shown while a timed mode runs). A status line shows the current mode. A separate
+section at the bottom ends the heating season (**End heating season…**, with a confirmation; sends `OFF` to
+`seasonItem`).
 Native list rows, segmented control and button only.
 
 Open it from a tile: `action: sheet`, `actionModal: widget:home_heating_quick` (no `actionModalConfig` needed when
@@ -15,7 +17,7 @@ the prop defaults fit; prop defaults apply inside sheets).
 | `commandItem` | `String` (no channel; `autoupdate=false` recommended) | Receives `fireplacemorning`, `vacation<days>`, `cancel` — a rule turns these into thermostat actions |
 | `modeItem` | `String` | Heating mode: `auto`, `manual`, `fireplace`, `holiday`, `extend` (atagone `ch_mode`) |
 | `targetItem` | `Number` | Current target temperature, shown in automatic mode |
-| `seasonItem` | `Switch` | `ON` = heating season (distinguishes "Manual mode" from "Heating season is off") |
+| `seasonItem` | `Switch` | `ON` = heating season (distinguishes "Manual mode" from "Heating season is off"); the sheet's last row sends `OFF` to it |
 
 ## Why a rule
 ATAG ONE fireplace / vacation / extend modes exist only as Thing Actions (`activateFireplace(seconds)`,
@@ -25,6 +27,10 @@ a plain command and [`rules/set-heating-mode.js`](rules/set-heating-mode.js) (op
 mode switches the boiler back to its schedule.
 
 ## Changelog
+### Version 1.1.0
+
+- New "End heating season…" row (own section, confirmation dialog) that switches `seasonItem` OFF.
+
 ### Version 1.0.0
 
 - Initial release.

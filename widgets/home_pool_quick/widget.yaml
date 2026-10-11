@@ -1,0 +1,103 @@
+uid: home_pool_quick
+tags:
+- home
+props:
+  parameters:
+  - name: pumpItem
+    label: Pump item
+    description: Switch that powers the pool pump.
+    type: TEXT
+    context: item
+    default: OU_Terrace_HueSmartPlug_Switch_Power
+    required: false
+  - name: seasonItem
+    label: Pool season switch
+    description: Switch, ON = pool season (pump schedule runs), OFF = winter break. The last row sends OFF to it.
+    type: TEXT
+    context: item
+    default: OU_Terrace_HueSmartPlug_Switch_PoolSeason
+    required: false
+  - name: scheduleText
+    label: Schedule text
+    description: Status line under the pump rows, e.g. the pump schedule.
+    type: TEXT
+    default: 'Schedule: on 06:00 and 22:00, off 09:00 and 00:00'
+    required: false
+  parameterGroups: []
+timestamp: Oct 11, 2026, 12:15:43 PM
+component: f7-block
+config:
+  label: Pool
+  style:
+    height: auto
+    max-height: 88vh
+    --f7-sheet-height: auto
+    margin: '0'
+    padding: '0'
+    background: var(--f7-page-bg-color)
+slots:
+  default:
+  - component: oh-list
+    config:
+      inset: true
+      strong: true
+      dividersIos: true
+      style:
+        margin: 16px 16px 8px
+    slots:
+      default:
+      - component: oh-list-item
+        config:
+          icon: f7:drop_fill
+          iconColor: '#0ea5e9'
+          title: Pump on
+          after: '=items[props.pumpItem].state===''ON'' ? ''✓'' : '''''
+          action: command
+          actionItem: =props.pumpItem
+          actionCommand: 'ON'
+          actionFeedback: Pool pump on
+          sheetClose: true
+      - component: oh-list-item
+        config:
+          icon: f7:stop_circle
+          iconColor: '#6b7280'
+          title: Pump off
+          after: '=items[props.pumpItem].state===''ON'' ? '''' : ''✓'''
+          action: command
+          actionItem: =props.pumpItem
+          actionCommand: 'OFF'
+          actionFeedback: Pool pump off
+          sheetClose: true
+  - component: Label
+    config:
+      text: =props.scheduleText || ''
+      style:
+        display: block
+        font-size: 13px
+        opacity: '0.6'
+        margin: 0 32px 20px
+  - component: oh-list
+    config:
+      inset: true
+      strong: true
+      style:
+        margin: 0 16px 24px
+      visible: =items[props.seasonItem].state==='ON'
+    slots:
+      default:
+      - component: oh-list-item
+        config:
+          icon: f7:snow
+          iconColor: '#dc2626'
+          title: Start winter break…
+          action: command
+          actionItem: =props.seasonItem
+          actionCommand: 'OFF'
+          actionConfirmation:
+            type: dialog
+            title: Start winter break?
+            text: The pool pump turns off and the pump schedule pauses until you start the pool season again.
+          actionFeedback: Winter break started
+          sheetClose: true
+          style:
+            color: '#dc2626'

@@ -32,7 +32,7 @@ props:
     default: gSceneHVAC
     required: false
   parameterGroups: []
-timestamp: Oct 5, 2026, 1:21:03 PM
+timestamp: Oct 11, 2026, 12:15:43 PM
 component: f7-block
 config:
   label: Heating
@@ -164,3 +164,28 @@ slots:
           style:
             text-transform: none
             font-weight: '600'
+  - component: oh-list
+    config:
+      inset: true
+      strong: true
+      style:
+        margin: 0 16px 24px
+      visible: =items[props.seasonItem].state==='ON'
+    slots:
+      default:
+      - component: oh-list-item
+        config:
+          icon: f7:sun_max
+          iconColor: '#dc2626'
+          title: End heating season…
+          action: command
+          actionItem: =props.seasonItem
+          actionCommand: 'OFF'
+          actionConfirmation:
+            type: dialog
+            title: End heating season?
+            text: The boiler switches to manual at 19 °C and the room valves open. It restarts automatically when it gets cold.
+          actionFeedback: Heating season ended
+          sheetClose: true
+          style:
+            color: '#dc2626'

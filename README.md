@@ -10,7 +10,7 @@ Custom OpenHAB Main UI widgets for home automation.
 |--------|-------------|------------|
 | [home_hero](widgets/home_hero/) | Greeting, weather, sun times and exception-driven alert chips (smoke, weather, waste, doorbell, batteries, humidity, offline) with detail sheets — one family in `widgets.yaml` | 5.x |
 | [home_heating_quick](widgets/home_heating_quick/) | Heating quick-mode sheet — fireplace until morning, vacation 3/5/7/14 days, back to auto, end heating season (needs a command rule, example in `rules/`) | 5.x |
-| [home_pool_quick](widgets/home_pool_quick/) | Pool quick sheet — pump on / off, schedule line, start winter break | 5.x |
+| [home_pool_quick](widgets/home_pool_quick/) | Pool quick sheet — pump toggle, start winter break, schedule footer | 5.x |
 | [waste_pickup_card](widgets/waste_pickup_card/) | Group-driven waste collection card (replaces `garbage_list_v1`) with `row` / `chips` / `schedule` parts — sorted by date, relative days, bin colours from item metadata | 5.x |
 | [doorbell_card](widgets/doorbell_card/) | IP camera doorbell card: relative event time, person/car badges, 4-image history with swipe viewer, live HLS popup (`doorbell_live`), optional lock icon and unlock | 5.x |
 | [gas_cost_card](widgets/gas_cost_card/) | Cost card/tile for gas and electricity: period cost, YoY badge, forecast vs. last period, optional live value and 24 h trend line | 5.x |

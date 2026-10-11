@@ -3,9 +3,9 @@
 ![Heating sheet](screenshots/sheet.png)
 
 Bottom sheet for the one-tap heating modes: **Fireplace** until the next morning (07:00), **Vacation** for
-3 / 5 / 7 / 14 days, and **Back to Auto** (only shown while a timed mode runs). A status line shows the current mode. A separate
-section at the bottom ends the heating season (**End heating season…**, with a confirmation; sends `OFF` to
-`seasonItem`).
+3 / 5 / 7 / 14 days, and **Back to Auto** (only shown while a timed mode runs). A status line at the top shows the current mode. A
+**Season** section at the bottom ends the heating season (**End heating season…**, neutral row with a confirmation;
+sends `OFF` to `seasonItem`) with a footer note that it restarts automatically.
 Native list rows, segmented control and button only.
 
 Open it from a tile: `action: sheet`, `actionModal: widget:home_heating_quick` (no `actionModalConfig` needed when
@@ -27,6 +27,10 @@ a plain command and [`rules/set-heating-mode.js`](rules/set-heating-mode.js) (op
 mode switches the boiler back to its schedule.
 
 ## Changelog
+### Version 1.2.0
+
+- Status line moved to the top; season row gets a SEASON header and footer note, neutral instead of red.
+
 ### Version 1.1.0
 
 - New "End heating season…" row (own section, confirmation dialog) that switches `seasonItem` OFF.

@@ -32,7 +32,7 @@ props:
     default: gSceneHVAC
     required: false
   parameterGroups: []
-timestamp: Oct 11, 2026, 12:15:43 PM
+timestamp: Oct 11, 2026, 12:21:49 PM
 component: f7-block
 config:
   label: Heating
@@ -45,13 +45,22 @@ config:
     background: var(--f7-page-bg-color)
 slots:
   default:
+  - component: Label
+    config:
+      text: '=(m=>m===''fireplace'' ? ''Fireplace mode is on'' : m===''holiday'' ? ''Vacation mode is on'' : m===''extend'' ? ''Extended heating is on'' : m===''auto'' ? ''Automatic · target ''+Number.parseFloat(items[props.targetItem].state).toFixed(0)+''°''
+        : items[props.seasonItem].state===''ON'' ? ''Manual mode'' : ''Heating season is off'')(items[props.modeItem].state)'
+      style:
+        display: block
+        font-size: 13px
+        opacity: '0.6'
+        margin: 16px 32px 8px
   - component: oh-list
     config:
       inset: true
       strong: true
       dividersIos: true
       style:
-        margin: 16px 16px 8px
+        margin: 0 16px 24px
       mediaList: true
     slots:
       default:
@@ -78,15 +87,6 @@ slots:
           actionFeedback: Back to Auto
           sheetClose: true
           visible: =['fireplace','holiday','extend'].includes(items[props.modeItem].state)
-  - component: Label
-    config:
-      text: '=(m=>m===''fireplace'' ? ''Fireplace mode is on'' : m===''holiday'' ? ''Vacation mode is on'' : m===''extend'' ? ''Extended heating is on'' : m===''auto'' ? ''Automatic · target ''+Number.parseFloat(items[props.targetItem].state).toFixed(0)+''°''
-        : items[props.seasonItem].state===''ON'' ? ''Manual mode'' : ''Heating season is off'')(items[props.modeItem].state)'
-      style:
-        display: block
-        font-size: 13px
-        opacity: '0.6'
-        margin: 0 32px 20px
   - component: Label
     config:
       text: VACATION
@@ -164,19 +164,30 @@ slots:
           style:
             text-transform: none
             font-weight: '600'
+  - component: Label
+    config:
+      text: SEASON
+      visible: =items[props.seasonItem].state==='ON'
+      style:
+        display: block
+        font-size: 13px
+        font-weight: '600'
+        letter-spacing: 0.04em
+        opacity: '0.6'
+        margin: 0 32px 8px
   - component: oh-list
     config:
       inset: true
       strong: true
       style:
-        margin: 0 16px 24px
+        margin: 0 16px 8px
       visible: =items[props.seasonItem].state==='ON'
     slots:
       default:
       - component: oh-list-item
         config:
           icon: f7:sun_max
-          iconColor: '#dc2626'
+          iconColor: '#6b7280'
           title: End heating season…
           action: command
           actionItem: =props.seasonItem
@@ -187,5 +198,12 @@ slots:
             text: The boiler switches to manual at 19 °C and the room valves open. It restarts automatically when it gets cold.
           actionFeedback: Heating season ended
           sheetClose: true
-          style:
-            color: '#dc2626'
+  - component: Label
+    config:
+      text: Restarts automatically when it gets cold.
+      visible: =items[props.seasonItem].state==='ON'
+      style:
+        display: block
+        font-size: 13px
+        opacity: '0.6'
+        margin: 0 32px 24px

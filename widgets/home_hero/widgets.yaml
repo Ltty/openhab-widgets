@@ -82,6 +82,13 @@ widgets:
         - name: type
           value: Group
         groupName: alerts
+      - name: smokeActiveItem
+        label: Smoke alarm active item
+        description: Switch that stays ON after a smoke alarm until it is cleared; the chip shows while it is ON and a tap (with confirmation) sends OFF to mark a false alarm. Empty = chip only while the group counts an alarm, no action.
+        type: TEXT
+        default: SmokeAlarm_Active
+        context: item
+        groupName: alerts
       - name: weatherWarningsGroup
         label: Weather warnings group
         description: Group of weather-warning event items (UNDEF / '-' = no warning).
@@ -171,7 +178,7 @@ widgets:
         label: Behaviour
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 5, 2026, 2:33:10 PM
+    timestamp: Oct 15, 2026, 11:19:35 AM
     component: f7-card
     config:
       style:
@@ -358,6 +365,7 @@ widgets:
             config:
               weatherPage: =props.weatherPage
               smokeGroup: =props.smokeGroup
+              smokeActiveItem: =props.smokeActiveItem
               weatherWarningsGroup: =props.weatherWarningsGroup
               batteryGroup: =props.batteryGroup
               humidityGroup: =props.humidityGroup
@@ -381,6 +389,13 @@ widgets:
         filterCriteria:
         - name: type
           value: Group
+        groupName: alerts
+      - name: smokeActiveItem
+        label: Smoke alarm active item
+        description: Switch that stays ON after a smoke alarm until it is cleared; the chip shows while it is ON and a tap (with confirmation) sends OFF to mark a false alarm. Empty = chip only while the group counts an alarm, no action.
+        type: TEXT
+        default: SmokeAlarm_Active
+        context: item
         groupName: alerts
       - name: weatherWarningsGroup
         label: Weather warnings group
@@ -474,7 +489,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 8, 2026, 12:43:20 PM
+    timestamp: Oct 15, 2026, 11:19:35 AM
     component: f7-row
     config:
       style:
@@ -490,12 +505,19 @@ widgets:
         config:
           for: x
           sourceType: array
-          in: '=(Number(items[props.smokeGroup].state)>0) ? [1] : []'
+          in: '=(Number(items[props.smokeGroup].state)>0 || (!!props.smokeActiveItem && (items[props.smokeActiveItem]||{}).state==''ON'')) ? [1] : []'
           fragment: true
         slots:
           default:
           - component: oh-link
             config:
+              action: '=props.smokeActiveItem ? ''command'' : '''''
+              actionItem: =props.smokeActiveItem
+              actionCommand: 'OFF'
+              actionConfirmation:
+                type: dialog
+                title: False alarm?
+                text: Silence the smoke detectors and put lights, blinds and front door back as they were?
               style:
                 color: inherit
                 display: block
@@ -523,7 +545,7 @@ widgets:
                         color: '#dc2626'
                   - component: Label
                     config:
-                      text: =Number(items[props.smokeGroup].state)
+                      text: '=Number(items[props.smokeGroup].state)>0 ? Number(items[props.smokeGroup].state) : ''False alarm?'''
                       style:
                         font-size: 12px
                         font-weight: '600'

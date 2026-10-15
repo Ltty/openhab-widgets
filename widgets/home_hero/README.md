@@ -20,6 +20,7 @@ defaults, so a page needs no config: add `widget:home_hero` in a full-width grid
 | | `name` | empty | Appended to the greeting |
 | Doorbell | `doorbellLabelItem`, `doorbellTimeItem`, `doorbellCamera`, `doorbellMinutes` | `GF_Entryway_Doorbell_LastEventLabel`, `…_LastEventTime`, `ipcamera:reolink:f2c0eb4ea2`, `10` | Chip "Person at the front door · 3 min ago" for N minutes after an event; tap opens `doorbell_live` (popup, from the doorbell_card family). Empty time item = no chip |
 | Alerts | `smokeGroup`, `weatherWarningsGroup`, `batteryGroup`, `humidityGroup`, `thingsGroup`, `pickupsGroup` | `gSmokeAlerts`, `gWeatherWarnings`, `gBatteryWarnings`, `gHumidityWarnings`, `gThingWarnings`, `gWastePickups` | Passed to `home_hero_alerts` |
+| | `smokeActiveItem` | `SmokeAlarm_Active` | Switch that stays ON after a smoke alarm until it is cleared. The smoke chip shows while it is ON ("False alarm?" once the detectors are quiet); a tap asks for confirmation and sends OFF. Empty = chip only during the alarm, no action |
 
 Look and feel (colours, chip order, greeting hours) is deliberately not configurable.
 
@@ -48,6 +49,10 @@ chips' data is prefetched with the page, so sheets open instantly. Chips and row
 editor shows exactly the chips that are currently active instead of every variant.
 
 ## Changelog
+
+### Version 1.5.0
+
+- Alerts: new prop `smokeActiveItem` — the smoke chip stays visible after the detectors go quiet and a tap, after a confirmation dialog, marks the alarm as false (sends OFF to the item; an openHAB rule restores the house)
 
 ### Version 1.4.1
 

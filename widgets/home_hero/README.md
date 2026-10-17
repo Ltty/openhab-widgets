@@ -18,7 +18,7 @@ defaults, so a page needs no config: add `widget:home_hero` in a full-width grid
 | Behaviour | `weatherPage` | Outdoor page | Opened when the weather block (or a warning chip) is tapped |
 | | `showSunTimes` | `true` | Show sunrise/sunset |
 | | `name` | empty | Appended to the greeting |
-| Doorbell | `doorbellLabelItem`, `doorbellTimeItem`, `doorbellCamera`, `doorbellMinutes` | `GF_Entryway_Doorbell_LastEventLabel`, `…_LastEventTime`, `ipcamera:reolink:f2c0eb4ea2`, `10` | Chip "Person at the front door · 3 min ago" for N minutes after an event; tap opens `doorbell_live` (popup, from the doorbell_card family). Empty time item = no chip |
+| Doorbell | `doorbellLabelItem`, `doorbellTimeItem`, `doorbellSnapshotFolder`, `doorbellMinutes` | `GF_Entryway_Doorbell_LastEventLabel`, `…_LastEventTime`, `doorbell`, `10` | Chip "Person at the front door · 3 min ago" for N minutes after an event; tap opens the 4 latest snapshots (`snapshot.jpg`, `snapshot_1..3.jpg` in the folder, see doorbell_card) fullscreen. Empty time item = no chip |
 | Alerts | `smokeGroup`, `weatherWarningsGroup`, `batteryGroup`, `humidityGroup`, `thingsGroup`, `pickupsGroup` | `gSmokeAlerts`, `gWeatherWarnings`, `gBatteryWarnings`, `gHumidityWarnings`, `gThingWarnings`, `gWastePickups` | Passed to `home_hero_alerts` |
 | | `smokeActiveItem` | `SmokeAlarm_Active` | Switch that stays ON after a smoke alarm until it is cleared. The smoke chip shows while it is ON ("False alarm?" once the detectors are quiet); a tap asks for confirmation and sends OFF. Empty = chip only during the alarm, no action |
 
@@ -38,17 +38,21 @@ widget editor create one widget per key (UID = key) and paste that entry's body.
 | `home_humidity` | humidity sheet |
 
 Also needs the waste widgets (`waste_pickup_chips`, `waste_pickup_schedule`, `waste_pickup_row`) from
-[`../waste_pickup_card/`](../waste_pickup_card/) and the live view popup `doorbell_live` from
-[`../doorbell_card/`](../doorbell_card/) (used by the doorbell chip). On the page give the entry a `config` object
+[`../waste_pickup_card/`](../waste_pickup_card/). The doorbell chip reads the snapshot folder written by the
+[`../doorbell_card/`](../doorbell_card/) rule. On the page give the entry a `config` object
 (`{}` is enough) or the editor shows no props.
 
 ## How it fits together
 `home_hero` embeds `home_hero_alerts` (the chip row). Chips open bottom sheets: `home_low_batteries`, `home_humidity`,
-`home_offline_devices` and, for waste, `waste_pickup_schedule`; the doorbell chip opens the `doorbell_live` popup. The
+`home_offline_devices` and, for waste, `waste_pickup_schedule`; the doorbell chip opens the latest doorbell snapshots in the fullscreen photo browser. The
 chips' data is prefetched with the page, so sheets open instantly. Chips and rows render through repeaters, so the page
 editor shows exactly the chips that are currently active instead of every variant.
 
 ## Changelog
+
+### Version 2.0.0
+
+- **BREAKING** Alerts: the doorbell chip opens the 4 latest snapshots in the fullscreen photo browser instead of the `doorbell_live` popup; prop `doorbellCamera` replaced by `doorbellSnapshotFolder` (default `doorbell`)
 
 ### Version 1.5.0
 

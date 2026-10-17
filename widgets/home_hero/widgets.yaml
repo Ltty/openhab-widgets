@@ -155,11 +155,11 @@ widgets:
         required: false
         groupName: doorbell
         context: item
-      - name: doorbellCamera
-        label: Doorbell camera Thing UID
-        description: ipcamera Thing UID; tapping the chip opens the live view (widget doorbell_live).
+      - name: doorbellSnapshotFolder
+        label: Doorbell snapshot folder
+        description: Subfolder under /etc/openhab/html/ with snapshot.jpg and snapshot_1..3.jpg; tapping the chip opens these 4 latest snapshots fullscreen. Empty = chip not tappable.
         type: TEXT
-        default: ipcamera:reolink:f2c0eb4ea2
+        default: doorbell
         required: false
         groupName: doorbell
       - name: doorbellMinutes
@@ -178,7 +178,7 @@ widgets:
         label: Behaviour
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 15, 2026, 11:19:35 AM
+    timestamp: Oct 17, 2026, 11:39:18 AM
     component: f7-card
     config:
       style:
@@ -373,7 +373,7 @@ widgets:
               pickupsGroup: =props.pickupsGroup
               doorbellLabelItem: =props.doorbellLabelItem
               doorbellTimeItem: =props.doorbellTimeItem
-              doorbellCamera: =props.doorbellCamera
+              doorbellSnapshotFolder: =props.doorbellSnapshotFolder
               doorbellMinutes: =props.doorbellMinutes
   home_hero_alerts:
     tags:
@@ -470,11 +470,11 @@ widgets:
         required: false
         groupName: doorbell
         context: item
-      - name: doorbellCamera
-        label: Doorbell camera Thing UID
-        description: ipcamera Thing UID; tapping the chip opens the live view (widget doorbell_live).
+      - name: doorbellSnapshotFolder
+        label: Doorbell snapshot folder
+        description: Subfolder under /etc/openhab/html/ with snapshot.jpg and snapshot_1..3.jpg; tapping the chip opens these 4 latest snapshots fullscreen. Empty = chip not tappable.
         type: TEXT
-        default: ipcamera:reolink:f2c0eb4ea2
+        default: doorbell
         required: false
         groupName: doorbell
       - name: doorbellMinutes
@@ -489,7 +489,7 @@ widgets:
         label: Alert sources
       - name: doorbell
         label: Doorbell
-    timestamp: Oct 15, 2026, 11:19:35 AM
+    timestamp: Oct 17, 2026, 11:39:18 AM
     component: f7-row
     config:
       style:
@@ -561,10 +561,8 @@ widgets:
           default:
           - component: oh-link
             config:
-              action: '=props.doorbellCamera ? ''popup'' : '''''
-              actionModal: widget:doorbell_live
-              actionModalConfig:
-                cameraThing: =props.doorbellCamera
+              action: '=props.doorbellSnapshotFolder ? ''photos'' : '''''
+              actionPhotos: '=[0,1,2,3].map(i=>({url: ''/static/''+props.doorbellSnapshotFolder+''/''+(i === 0 ? ''snapshot'' : ''snapshot_''+i)+''.jpg?t=''+(items[props.doorbellTimeItem]||{}).state}))'
               style:
                 color: inherit
                 display: block

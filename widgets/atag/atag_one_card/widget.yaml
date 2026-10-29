@@ -125,7 +125,7 @@ props:
 timestamp: Oct 5, 2026, 3:28:38 PM
 component: oh-webframe
 config:
-  src: '=''/static/atag/control.html?v=7'' + ''&thing='' + props.thingUID + ''&current='' + props.currentTempItem + ''&target='' + props.targetTempItem + ''&mode='' + props.modeItem + (props.flameItem ? ''&flame='' + props.flameItem : '''') + (props.chActiveItem
+  src: '=''/static/atag/control.html?v=8'' + ''&thing='' + props.thingUID + ''&current='' + props.currentTempItem + ''&target='' + props.targetTempItem + ''&mode='' + props.modeItem + (props.flameItem ? ''&flame='' + props.flameItem : '''') + (props.chActiveItem
     ? ''&chactive='' + props.chActiveItem : '''') + (props.dhwActiveItem ? ''&dhwactive='' + props.dhwActiveItem : '''') + (props.nextTimeItem ? ''&nexttime='' + props.nextTimeItem : '''') + (props.nextTempItem ? ''&nexttemp='' + props.nextTempItem : '''')
     + (props.vacationDurationItem ? ''&vacdur='' + props.vacationDurationItem : '''') + (props.vacationTempItem ? ''&vactemp='' + props.vacationTempItem : '''') + (props.vacationRemainingItem ? ''&vacrem='' + props.vacationRemainingItem : '''') + (props.extendDurationItem
     ? ''&extdur='' + props.extendDurationItem : '''') + (props.extendRemainingItem ? ''&extrem='' + props.extendRemainingItem : '''') + (props.fireplaceDurationItem ? ''&firedur='' + props.fireplaceDurationItem : '''') + (props.fireplaceRemainingItem ?

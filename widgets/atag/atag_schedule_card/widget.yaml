@@ -6,7 +6,7 @@ tags:
 props:
   parameters:
   - context: thing
-    description: The atagone:thermostat Thing UID — used to resolve and call its per-period schedule Thing Actions.
+    description: The atagone:thermostat Thing UID — used to resolve and call its whole-schedule Thing Actions.
     groupName: thing
     label: ATAG Thing
     name: thingUID
@@ -34,5 +34,5 @@ props:
 timestamp: Oct 5, 2026, 8:24:06 PM
 component: oh-webframe
 config:
-  src: ='/static/atag/schedule.html?v=8' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem
+  src: ='/static/atag/schedule.html?v=9' + '&thing=' + props.thingUID + '&ch=' + props.chScheduleItem + '&dhw=' + props.dhwScheduleItem
   height: 520

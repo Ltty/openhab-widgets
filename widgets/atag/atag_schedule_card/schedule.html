@@ -508,57 +508,21 @@
     });
   }
 
-  // Diff-based save via per-period actions (until the binding gains a whole-schedule action —
-  // see atag-binding-schedule-spec.md). Sequential with a pause between calls; the firmware
-  // requires >= 2s between requests.
-  function delay(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
-
+  // One whole-schedule write (setChSchedule / setDhwSchedule): the binding composes and sends the
+  // week atomically, so there is no partial-week state and no per-period pacing here.
   el('btn-save').addEventListener('click', function () {
-    var setAction = activeTab === 'ch' ? 'setChSchedulePeriod' : 'setDhwSchedulePeriod';
-    var clearAction = activeTab === 'ch' ? 'clearChSchedulePeriod' : 'clearDhwSchedulePeriod';
+    var action = activeTab === 'ch' ? 'setChSchedule' : 'setDhwSchedule';
     setOff('btn-save', true);
-
-    var writes = [];
-    DAYS.forEach(function (day) {
-      var oldPeriods = (savedSchedule.days && savedSchedule.days[day]) || [];
-      var newPeriods = (schedule.days && schedule.days[day]) || [];
-      var maxLen = Math.max(oldPeriods.length, newPeriods.length);
-      for (var i = 0; i < maxLen; i++) {
-        var oldP = oldPeriods[i], newP = newPeriods[i];
-        if (newP && (!oldP || oldP.start !== newP.start || oldP.end !== newP.end || oldP.temp !== newP.temp)) {
-          writes.push({ action: setAction, args: { weekday: day, periodIndex: i, startMinutes: newP.start, endMinutes: newP.end, temperatureCelsius: newP.temp } });
-        } else if (!newP && oldP) {
-          writes.push({ action: clearAction, args: { weekday: day, periodIndex: i } });
-        }
-      }
-    });
-
-    var total = writes.length;
-    var done = 0;
-    function next() {
-      if (done >= total) {
-        el('save-status').textContent = 'Saved (' + total + ' period' + (total === 1 ? '' : 's') + ')';
-        dirty = false;
-        setTimeout(loadSchedule, 4000);
-        return;
-      }
-      var w = writes[done];
-      el('save-status').textContent = 'Saving ' + (done + 1) + ' / ' + total + '…';
-      callAction(w.action, w.args).then(function () {
-        done++;
-        setTimeout(next, 2100);
-      }).catch(function () {
-        el('save-status').textContent = 'Write ' + (done + 1) + ' failed — stopped to avoid a partial week. Re-checking the boiler…';
-        setTimeout(loadSchedule, 4000);
-      });
-    }
-    if (total === 0) {
-      el('save-status').textContent = '';
+    el('save-status').textContent = 'Saving…';
+    callAction(action, { json: JSON.stringify(schedule) }).then(function (ok) {
+      if (!ok) throw new Error('rejected');
+      el('save-status').textContent = 'Saved';
       dirty = false;
-      setButtons();
-    } else {
-      next();
-    }
+      setTimeout(loadSchedule, 4000);
+    }).catch(function () {
+      el('save-status').textContent = 'Write failed — re-checking the boiler…';
+      setTimeout(loadSchedule, 4000);
+    });
   });
 
   document.querySelectorAll('#tabs .tab').forEach(function (t) {

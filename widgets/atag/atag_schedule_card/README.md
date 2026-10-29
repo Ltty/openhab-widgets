@@ -65,7 +65,7 @@ two schedule-JSON item props.
 
 | Prop | Required | Description |
 |------|----------|-------------|
-| `thingUID` | Yes | The `atagone:thermostat:...` Thing UID — used to call the per-period schedule Thing Actions |
+| `thingUID` | Yes | The `atagone:thermostat:...` Thing UID — used to call the whole-schedule Thing Actions (`setChSchedule` / `setDhwSchedule`) |
 | `chScheduleItem` | Yes | CH weekly schedule as JSON — `heating#schedule` |
 | `dhwScheduleItem` | Yes | DHW weekly schedule as JSON — `hotwater#schedule` |
 
@@ -95,9 +95,13 @@ two schedule-JSON item props.
 
 ## Changelog
 
+### Version 1.3.0
+
+- Save sends the whole week in one `setChSchedule` / `setDhwSchedule` Thing Action call instead of one call per changed period (the per-period actions no longer take a period index) — atomic, no partial-week state, no "Saving n / m" progress
+
 ### Version 1.2.2
 
-- Removed the Cancel button: the dialog's Back button already discards unsaved edits, so Save is the only action in the bar. Do not close the dialog while it reads "Saving n / m…" — the remaining periods would not be written
+- Removed the Cancel button: the dialog's Back button already discards unsaved edits, so Save is the only action in the bar. 
 
 ### Version 1.2.1
 

@@ -5,8 +5,8 @@ Each widget is independent — place any of them on its own page — and keeps i
 
 | Widget | Version | Shows |
 |---|---|---|
-| [`atag_one_card`](atag_one_card/) | 1.1.5 | Thermostat control face: current/target temperature, steppers, mode selector, vacation / extend / fireplace duration picker |
-| [`atag_schedule_card`](atag_schedule_card/) | 1.2.2 | Weekly central-heating / hot-water schedule editor (24 h timeline per day) |
+| [`atag_one_card`](atag_one_card/) | 1.1.6 | Thermostat control face: current/target temperature, steppers, mode selector, vacation / extend / fireplace duration picker |
+| [`atag_schedule_card`](atag_schedule_card/) | 1.3.0 | Weekly central-heating / hot-water schedule editor (24 h timeline per day) |
 | [`atag_regulation_card`](atag_regulation_card/) | 2.3.2 | Regulation settings: central heating, weather-dependent control, hot water, display |
 | [`atag_diagnostics_card`](atag_diagnostics_card/) | 2.1.0 | Read-only boiler diagnostics (Information → Diagnosis) |
 | [`atag_heating_chart`](atag_heating_chart/) | 1.1.1 | Central heating chart: target vs. room vs. outside temperature, summer eco threshold, burner overlay |

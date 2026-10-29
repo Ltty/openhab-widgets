@@ -442,19 +442,19 @@
       title: 'Vacation Duration', unit: 'days', step: 1, min: 1, max: 365,
       init: function () { return Math.max(1, Math.round(numState(ITEM.vacdur, 86400) / 86400)); },
       note: 'The house will be held at the vacation setback temperature for the selected number of days, starting now.',
-      action: 'activateVacation', toSeconds: function (v) { return v * 86400; }
+      action: 'activateVacation', arg: 'days'
     },
     extend: {
       title: 'Extend Duration', unit: 'minutes', step: 15, min: 15, max: 360,
       init: function () { return Math.max(15, Math.round(numState(ITEM.extdur, 3600) / 60 / 15) * 15); },
       note: 'Extends the current temperature by this many minutes on top of the time remaining until the next scheduled change — not a fixed countdown.',
-      action: 'activateExtend', toSeconds: function (v) { return v * 60; }
+      action: 'activateExtend', arg: 'minutes'
     },
     fireplace: {
       title: 'Fireplace Duration', unit: 'hours', step: 1, min: 1, max: 24,
       init: function () { return Math.max(1, Math.round(numState(ITEM.firedur, 10800) / 3600)); },
       note: 'Close the radiator valve in this room while fireplace mode is active. Cancelling fireplace mode later requires a button press on the thermostat display.',
-      action: 'activateFireplace', toSeconds: function (v) { return v * 3600; }
+      action: 'activateFireplace', arg: 'hours'
     }
   };
   var durState = { key: null, value: 0 };
@@ -482,8 +482,8 @@
   });
   el('dur-set').addEventListener('click', function () {
     var cfg = DUR_CFG[durState.key];
-    var seconds = cfg.toSeconds(durState.value);
-    callAction(cfg.action, { durationSeconds: seconds }).then(function () {
+    var args = {}; args[cfg.arg] = durState.value;
+    callAction(cfg.action, args).then(function () {
       closeOverlay('ov-duration');
       el('confirm-note').textContent = '';
       setTimeout(refreshAll, 3000);

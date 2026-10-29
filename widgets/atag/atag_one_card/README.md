@@ -88,6 +88,10 @@ item props for the channels you want live.
 
 ## Changelog
 
+### Version 1.1.6
+
+- Fixed: vacation / extend / fireplace failed against the updated `atagone` binding — the Thing Actions now take `days` / `minutes` / `hours` instead of `durationSeconds`
+
 ### Version 1.1.5
 
 - Frame uses 18 px corners, margin 0 and the full column width to line up with the other page cards

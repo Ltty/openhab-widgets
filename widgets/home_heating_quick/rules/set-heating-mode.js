@@ -15,7 +15,7 @@ try {
     target.setHours(MORNING_HOUR, 0, 0, 0);
     if (target.getTime() - now.getTime() < 3600000) { target.setDate(target.getDate() + 1); }
     var hours = Math.min(24, Math.max(1, Math.ceil((target.getTime() - now.getTime()) / 3600000 - 0.05)));
-    a.activateFireplace(hours * 3600);
+    a.activateFireplace(hours); // action takes hours
   } else if (cmd === 'cancel') {
     // Only for timed modes: cancelMode() on manual (summer hold) would flip the boiler back to schedule mode.
     var mode = items.getItem(MODE_ITEM).state.toString();
@@ -29,11 +29,11 @@ try {
   } else if (cmd === 'auto') {
     items.getItem(MODE_ITEM).sendCommand('auto');
   } else if ((m = /^fireplace(\d+)$/.exec(cmd))) {
-    a.activateFireplace(parseInt(m[1], 10) * 3600);
+    a.activateFireplace(parseInt(m[1], 10));
   } else if ((m = /^vacation(\d+)$/.exec(cmd))) {
-    a.activateVacation(parseInt(m[1], 10) * 86400);
+    a.activateVacation(parseInt(m[1], 10));
   } else if ((m = /^extend(\d+)$/.exec(cmd))) {
-    a.activateExtend(parseInt(m[1], 10) * 60);
+    a.activateExtend(parseInt(m[1], 10));
   } else {
     console.warn('[HeatingQuick] Unknown command: ' + cmd);
   }

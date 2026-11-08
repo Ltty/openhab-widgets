@@ -223,6 +223,7 @@ The weather guard icon strip is hidden when none of the guard props are set.
 | `isCold` | Switch ON when too cold |
 | `isRaining` | Switch ON when raining |
 | `isFrost` | Switch ON when frost |
+| `isWinter` | Switch ON when the mower is stored for winter |
 
 ---
 
@@ -306,6 +307,10 @@ L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
 ---
 
 ## Changelog
+
+### Version 1.5.0
+
+- New optional `isWinter` prop: a storage icon in the guard strip lights while the mower is stored for winter
 
 ### Version 1.4.0
 

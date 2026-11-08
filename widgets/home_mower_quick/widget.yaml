@@ -1,0 +1,109 @@
+uid: home_mower_quick
+tags:
+- home
+props:
+  parameters:
+  - name: pauseItem
+    label: Manual pause item
+    description: Switch, ON = mower manually paused (member of the schedule group, so it parks the mower).
+    type: TEXT
+    context: item
+    default: AutomowerAM415X_Status_Manual
+    required: false
+  - name: winterItem
+    label: Winter mode item
+    description: Switch, ON = mower stored for winter. The last row sends ON to it; the tile itself ends winter mode.
+    type: TEXT
+    context: item
+    default: AutomowerAM415X_Status_Winter
+    required: false
+  - name: statusItem
+    label: Status summary item
+    description: String item with the one-word mower status (Mowing, Charging, Parked ...).
+    type: TEXT
+    context: item
+    default: AutomowerAM415X_Summary_Status
+    required: false
+  - name: detailItem
+    label: Status detail item
+    description: String item with the status detail (next start, work area ...), shown after the status.
+    type: TEXT
+    context: item
+    default: AutomowerAM415X_Summary_Detail
+    required: false
+  parameterGroups: []
+component: f7-block
+config:
+  label: Mower
+  style:
+    height: auto
+    max-height: 88vh
+    --f7-sheet-height: auto
+    margin: '0'
+    padding: '0'
+    background: var(--f7-page-bg-color)
+slots:
+  default:
+  - component: Label
+    config:
+      text: '=items[props.pauseItem].state===''ON'' ? ''Paused · the mower stays parked until you resume'' : items[props.statusItem].state + '' · '' + items[props.detailItem].state'
+      style:
+        display: block
+        font-size: 13px
+        opacity: '0.6'
+        margin: 16px 32px 8px
+  - component: oh-list
+    config:
+      inset: true
+      strong: true
+      style:
+        margin: 0 16px 24px
+    slots:
+      default:
+      - component: oh-toggle-item
+        config:
+          icon: f7:pause_circle_fill
+          iconColor: '#d97706'
+          title: Pause mowing
+          item: =props.pauseItem
+  - component: Label
+    config:
+      text: SEASON
+      style:
+        display: block
+        font-size: 13px
+        font-weight: '600'
+        letter-spacing: 0.04em
+        opacity: '0.6'
+        margin: 0 32px 8px
+  - component: oh-list
+    config:
+      inset: true
+      strong: true
+      style:
+        margin: 0 16px 8px
+    slots:
+      default:
+      - component: oh-list-item
+        config:
+          icon: f7:snow
+          iconColor: '#6b7280'
+          title: Start winter mode…
+          action: command
+          actionItem: =props.winterItem
+          actionCommand: 'ON'
+          actionConfirmation:
+            type: dialog
+            title: Start winter mode?
+            text: The mower stays parked and its offline warnings are hidden until you end winter mode.
+          actionFeedback: Winter mode started
+          sheetClose: true
+  - component: Label
+    config:
+      text: In spring, switch the mower on first, then end winter mode from the Mower tile.
+      style:
+        display: block
+        font-size: 13px
+        opacity: '0.6'
+        margin: 0 32px 24px
+timestamp: Nov 8, 2026, 8:47:47 AM

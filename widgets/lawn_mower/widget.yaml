@@ -147,6 +147,13 @@ props:
     required: false
     type: TEXT
     groupName: schedule
+  - context: item
+    description: Switch ON when the mower is stored for winter. Lights the storage icon in the guard strip.
+    label: Winter Mode Switch
+    name: isWinter
+    required: false
+    type: TEXT
+    groupName: schedule
   parameterGroups:
   - name: binding
     label: Binding Channels
@@ -156,7 +163,7 @@ props:
     label: Control Actions
   - name: schedule
     label: Schedule & Weather Guards
-timestamp: Oct 5, 2026, 3:31:01 PM
+timestamp: Nov 8, 2026, 8:48:48 AM
 component: f7-card
 config:
   style:
@@ -362,7 +369,7 @@ slots:
         padding-top: 10px
         margin-top: 8px
         border-top: 1px solid rgba(128,128,128,0.15)
-      visible: =!!(props.isDark || props.isHot || props.isCold || props.isRaining || props.isFrost)
+      visible: =!!(props.isDark || props.isHot || props.isCold || props.isRaining || props.isFrost || props.isWinter)
     slots:
       default:
       - component: oh-icon
@@ -395,6 +402,13 @@ slots:
           width: 24px
           style:
             filter: '=(props.isFrost && items[props.isFrost]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
+      - component: oh-icon
+        config:
+          icon: f7:archivebox_fill
+          width: 24px
+          visible: =!!props.isWinter
+          style:
+            filter: '=(props.isWinter && items[props.isWinter]?.state === ''ON'') ? ''grayscale(0%)'' : ''grayscale(100%) opacity(0.35)'''
   - component: f7-row
     config:
       style:
